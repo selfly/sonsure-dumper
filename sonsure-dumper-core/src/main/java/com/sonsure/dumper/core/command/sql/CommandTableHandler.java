@@ -176,9 +176,10 @@ public class CommandTableHandler {
             key = DEFAULT_ALIAS;
         }
         String tableName = aliasTableMap.get(key);
-
+        if (StringUtils.isBlank(tableName)) {
+            return null;
+        }
         String tableClass = StringUtils.indexOf(tableName, ".") != -1 ? tableName : getTableClass(tableName);
-
         return ParseCache.getClass(tableClass);
     }
 

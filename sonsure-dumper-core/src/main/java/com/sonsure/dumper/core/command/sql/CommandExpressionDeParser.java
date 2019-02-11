@@ -29,9 +29,13 @@ public class CommandExpressionDeParser extends ExpressionDeParser {
         //表名实际上是class
         Class<?> entityClass = commandTableHandler.getTableClassForAlias(tableName);
 
-        CommandTable commandTable = new CommandTable();
-        commandTable.setModelClass(entityClass);
-        String columnName = MappingCache.getColumn(commandTable, column.getColumnName(), commandTableHandler.getMappingHandler());
+        String columnName = column.getColumnName();
+        if (entityClass != null) {
+            //有时entityClass是没有的，比如多表联查时的count(*)列
+            CommandTable commandTable = new CommandTable();
+            commandTable.setModelClass(entityClass);
+            columnName = MappingCache.getColumn(commandTable, column.getColumnName(), commandTableHandler.getMappingHandler());
+        }
         getBuffer().append(columnName);
     }
 }
