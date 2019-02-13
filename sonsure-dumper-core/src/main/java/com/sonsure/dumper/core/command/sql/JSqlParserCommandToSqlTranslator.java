@@ -2,7 +2,6 @@ package com.sonsure.dumper.core.command.sql;
 
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.mapping.MappingHandler;
-import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
@@ -24,7 +23,7 @@ public class JSqlParserCommandToSqlTranslator implements CommandToSqlTranslator 
             expressionDeParser.setBuffer(buffer);
             statement.accept(new CommandStatementDeParser(expressionDeParser, selectDeParser, buffer, commandMappingHandler));
             return buffer.toString();
-        } catch (JSQLParserException e) {
+        } catch (Exception e) {
             throw new SonsureJdbcException("解析sql失败:" + command, e);
         }
     }

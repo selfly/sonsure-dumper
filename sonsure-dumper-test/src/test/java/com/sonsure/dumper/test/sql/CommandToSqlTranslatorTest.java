@@ -13,19 +13,24 @@ import java.util.Map;
 
 public class CommandToSqlTranslatorTest {
 
-    @Test
-    public void commandToSql() throws Exception {
+    private MappingHandler mappingHandler = new DefaultMappingHandler();
 
-        MappingHandler mappingHandler = new DefaultMappingHandler();
+    private Map<String, Class<?>> classMapping = new HashMap<>();
 
-        Map<String, Class<?>> classMapping = new HashMap<>();
+    private CommandToSqlTranslator commandToSqlTranslator = new JSqlParserCommandToSqlTranslator();
+
+    public CommandToSqlTranslatorTest() {
         classMapping.put("RelTag", RelTag.class);
         classMapping.put("Tag", Tag.class);
         classMapping.put("User", User.class);
         classMapping.put("UserInfo", UserInfo.class);
         classMapping.put("Content", Content.class);
+        classMapping.put("Series", Series.class);
+        classMapping.put("RelSeries", RelSeries.class);
+    }
 
-        CommandToSqlTranslator commandToSqlTranslator = new JSqlParserCommandToSqlTranslator();
+    @Test
+    public void commandToSql() throws Exception {
 
         String command = "select t1.*,t2.contentNum,t2.contentType from Tag t1 inner join (select count(*) as contentNum,rt.tagId,rt.contentType from RelTag rt where rt.contentType = ? group by rt.tagId order by contentNum desc limit 0,?) t2 on t1.tagId = t2.tagId";
         String sql = commandToSqlTranslator.getSql(command, mappingHandler, classMapping, null);
@@ -68,5 +73,15 @@ public class CommandToSqlTranslatorTest {
         String result7 = "delete from user_info where login_name = ? and password = ? and user_info_id = ?";
         Assert.assertTrue(sql7.toLowerCase().equals(result7));
         System.out.println(sql7.toLowerCase());
+    }
+
+    @Test
+    public void commandToSql8() {
+        String command = "select t1.* from Series t1 inner join RelSeries t2 inner JOIN Content t3 on t1.seriesId = t2.seriesId and t2.contentId = t3.contentId group by t1.seriesId order by sum(t3.clickCount) desc";
+        String sql = commandToSqlTranslator.getSql(command, mappingHandler, classMapping, null);
+        String result = "select t1.* from series t1 inner join rel_series t2 inner join content t3 on t1.series_id = t2.series_id and t2.content_id = t3.content_id group by t1.series_id order by sum(t3.click_count) desc";
+        Assert.assertTrue(sql.toLowerCase().equals(result));
+        System.out.println(sql.toLowerCase());
+
     }
 }

@@ -28,6 +28,7 @@ public abstract class AbstractSimpleCommandContextBuilder extends AbstractComman
         if (commandTable.isForceNative()) {
             return command;
         }
+        COMMAND_CACHE.clear();
         String resolvedCommand = COMMAND_CACHE.get(command);
         if (StringUtils.isBlank(resolvedCommand)) {
             resolvedCommand = commandResolver.resolve(command, commandTable, mappingHandler);

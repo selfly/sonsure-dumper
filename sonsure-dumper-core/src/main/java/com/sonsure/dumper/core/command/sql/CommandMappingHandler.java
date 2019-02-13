@@ -5,6 +5,8 @@ import com.sonsure.dumper.core.mapping.MappingHandler;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -130,15 +132,10 @@ public class CommandMappingHandler {
         if (orderByElements != null) {
 
             for (OrderByElement orderByElement : orderByElements) {
-
                 Expression expression = orderByElement.getExpression();
-                if (expression instanceof Column) {
-                    this.extractColumnMapping(((Column) expression), mappings);
-                }
+                this.extractExpression(expression, mappings);
             }
-
         }
-
 
         List<SelectItem> selectItems = plainSelect.getSelectItems();
         for (SelectItem selectItem : selectItems) {
@@ -211,6 +208,13 @@ public class CommandMappingHandler {
 
             //暂未实现
 //            ItemsList rightItemsList = inExpression.getRightItemsList();
+        } else if (expression instanceof Function) {
+            Function function = (Function) expression;
+            ExpressionList parameters = function.getParameters();
+            if (parameters != null) {
+                this.extractExpression(parameters.getExpressions(), mappings);
+            }
+
         } else if (expression instanceof Column) {
             this.extractColumnMapping(((Column) expression), mappings);
         }
