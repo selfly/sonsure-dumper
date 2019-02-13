@@ -8,6 +8,6 @@ import java.util.Map;
 public interface CommandToSqlTranslator {
 
 
-    String getSql(String command, MappingHandler mappingHandler, Map<String, String> classMapping, Map<String, String> customClassMapping);
+    String getSql(String command, MappingHandler mappingHandler, Map<String, Class<?>> classMapping, Map<String, Class<?>> customClassMapping);
 
 }

@@ -9,23 +9,22 @@ import net.sf.jsqlparser.util.deparser.SelectDeParser;
 
 public class CommandSelectDeParser extends SelectDeParser {
 
-    private CommandTableHandler commandTableHandler;
+    private CommandMappingHandler commandMappingHandler;
 
-    public CommandSelectDeParser(ExpressionVisitor expressionVisitor, StringBuilder buffer, CommandTableHandler commandTableHandler) {
+    public CommandSelectDeParser(ExpressionVisitor expressionVisitor, StringBuilder buffer, CommandMappingHandler commandMappingHandler) {
         super(expressionVisitor, buffer);
-        this.commandTableHandler = commandTableHandler;
+        this.commandMappingHandler = commandMappingHandler;
     }
 
     @Override
     public void visit(PlainSelect plainSelect) {
-        this.commandTableHandler.extractTable(plainSelect);
         super.visit(plainSelect);
     }
 
     @Override
     public void visit(Table table) {
 
-        String tbName = this.commandTableHandler.getTableName(table.getName());
+        String tbName = this.commandMappingHandler.getTableName(table);
 
         table.setName(tbName);
 
@@ -41,7 +40,7 @@ public class CommandSelectDeParser extends SelectDeParser {
         }
     }
 
-    public CommandTableHandler getCommandTableHandler() {
-        return commandTableHandler;
+    public CommandMappingHandler getCommandMappingHandler() {
+        return commandMappingHandler;
     }
 }

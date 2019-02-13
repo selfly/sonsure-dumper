@@ -19,12 +19,12 @@ import java.util.List;
 public class CommandUpdateDeParser extends UpdateDeParser {
 
     private SelectVisitor selectVisitor;
-    private CommandTableHandler commandTableHandler;
+    private CommandMappingHandler commandMappingHandler;
 
-    public CommandUpdateDeParser(ExpressionVisitor expressionVisitor, SelectVisitor selectVisitor, StringBuilder buffer, CommandTableHandler commandTableHandler) {
+    public CommandUpdateDeParser(ExpressionVisitor expressionVisitor, SelectVisitor selectVisitor, StringBuilder buffer, CommandMappingHandler commandMappingHandler) {
         super(expressionVisitor, selectVisitor, buffer);
         this.selectVisitor = selectVisitor;
-        this.commandTableHandler = commandTableHandler;
+        this.commandMappingHandler = commandMappingHandler;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class CommandUpdateDeParser extends UpdateDeParser {
 
             for (int i = 0; i < list.size(); i++) {
                 Table table = list.get(i);
-                String tableName = this.commandTableHandler.getTableName(table.getName());
+                String tableName = this.commandMappingHandler.getTableName(table);
                 if (table.getAlias() != null) {
                     tableName += " " + table.getAlias().toString();
                 }

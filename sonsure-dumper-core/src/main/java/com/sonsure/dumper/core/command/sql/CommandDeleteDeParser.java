@@ -9,11 +9,11 @@ import net.sf.jsqlparser.util.deparser.OrderByDeParser;
 
 public class CommandDeleteDeParser extends DeleteDeParser {
 
-    private CommandTableHandler commandTableHandler;
+    private CommandMappingHandler commandMappingHandler;
 
-    public CommandDeleteDeParser(ExpressionVisitor expressionVisitor, StringBuilder buffer, CommandTableHandler commandTableHandler) {
+    public CommandDeleteDeParser(ExpressionVisitor expressionVisitor, StringBuilder buffer, CommandMappingHandler commandMappingHandler) {
         super(expressionVisitor, buffer);
-        this.commandTableHandler = commandTableHandler;
+        this.commandMappingHandler = commandMappingHandler;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class CommandDeleteDeParser extends DeleteDeParser {
 //        }
 
         Table table = delete.getTable();
-        String tableName = this.commandTableHandler.getTableName(table.getName());
+        String tableName = this.commandMappingHandler.getTableName(table);
         if (table.getAlias() != null) {
             tableName += " " + table.getAlias().toString();
         }

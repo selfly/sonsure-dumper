@@ -9,49 +9,42 @@ public class CommandStatementDeParser extends StatementDeParser {
 
     protected ExpressionDeParser expressionDeParser;
     protected SelectDeParser selectDeParser;
-    protected CommandTableHandler commandTableHandler;
+    protected CommandMappingHandler commandMappingHandler;
 
-    public CommandStatementDeParser(ExpressionDeParser expressionDeParser, SelectDeParser selectDeParser, StringBuilder buffer, CommandTableHandler commandTableHandler) {
+    public CommandStatementDeParser(ExpressionDeParser expressionDeParser, SelectDeParser selectDeParser, StringBuilder buffer, CommandMappingHandler commandMappingHandler) {
         super(expressionDeParser, selectDeParser, buffer);
         this.expressionDeParser = expressionDeParser;
         this.selectDeParser = selectDeParser;
-        this.commandTableHandler = commandTableHandler;
+        this.commandMappingHandler = commandMappingHandler;
     }
 
     @Override
     public void visit(Update update) {
-        commandTableHandler.extractTable(update);
         selectDeParser.setBuffer(getBuffer());
         expressionDeParser.setSelectVisitor(selectDeParser);
         expressionDeParser.setBuffer(getBuffer());
-        UpdateDeParser updateDeParser = new CommandUpdateDeParser(expressionDeParser, selectDeParser, getBuffer(), commandTableHandler);
+        UpdateDeParser updateDeParser = new CommandUpdateDeParser(expressionDeParser, selectDeParser, getBuffer(), this.commandMappingHandler);
         selectDeParser.setExpressionVisitor(expressionDeParser);
         updateDeParser.deParse(update);
     }
 
     @Override
     public void visit(Delete delete) {
-        commandTableHandler.extractTable(delete);
         selectDeParser.setBuffer(getBuffer());
         expressionDeParser.setSelectVisitor(selectDeParser);
         expressionDeParser.setBuffer(getBuffer());
         selectDeParser.setExpressionVisitor(expressionDeParser);
-        DeleteDeParser deleteDeParser = new CommandDeleteDeParser(expressionDeParser, getBuffer(), this.commandTableHandler);
+        DeleteDeParser deleteDeParser = new CommandDeleteDeParser(expressionDeParser, getBuffer(), this.commandMappingHandler);
         deleteDeParser.deParse(delete);
     }
 
     @Override
     public void visit(Insert insert) {
-        commandTableHandler.extractTable(insert);
         selectDeParser.setBuffer(getBuffer());
         expressionDeParser.setSelectVisitor(selectDeParser);
         expressionDeParser.setBuffer(getBuffer());
         selectDeParser.setExpressionVisitor(expressionDeParser);
-        InsertDeParser insertDeParser = new CommandInsertDeParser(expressionDeParser, selectDeParser, getBuffer(), this.commandTableHandler);
+        InsertDeParser insertDeParser = new CommandInsertDeParser(expressionDeParser, selectDeParser, getBuffer(), this.commandMappingHandler);
         insertDeParser.deParse(insert);
-    }
-
-    public CommandTableHandler getCommandTableHandler() {
-        return commandTableHandler;
     }
 }

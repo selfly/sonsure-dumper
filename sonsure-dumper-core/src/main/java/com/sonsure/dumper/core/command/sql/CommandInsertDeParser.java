@@ -1,8 +1,5 @@
 package com.sonsure.dumper.core.command.sql;
 
-import com.sonsure.commons.utils.ClassUtils;
-import com.sonsure.dumper.core.management.CommandTable;
-import com.sonsure.dumper.core.management.MappingCache;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.schema.Column;
@@ -16,11 +13,11 @@ import java.util.Iterator;
 
 public class CommandInsertDeParser extends InsertDeParser {
 
-    private CommandTableHandler commandTableHandler;
+    private CommandMappingHandler commandMappingHandler;
 
-    public CommandInsertDeParser(ExpressionVisitor expressionVisitor, SelectVisitor selectVisitor, StringBuilder buffer, CommandTableHandler commandTableHandler) {
+    public CommandInsertDeParser(ExpressionVisitor expressionVisitor, SelectVisitor selectVisitor, StringBuilder buffer, CommandMappingHandler commandMappingHandler) {
         super(expressionVisitor, selectVisitor, buffer);
-        this.commandTableHandler = commandTableHandler;
+        this.commandMappingHandler = commandMappingHandler;
     }
 
 
@@ -34,21 +31,16 @@ public class CommandInsertDeParser extends InsertDeParser {
         }
         getBuffer().append("INTO ");
 
-        String commandTbName = insert.getTable().getName();
-        String tableName = commandTableHandler.getTableName(commandTbName);
+        String tableName = this.commandMappingHandler.getTableName(insert.getTable());
         getBuffer().append(tableName);
 
         if (insert.getColumns() != null) {
 
             //表名实际上是class
-            Class<?> entityClass = ClassUtils.loadClass(commandTableHandler.getTableClass(commandTbName));
-            CommandTable commandTable = new CommandTable();
-            commandTable.setModelClass(entityClass);
-
             getBuffer().append(" (");
             for (Iterator<Column> iter = insert.getColumns().iterator(); iter.hasNext(); ) {
                 Column column = iter.next();
-                String columnName = MappingCache.getColumn(commandTable, column.getColumnName(), commandTableHandler.getMappingHandler());
+                String columnName = this.commandMappingHandler.getColumnName(column);
                 getBuffer().append(columnName);
                 if (iter.hasNext()) {
                     getBuffer().append(", ");

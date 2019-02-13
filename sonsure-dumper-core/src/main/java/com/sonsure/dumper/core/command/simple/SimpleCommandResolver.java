@@ -1,8 +1,10 @@
 package com.sonsure.dumper.core.command.simple;
 
 import com.sonsure.commons.spring.scan.ClassPathBeanScanner;
+import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.command.sql.CommandResolver;
 import com.sonsure.dumper.core.command.sql.CommandToSqlTranslator;
+import com.sonsure.dumper.core.command.sql.JSqlParserCommandToSqlTranslator;
 import com.sonsure.dumper.core.management.CommandTable;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -25,12 +27,12 @@ public class SimpleCommandResolver implements CommandResolver {
     /**
      * 类名称映射
      */
-    protected Map<String, String> simpleClassMapping = new HashMap<>();
+    protected Map<String, Class<?>> simpleClassMapping = new HashMap<>();
 
     /**
      * 自定义类名称映射
      */
-    protected Map<String, String> customClassMapping;
+    protected Map<String, Class<?>> customClassMapping;
 
     protected CommandToSqlTranslator commandToSqlTranslator;
 
@@ -42,7 +44,7 @@ public class SimpleCommandResolver implements CommandResolver {
 
     public SimpleCommandResolver(String modelPackages) {
         this.modelPackages = modelPackages;
-        this.commandToSqlTranslator = new SimpleCommandToSqlTranslator();
+        this.commandToSqlTranslator = new JSqlParserCommandToSqlTranslator();
     }
 
     /**
@@ -71,7 +73,8 @@ public class SimpleCommandResolver implements CommandResolver {
                 if (simpleClassMapping.containsKey(simpleName)) {
                     LOG.warn("短类名相同，使用时请自定义短类名或使用完整类名:class1:{},class2:{}", simpleClassMapping.get(simpleName), clazz);
                 } else {
-                    simpleClassMapping.put(simpleName, clazz);
+                    Class<?> aClass = ClassUtils.loadClass(clazz);
+                    simpleClassMapping.put(simpleName, aClass);
                 }
             }
         }
@@ -87,7 +90,7 @@ public class SimpleCommandResolver implements CommandResolver {
         this.modelPackages = modelPackages;
     }
 
-    public void setCustomClassMapping(Map<String, String> customClassMapping) {
+    public void setCustomClassMapping(Map<String, Class<?>> customClassMapping) {
         this.customClassMapping = customClassMapping;
     }
 
