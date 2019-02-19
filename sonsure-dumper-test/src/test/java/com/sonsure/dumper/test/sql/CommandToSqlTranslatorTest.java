@@ -84,4 +84,15 @@ public class CommandToSqlTranslatorTest {
         System.out.println(sql.toLowerCase());
 
     }
+
+
+    @Test
+    public void commandToSql9() {
+        String command = "select username,password from User where parentId is null";
+        String sql = commandToSqlTranslator.getSql(command, mappingHandler, classMapping, null);
+//        String result = "select t1.* from series t1 inner join rel_series t2 inner join content t3 on t1.series_id = t2.series_id and t2.content_id = t3.content_id group by t1.series_id order by sum(t3.click_count) desc";
+//        Assert.assertTrue(sql.toLowerCase().equals(result));
+        System.out.println(sql.toLowerCase());
+
+    }
 }

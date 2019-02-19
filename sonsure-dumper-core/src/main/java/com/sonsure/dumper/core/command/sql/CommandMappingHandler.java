@@ -8,6 +8,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
@@ -208,6 +209,10 @@ public class CommandMappingHandler {
 
             //暂未实现
 //            ItemsList rightItemsList = inExpression.getRightItemsList();
+        } else if (expression instanceof IsNullExpression) {
+            IsNullExpression isNullExpression = (IsNullExpression) expression;
+            Expression leftExpression = isNullExpression.getLeftExpression();
+            this.extractExpression(leftExpression, mappings);
         } else if (expression instanceof Function) {
             Function function = (Function) expression;
             ExpressionList parameters = function.getParameters();
