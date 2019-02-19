@@ -46,7 +46,7 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
     }
 
     public T where(String field, Object value) {
-        Object[] values = value instanceof Object[] ? (Object[]) value : new Object[]{value};
+        Object[] values = value == null ? null : (value instanceof Object[] ? (Object[]) value : new Object[]{value});
         this.where(field, value == null ? "is" : "=", values);
         return (T) this;
     }
