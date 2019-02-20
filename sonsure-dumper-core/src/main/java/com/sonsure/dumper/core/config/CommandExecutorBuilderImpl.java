@@ -71,14 +71,14 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
                     jdbcEngineConfig.isCommandUppercase());
-            commandContextBuilder = new SimpleCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandResolver());
+            commandContextBuilder = new SimpleCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
         } else if (commandExecutorClass == MybatisExecutor.class) {
             commandExecutor = new MybatisExecutorImpl(getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
                     jdbcEngineConfig.isCommandUppercase());
-            commandContextBuilder = new MybatisCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandResolver(), jdbcEngineConfig.getMybatisSqlSessionFactory());
+            commandContextBuilder = new MybatisCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandConversionHandler(), jdbcEngineConfig.getMybatisSqlSessionFactory());
         }
 
         commandExecutor.setModelClass(modelClass);

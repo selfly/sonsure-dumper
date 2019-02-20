@@ -20,6 +20,14 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
      */
     T command(String command);
 
+    /**
+     * 参数
+     *
+     * @param name  the name
+     * @param value the value
+     * @return mybatis executor
+     */
+    T parameter(String name, Object value);
 
     /**
      * 是否强制native，command不做任何加工

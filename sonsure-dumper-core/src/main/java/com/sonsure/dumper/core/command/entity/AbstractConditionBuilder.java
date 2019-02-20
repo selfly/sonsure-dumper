@@ -4,7 +4,6 @@ import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.management.CommandField;
-import com.sonsure.dumper.core.management.MappingCache;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -132,7 +131,7 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
     }
 
     public T conditionId(Serializable value) {
-        String pkField = MappingCache.getPkField(this.commandTable, getMappingHandler());
+        String pkField = mappingHandler.getPkField(this.commandTable.getModelClass());
         CommandField commandField = CommandField.builder()
                 .name(pkField)
                 .fieldOperator("=")

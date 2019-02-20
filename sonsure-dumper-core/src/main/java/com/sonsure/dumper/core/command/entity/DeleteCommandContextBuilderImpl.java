@@ -19,7 +19,7 @@ public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     public CommandContext doBuild(CommandTable commandTable) {
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
-        command.append(this.getTableAliasName(commandTable));
+        command.append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias()));
 
         CommandContext whereCommandContext = this.buildWhereSql(commandTable);
         if (StringUtils.isNotBlank(whereCommandContext.getResolvedCommand())) {
@@ -27,8 +27,7 @@ public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuild
         }
         CommandContext commandContext = getGenericCommandContext(commandTable);
         commandContext.setCommand(command.toString());
-        commandContext.addParameterNames(whereCommandContext.getParameterNames());
-        commandContext.addParameters(whereCommandContext.getParameters());
+        commandContext.addParameters(whereCommandContext.getParameterMap());
 
         return commandContext;
     }

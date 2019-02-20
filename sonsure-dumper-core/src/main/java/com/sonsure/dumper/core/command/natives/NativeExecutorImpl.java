@@ -12,19 +12,19 @@ import com.sonsure.dumper.core.persist.PersistExecutor;
  */
 public class NativeExecutorImpl extends AbstractSimpleCommandExecutor<NativeExecutor> implements NativeExecutor {
 
-    private Object[] parameters;
+    private static final String DEFAULT_PARAM_PREFIX = "param";
+
+    private int paramCount = 0;
 
     public NativeExecutorImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
         super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
     }
 
     public NativeExecutor parameters(Object... values) {
-        this.parameters = values;
+        for (Object value : values) {
+            this.parameter(DEFAULT_PARAM_PREFIX + (paramCount++), value);
+        }
         return this;
     }
 
-    @Override
-    protected Object getParameters() {
-        return this.parameters;
-    }
 }

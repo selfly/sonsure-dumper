@@ -12,7 +12,9 @@ import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by liyd on 17/4/25.
@@ -21,15 +23,24 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     protected String command;
 
+    protected Map<String, Object> parameters;
+
     protected ResultHandler<?> resultHandler;
 
     public AbstractSimpleCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
         super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
+        parameters = new LinkedHashMap<>();
     }
 
     @Override
     public T command(String command) {
         this.command = command;
+        return (T) this;
+    }
+
+    @Override
+    public T parameter(String name, Object value) {
+        this.parameters.put(name, value);
         return (T) this;
     }
 
@@ -121,7 +132,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         this.setNativeData();
         CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
         commandContext.setPkValueByDb(true);
-        commandContext.setPkColumn(pkColumn);
+//        commandContext.setPkColumn(pkColumn);
         return (Long) this.persistExecutor.execute(commandContext, CommandType.INSERT);
     }
 
@@ -139,8 +150,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     protected void setNativeData() {
         this.commandTable.addExtendData(CommandTable.ExtendDataKey.COMMAND.name(), this.command);
-        this.commandTable.addExtendData(CommandTable.ExtendDataKey.PARAMETERS.name(), getParameters());
+        this.commandTable.addExtendData(CommandTable.ExtendDataKey.PARAMETERS.name(), this.parameters);
     }
 
-    protected abstract Object getParameters();
 }

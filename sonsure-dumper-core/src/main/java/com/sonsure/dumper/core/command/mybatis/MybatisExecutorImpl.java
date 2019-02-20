@@ -7,7 +7,6 @@ import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,11 +14,9 @@ import java.util.Map;
  */
 public class MybatisExecutorImpl extends AbstractSimpleCommandExecutor<MybatisExecutor> implements MybatisExecutor {
 
-    private Map<String, Object> parameters;
 
     public MybatisExecutorImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
         super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
-        parameters = new HashMap<>();
     }
 
     @Override
@@ -30,14 +27,4 @@ public class MybatisExecutorImpl extends AbstractSimpleCommandExecutor<MybatisEx
         return this;
     }
 
-    @Override
-    public MybatisExecutor parameter(String name, Object value) {
-        this.parameters.put(name, value);
-        return this;
-    }
-
-    @Override
-    protected Object getParameters() {
-        return this.parameters;
-    }
 }

@@ -3,7 +3,7 @@ package com.sonsure.dumper.core.command.mybatis;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.simple.AbstractSimpleCommandContextBuilder;
-import com.sonsure.dumper.core.command.sql.CommandResolver;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.management.CommandTable;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -14,7 +14,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,13 +21,15 @@ public class MybatisCommandContextBuilder extends AbstractSimpleCommandContextBu
 
     private SqlSessionFactory sqlSessionFactory;
 
-    public MybatisCommandContextBuilder(AbstractCommandExecutor commandExecutor, CommandResolver commandResolver, SqlSessionFactory sqlSessionFactory) {
-        super(commandExecutor, commandResolver);
+    public MybatisCommandContextBuilder(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler, SqlSessionFactory sqlSessionFactory) {
+        super(commandExecutor, commandConversionHandler);
         this.sqlSessionFactory = sqlSessionFactory;
     }
 
     @Override
     public CommandContext doBuild(CommandTable commandTable) {
+
+        CommandContext commandContext = new CommandContext();
 
         String command = (String) commandTable.getExtendData(CommandTable.ExtendDataKey.COMMAND.name());
         Map<String, Object> parameters = (Map<String, Object>) commandTable.getExtendData(CommandTable.ExtendDataKey.PARAMETERS.name());
@@ -39,14 +40,13 @@ public class MybatisCommandContextBuilder extends AbstractSimpleCommandContextBu
         BoundSql boundSql = statement.getBoundSql(parameters);
         Object parameterObject = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
-        List<Object> params = new ArrayList<>();
         if (parameterMappings != null) {
             for (int i = 0; i < parameterMappings.size(); i++) {
                 ParameterMapping parameterMapping = parameterMappings.get(i);
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;
                     String propertyName = parameterMapping.getProperty();
-                    if (boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
+                    if (boundSql.hasAdditionalParameter(propertyName)) {
                         value = boundSql.getAdditionalParameter(propertyName);
                     } else if (parameterObject == null) {
                         value = null;
@@ -56,16 +56,13 @@ public class MybatisCommandContextBuilder extends AbstractSimpleCommandContextBu
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
                     }
-                    params.add(value);
+                    commandContext.addParameter(propertyName, value);
                 }
             }
         }
         String sql = this.resolveCommand(boundSql.getSql(), commandTable, commandExecutor.getMappingHandler());
-        CommandContext commandContext = new CommandContext();
+
         commandContext.setCommand(sql);
-        if (parameters != null) {
-            commandContext.addParameters(params);
-        }
         return commandContext;
     }
 }

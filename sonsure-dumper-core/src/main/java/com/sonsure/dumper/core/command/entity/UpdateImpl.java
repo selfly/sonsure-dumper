@@ -7,7 +7,6 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.CommandField;
-import com.sonsure.dumper.core.management.MappingCache;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -37,7 +36,7 @@ public class UpdateImpl<T> extends AbstractConditionBuilder<Update<T>> implement
 
     public Update<T> setForEntityWhereId(Object entity) {
         commandTable.setModelClass(entity.getClass());
-        String pkField = MappingCache.getPkField(this.commandTable, getMappingHandler());
+        String pkField = mappingHandler.getPkField(this.commandTable.getModelClass());
 
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
         //处理主键成where条件

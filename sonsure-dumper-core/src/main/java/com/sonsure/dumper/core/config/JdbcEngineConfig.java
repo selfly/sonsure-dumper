@@ -2,7 +2,7 @@ package com.sonsure.dumper.core.config;
 
 
 import com.sonsure.dumper.core.command.CommandExecutor;
-import com.sonsure.dumper.core.command.sql.CommandResolver;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -85,7 +85,7 @@ public interface JdbcEngineConfig {
      *
      * @return
      */
-    CommandResolver getCommandResolver();
+    CommandConversionHandler getCommandConversionHandler();
 
     /**
      * 获取JdbcEngine

@@ -15,14 +15,7 @@ public interface MybatisExecutor extends SimpleCommandExecutor<MybatisExecutor> 
     MybatisExecutor parameters(Map<String, Object> parameters);
 
 
-    /**
-     * 参数
-     *
-     * @param name  the name
-     * @param value the value
-     * @return mybatis executor
-     */
-    MybatisExecutor parameter(String name, Object value);
+
 
 
 }

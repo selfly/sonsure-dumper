@@ -15,26 +15,52 @@ public interface MappingHandler {
     /**
      * 根据实体名获取表名
      *
-     * @param entityClass the entity class
-     * @param fieldMap    the field map
+     * @param className the class name
+     * @param fieldMap  the field map
      * @return table name
      */
-    String getTableName(Class<?> entityClass, Map<String, CommandField> fieldMap);
+    String getTable(String className, Map<String, CommandField> fieldMap);
+
+    /**
+     * 根据实体名获取表名
+     *
+     * @param clazz    the clazz
+     * @param fieldMap the field map
+     * @return table name
+     */
+    String getTable(Class<?> clazz, Map<String, CommandField> fieldMap);
 
     /**
      * 根据类名获取主键字段名
      *
-     * @param entityClass the entity class
+     * @param className the class name
      * @return pK name
      */
-    String getPkFieldName(Class<?> entityClass);
+    String getPkField(String className);
+
+    /**
+     * 根据类名获取主键字段名
+     *
+     * @param clazz the clazz
+     * @return pK name
+     */
+    String getPkField(Class<?> clazz);
 
     /**
      * 根据属性名获取列名
      *
-     * @param entityClass the entity class
-     * @param fieldName   the field name
+     * @param clazzName the clazz name
+     * @param fieldName the field name
      * @return column name
      */
-    String getColumnName(Class<?> entityClass, String fieldName);
+    String getColumn(String clazzName, String fieldName);
+
+    /**
+     * 根据属性名获取列名
+     *
+     * @param clazz     the clazz
+     * @param fieldName the field name
+     * @return column name
+     */
+    String getColumn(Class<?> clazz, String fieldName);
 }

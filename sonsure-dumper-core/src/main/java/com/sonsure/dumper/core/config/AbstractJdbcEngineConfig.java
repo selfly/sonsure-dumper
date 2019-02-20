@@ -2,8 +2,8 @@ package com.sonsure.dumper.core.config;
 
 
 import com.sonsure.dumper.core.command.CommandExecutor;
-import com.sonsure.dumper.core.command.simple.SimpleCommandResolver;
-import com.sonsure.dumper.core.command.sql.CommandResolver;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
+import com.sonsure.dumper.core.command.sql.JSqlParserCommandConversionHandler;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.mapping.DefaultMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
@@ -55,7 +55,7 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     /**
      * 解析器
      */
-    protected CommandResolver commandResolver;
+    protected CommandConversionHandler commandConversionHandler;
 
     /**
      * mybatis SqlSessionFactory
@@ -78,13 +78,13 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
             commandExecutorFactory = new CommandExecutorFactoryImpl();
         }
         if (mappingHandler == null) {
-            mappingHandler = new DefaultMappingHandler();
+            mappingHandler = new DefaultMappingHandler(this.modelPackages);
         }
         if (pageHandler == null) {
             pageHandler = new NegotiatingPageHandler();
         }
-        if (commandResolver == null) {
-            commandResolver = new SimpleCommandResolver(modelPackages);
+        if (commandConversionHandler == null) {
+            commandConversionHandler = new JSqlParserCommandConversionHandler(this.mappingHandler);
         }
 
         this.doInit();
@@ -129,12 +129,12 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
 
 
     @Override
-    public CommandResolver getCommandResolver() {
-        return commandResolver;
+    public CommandConversionHandler getCommandConversionHandler() {
+        return commandConversionHandler;
     }
 
-    public void setCommandResolver(CommandResolver commandResolver) {
-        this.commandResolver = commandResolver;
+    public void setCommandConversionHandler(CommandConversionHandler commandConversionHandler) {
+        this.commandConversionHandler = commandConversionHandler;
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.command.simple.DefaultResultHandler;
 import com.sonsure.dumper.core.management.CommandField;
-import com.sonsure.dumper.core.management.MappingCache;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -82,7 +81,7 @@ public class SelectImpl<T extends Object> extends AbstractConditionBuilder<Selec
     }
 
     public Select<T> orderById() {
-        String pkField = MappingCache.getPkField(this.commandTable, getMappingHandler());
+        String pkField = mappingHandler.getPkField(this.commandTable.getModelClass());
         CommandField commandField = CommandField.builder()
                 .name(pkField)
                 .orig(CommandField.Orig.MANUAL)

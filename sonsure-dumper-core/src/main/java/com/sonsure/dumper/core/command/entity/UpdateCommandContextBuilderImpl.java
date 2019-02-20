@@ -7,9 +7,6 @@ import com.sonsure.dumper.core.management.CommandTable;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by liyd on 17/4/14.
  */
@@ -24,10 +21,10 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     public CommandContext doBuild(CommandTable commandTable) {
 
+        CommandContext commandContext = getGenericCommandContext(commandTable);
+
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
-        List<String> paramNames = new ArrayList<String>();
-        List<Object> paramValues = new ArrayList<Object>();
-        command.append(this.getTableAliasName(commandTable)).append(" set ");
+        command.append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias())).append(" set ");
 
         String pkField = this.getPkField(commandTable);
         for (CommandField commandField : commandTable.getOperationFields()) {
@@ -40,7 +37,7 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
                 continue;
             }
 
-            Object[] objects = this.decideNativeField(commandTable, commandField.getName(), commandField.getValue());
+            Object[] objects = this.decideNativeField(commandTable, commandField);
 
             command.append(objects[3]).append(" = ");
             if (commandField.getValue() == null) {
@@ -49,8 +46,7 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
                 command.append(objects[4]);
             } else {
                 command.append("?");
-                paramNames.add(objects[2].toString());
-                paramValues.add(commandField.getValue());
+                commandContext.addParameter(((String) objects[2]), commandField.getValue());
             }
             command.append(",");
         }
@@ -59,13 +55,8 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
         CommandContext whereCommandContext = this.buildWhereSql(commandTable);
         command.append(whereCommandContext.getResolvedCommand());
 
-        paramNames.addAll(whereCommandContext.getParameterNames());
-        paramValues.addAll(whereCommandContext.getParameters());
-
-        CommandContext commandContext = getGenericCommandContext(commandTable);
         commandContext.setCommand(command.toString());
-        commandContext.addParameterNames(paramNames);
-        commandContext.addParameters(paramValues);
+        commandContext.addParameters(whereCommandContext.getParameterMap());
 
         return commandContext;
     }

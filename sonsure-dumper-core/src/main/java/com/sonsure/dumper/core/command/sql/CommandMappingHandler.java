@@ -1,6 +1,5 @@
 package com.sonsure.dumper.core.command.sql;
 
-import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -29,19 +28,13 @@ public class CommandMappingHandler {
      */
     private static final String DEFAULT_ALIAS = "_default_alias";
 
-    protected Map<String, Class<?>> classMapping;
-
-    protected Map<String, Class<?>> customClassMapping;
-
     private MappingHandler mappingHandler;
 
     private Map<Column, ColumnMapping> mappingColumns = new HashMap<>();
     private Map<Table, TableMapping> mappingTables = new HashMap<>();
 
-    public CommandMappingHandler(Statement statement, MappingHandler mappingHandler, Map<String, Class<?>> classMapping, Map<String, Class<?>> customClassMapping) {
+    public CommandMappingHandler(Statement statement, MappingHandler mappingHandler) {
         this.mappingHandler = mappingHandler;
-        this.classMapping = classMapping;
-        this.customClassMapping = customClassMapping;
         this.extractMappings(statement);
     }
 
@@ -164,8 +157,7 @@ public class CommandMappingHandler {
         String mappingName = column.getColumnName();
         Object obj = mappings.get(name);
         if (obj instanceof String) {
-            Class<?> clazz = this.getMappingClass(((String) obj));
-            mappingName = mappingHandler.getColumnName(clazz, column.getColumnName());
+            mappingName = mappingHandler.getColumn((String) obj, column.getColumnName());
             mappings.put(column.getColumnName(), mappingName);
         } else if (obj instanceof Map) {
             Map<String, Object> subMap = (Map<String, Object>) obj;
@@ -251,7 +243,7 @@ public class CommandMappingHandler {
         String tableAliasName = this.getTableAliasName(table);
         mappings.put(tableAliasName, table.getName());
 
-        String mappingName = this.getTableName(table.getName());
+        String mappingName = mappingHandler.getTable(table.getName(), null);
         TableMapping tableMapping = new TableMapping();
         tableMapping.setTable(table);
         tableMapping.setMappingName(mappingName);
@@ -268,25 +260,5 @@ public class CommandMappingHandler {
         SelectBody selectBody = subSelect.getSelectBody();
         this.extractMappings(selectBody, subMappings);
 
-    }
-
-    private Class<?> getMappingClass(String modelName) {
-        Class<?> clazz = null;
-        if (customClassMapping != null) {
-            clazz = customClassMapping.get(modelName);
-        }
-        if (clazz == null && classMapping != null) {
-            clazz = classMapping.get(modelName);
-        }
-        if (clazz == null) {
-            throw new SonsureJdbcException("对应的class不存在:" + modelName);
-        }
-        return clazz;
-    }
-
-    private String getTableName(String modelName) {
-        Class<?> clazz = this.getMappingClass(modelName);
-        String tableName = mappingHandler.getTableName(clazz, null);
-        return tableName;
     }
 }

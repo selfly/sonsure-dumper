@@ -13,7 +13,7 @@ import java.util.Map;
  * Date: 2/12/14
  * Time: 4:51 PM
  */
-public class DefaultMappingHandler implements MappingHandler {
+public class DefaultMappingHandler extends AbstractMappingHandler {
 
     protected Map<String, String> tablePreFixMap;
 
@@ -22,7 +22,16 @@ public class DefaultMappingHandler implements MappingHandler {
      */
     private static final String PRI_FIELD_SUFFIX = "Id";
 
-    public String getTableName(Class<?> entityClass, Map<String, CommandField> fieldMap) {
+    public DefaultMappingHandler() {
+        this(null);
+    }
+
+    public DefaultMappingHandler(String modelPackages) {
+        super(modelPackages);
+    }
+
+
+    public String getTable(Class<?> entityClass, Map<String, CommandField> fieldMap) {
 
         if (tablePreFixMap == null) {
             //默认Java属性的骆驼命名法转换回数据库下划线“_”分隔的格式
@@ -39,13 +48,13 @@ public class DefaultMappingHandler implements MappingHandler {
         return tablePreFix + NameUtils.getUnderlineName(entityClass.getSimpleName());
     }
 
-    public String getPkFieldName(Class<?> entityClass) {
+    public String getPkField(Class<?> entityClass) {
         String firstLowerName = NameUtils.getFirstLowerName(entityClass.getSimpleName());
         //主键以类名加上“Id” 如user表主键属性即userId
         return firstLowerName + PRI_FIELD_SUFFIX;
     }
 
-    public String getColumnName(Class<?> entityClass, String fieldName) {
+    public String getColumn(Class<?> entityClass, String fieldName) {
         return NameUtils.getUnderlineName(fieldName);
     }
 

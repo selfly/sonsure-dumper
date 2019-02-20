@@ -7,9 +7,6 @@ import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.management.CommandTable;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by liyd on 17/4/14.
  */
@@ -40,25 +37,23 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
 
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
         StringBuilder argsCommand = new StringBuilder("(");
-        List<String> paramNames = new ArrayList<String>();
-        List<Object> paramValues = new ArrayList<Object>();
+
         command.append(this.getTableName(commandTable)).append(" (");
 
         for (CommandField commandField : commandTable.getOperationFields()) {
-            String column = this.getColumn(commandTable, commandField.getName());
+            String fieldName = commandField.getName();
             //数据库生成值，不能传参
             if (commandField.getType() == CommandField.Type.INSERT_PK_NATIVE) {
                 //如果已经设置了主键值，则不用主键生成器生成 主键生成器field在build时上面代码中添加，所以肯定在人为设置之后
-                if (paramNames.contains(column)) {
+                if (commandContext.getParameterNames().contains(fieldName)) {
                     continue;
                 }
-                command.append(column).append(",");
+                command.append(fieldName).append(",");
                 argsCommand.append(commandField.getValue()).append(",");
             } else {
-                command.append(column).append(",");
+                command.append(fieldName).append(",");
                 argsCommand.append("?").append(",");
-                paramNames.add(column);
-                paramValues.add(commandField.getValue());
+                commandContext.addParameter(fieldName, commandField.getValue());
             }
         }
         command.deleteCharAt(command.length() - 1);
@@ -67,8 +62,6 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
         command.append(")").append(" values ").append(argsCommand);
 
         commandContext.setCommand(command.toString());
-        commandContext.addParameterNames(paramNames);
-        commandContext.addParameters(paramValues);
 
         return commandContext;
     }

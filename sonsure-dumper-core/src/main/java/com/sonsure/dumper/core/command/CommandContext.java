@@ -1,8 +1,7 @@
 package com.sonsure.dumper.core.command;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 执行的命令内容
@@ -39,12 +38,7 @@ public class CommandContext {
     /**
      * 参数名称列表
      */
-    private List<String> parameterNames;
-
-    /**
-     * 参数值列表
-     */
-    private List<Object> parameters;
+    private Map<String, Object> parameterMap;
 
     /**
      * 主键值是否有数据库生成
@@ -62,8 +56,8 @@ public class CommandContext {
     private boolean commandUppercase;
 
     public CommandContext() {
-        parameterNames = new ArrayList<String>();
-        parameters = new ArrayList<Object>();
+        //必须是有序map
+        parameterMap = new LinkedHashMap<>();
     }
 
     public Class<?> getResolvedResultType() {
@@ -84,20 +78,42 @@ public class CommandContext {
         }
     }
 
-    public void addParameterNames(List<String> parameterNames) {
-        this.parameterNames.addAll(parameterNames);
+    public Set<String> getParameterNames() {
+        return this.parameterMap.keySet();
     }
 
-    public void addParameters(List<Object> parameters) {
-        this.parameters.addAll(parameters);
+    public List<Object> getParameterValues() {
+        List<Object> parameterValues = new ArrayList<>();
+        Collection<Object> values = this.parameterMap.values();
+        for (Object value : values) {
+            if (value instanceof List) {
+                parameterValues.addAll(((List<Object>) value));
+            } else {
+                parameterValues.add(value);
+            }
+        }
+        return parameterValues;
     }
 
-    public void setParameterNames(List<String> parameterNames) {
-        this.parameterNames = parameterNames;
+
+    public void addParameters(Map<String, Object> parameters) {
+        this.parameterMap.putAll(parameters);
     }
 
-    public void setParameters(List<Object> parameters) {
-        this.parameters = parameters;
+    public void addParameter(String name, Object value) {
+        Object param = this.parameterMap.get(name);
+        if (param == null) {
+            this.parameterMap.put(name, value);
+        } else {
+            if (param instanceof List) {
+                ((List<Object>) param).add(value);
+            } else {
+                List<Object> list = new ArrayList<>();
+                list.add(param);
+                list.add(value);
+                this.parameterMap.put(name, list);
+            }
+        }
     }
 
     public String getPkField() {
@@ -132,12 +148,8 @@ public class CommandContext {
         this.resultType = resultType;
     }
 
-    public List<String> getParameterNames() {
-        return parameterNames;
-    }
-
-    public List<Object> getParameters() {
-        return parameters;
+    public Map<String, Object> getParameterMap() {
+        return parameterMap;
     }
 
     public String getCommand() {
