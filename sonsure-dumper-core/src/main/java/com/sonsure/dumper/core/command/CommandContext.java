@@ -1,6 +1,7 @@
 package com.sonsure.dumper.core.command;
 
 
+import com.sonsure.dumper.core.mapping.MappingHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -53,6 +54,8 @@ public class CommandContext {
     private Object pkValue;
 
     private String commandCase;
+
+    private MappingHandler mappingHandler;
 
     public CommandContext() {
         command = "";
@@ -187,4 +190,11 @@ public class CommandContext {
         this.pkValue = pkValue;
     }
 
+    public MappingHandler getMappingHandler() {
+        return mappingHandler;
+    }
+
+    public void setMappingHandler(MappingHandler mappingHandler) {
+        this.mappingHandler = mappingHandler;
+    }
 }

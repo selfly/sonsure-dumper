@@ -21,13 +21,6 @@ import java.util.Map;
  */
 public class DefaultMappingHandler extends AbstractMappingHandler {
 
-    protected Map<String, String> tablePreFixMap;
-
-    /**
-     * 主键属性后缀
-     */
-    private static final String PRI_FIELD_SUFFIX = "Id";
-
     public DefaultMappingHandler() {
         this(null);
     }
@@ -100,11 +93,12 @@ public class DefaultMappingHandler extends AbstractMappingHandler {
         return NameUtils.getUnderlineName(fieldName);
     }
 
-    public Map<String, String> getTablePreFixMap() {
-        return tablePreFixMap;
-    }
-
-    public void setTablePreFixMap(Map<String, String> tablePreFixMap) {
-        this.tablePreFixMap = tablePreFixMap;
+    @Override
+    public String getField(Class<?> clazz, String columnName) {
+        ModelFieldMeta mappedFieldMeta = ModelClassCache.getMappedFieldMeta(clazz, columnName);
+        if (mappedFieldMeta != null) {
+            return mappedFieldMeta.getName();
+        }
+        return NameUtils.getCamelName(columnName);
     }
 }

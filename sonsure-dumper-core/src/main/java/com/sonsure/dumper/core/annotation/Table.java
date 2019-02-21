@@ -14,7 +14,4 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Table {
 
     String value();
-
-    String id() default "";
-
 }

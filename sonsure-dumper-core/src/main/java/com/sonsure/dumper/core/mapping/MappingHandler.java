@@ -33,14 +33,6 @@ public interface MappingHandler {
     /**
      * 根据类名获取主键字段名
      *
-     * @param className the class name
-     * @return pK name
-     */
-    String getPkField(String className);
-
-    /**
-     * 根据类名获取主键字段名
-     *
      * @param clazz the clazz
      * @return pK name
      */
@@ -63,4 +55,13 @@ public interface MappingHandler {
      * @return column name
      */
     String getColumn(Class<?> clazz, String fieldName);
+
+    /**
+     * 根据列获取属性
+     *
+     * @param clazz
+     * @param columnName
+     * @return
+     */
+    String getField(Class<?> clazz, String columnName);
 }

@@ -24,6 +24,13 @@ public class ModelClassCache {
         return modelClassMeta;
     }
 
+    public static String getColumnAnnotationName(Object annotation) {
+        if (annotation instanceof Column) {
+            return ((Column) annotation).value();
+        } else {
+            return null;
+        }
+    }
 
     /**
      * 获取class的属性
@@ -38,6 +45,11 @@ public class ModelClassCache {
     public static ModelFieldMeta getClassFieldMeta(Class<?> clazz, String fieldName) {
         ModelClassMeta classMeta = getClassMeta(clazz);
         return classMeta.getModelFieldMeta(fieldName);
+    }
+
+    public static ModelFieldMeta getMappedFieldMeta(Class<?> clazz, String columnName) {
+        ModelClassMeta classMeta = getClassMeta(clazz);
+        return classMeta.getMappedFieldMeta(columnName);
     }
 
 

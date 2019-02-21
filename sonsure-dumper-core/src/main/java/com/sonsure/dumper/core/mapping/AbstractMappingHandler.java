@@ -16,6 +16,14 @@ public abstract class AbstractMappingHandler implements MappingHandler {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MappingHandler.class);
 
+    /**
+     * 主键属性后缀
+     */
+    protected static final String PRI_FIELD_SUFFIX = "Id";
+
+
+    protected Map<String, String> tablePreFixMap;
+
     protected Map<String, Class<?>> loadedClass;
 
     /**
@@ -52,12 +60,6 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     public String getTable(String className, Map<String, CommandField> fieldMap) {
         Class<?> tableClass = this.getTableClass(className);
         return this.getTable(tableClass, fieldMap);
-    }
-
-    @Override
-    public String getPkField(String className) {
-        Class<?> tableClass = this.getTableClass(className);
-        return this.getPkField(tableClass);
     }
 
     @Override
@@ -132,5 +134,13 @@ public abstract class AbstractMappingHandler implements MappingHandler {
 
     public void setCustomClassMapping(Map<String, Class<?>> customClassMapping) {
         this.customClassMapping = customClassMapping;
+    }
+
+    public Map<String, String> getTablePreFixMap() {
+        return tablePreFixMap;
+    }
+
+    public void setTablePreFixMap(Map<String, String> tablePreFixMap) {
+        this.tablePreFixMap = tablePreFixMap;
     }
 }

@@ -16,7 +16,7 @@
 
 package com.sonsure.dumper.springjdbc.persist;
 
-import com.sonsure.dumper.core.annotation.Column;
+import com.sonsure.dumper.core.mapping.MappingHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.*;
@@ -30,7 +30,6 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -51,6 +50,8 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
      * Logger available to subclasses
      */
     protected final Log logger = LogFactory.getLog(getClass());
+
+    private MappingHandler mappingHandler;
 
     /**
      * The class we are mapping to
@@ -80,7 +81,6 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
     /**
      * Create a new {@code BeanPropertyRowMapper} for bean-style configuration.
      *
-     * @see #setMappedClass
      * @see #setCheckFullyPopulated
      */
     public JdbcRowMapper() {
@@ -94,36 +94,21 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
      *
      * @param mappedClass the class that each row should be mapped to
      */
-    public JdbcRowMapper(Class<T> mappedClass) {
-        initialize(mappedClass);
+    public JdbcRowMapper(Class<T> mappedClass, MappingHandler mappingHandler) {
+        initialize(mappedClass, mappingHandler);
     }
 
     /**
      * Create a new {@code BeanPropertyRowMapper}.
      *
      * @param mappedClass         the class that each row should be mapped to
+     * @param mappingHandler      the mapping handler
      * @param checkFullyPopulated whether we're strictly validating that
      *                            all bean properties have been mapped from corresponding database fields
      */
-    public JdbcRowMapper(Class<T> mappedClass, boolean checkFullyPopulated) {
-        initialize(mappedClass);
+    public JdbcRowMapper(Class<T> mappedClass, MappingHandler mappingHandler, boolean checkFullyPopulated) {
+        initialize(mappedClass, mappingHandler);
         this.checkFullyPopulated = checkFullyPopulated;
-    }
-
-    /**
-     * Set the class that each row should be mapped to.
-     */
-    public void setMappedClass(Class<T> mappedClass) {
-        if (this.mappedClass == null) {
-            initialize(mappedClass);
-        } else {
-            if (this.mappedClass != mappedClass) {
-                throw new InvalidDataAccessApiUsageException("The mapped class can not be reassigned to map to "
-                        + mappedClass
-                        + " since it is already providing mapping for "
-                        + this.mappedClass);
-            }
-        }
     }
 
     /**
@@ -172,8 +157,9 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
      *
      * @param mappedClass the mapped class
      */
-    protected void initialize(Class<T> mappedClass) {
+    protected void initialize(Class<T> mappedClass, MappingHandler mappingHandler) {
         this.mappedClass = mappedClass;
+        this.mappingHandler = mappingHandler;
         this.mappedFields = new HashMap<>();
         this.mappedProperties = new HashSet<>();
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(mappedClass);
@@ -181,18 +167,18 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
             if (pd.getWriteMethod() != null) {
 
                 this.mappedFields.put(lowerCaseName(pd.getName()), pd);
-                String underscoredName = underscoreName(pd.getName());
-                if (!lowerCaseName(pd.getName()).equals(underscoredName)) {
-                    this.mappedFields.put(underscoredName, pd);
-                }
-
-                Field beanField = com.sonsure.commons.utils.ClassUtils.getBeanField(mappedClass, pd.getName());
-                if (beanField != null) {
-                    Column column = beanField.getAnnotation(Column.class);
-                    if (column != null) {
-                        this.mappedFields.put(lowerCaseName(column.value()), pd);
-                    }
-                }
+//                String underscoredName = underscoreName(pd.getName());
+//                if (!lowerCaseName(pd.getName()).equals(underscoredName)) {
+//                    this.mappedFields.put(underscoredName, pd);
+//                }
+//
+//                Field beanField = com.sonsure.commons.utils.ClassUtils.getBeanField(mappedClass, pd.getName());
+//                if (beanField != null) {
+//                    Column column = beanField.getAnnotation(Column.class);
+//                    if (column != null) {
+//                        this.mappedFields.put(lowerCaseName(column.value()), pd);
+//                    }
+//                }
 
                 this.mappedProperties.add(pd.getName());
             }
@@ -256,7 +242,8 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
 
         for (int index = 1; index <= columnCount; index++) {
             String column = JdbcUtils.lookupColumnName(rsmd, index);
-            String field = lowerCaseName(column.replaceAll(" ", ""));
+            String field = column.replaceAll(" ", "");
+            field = lowerCaseName(mappingHandler.getField(this.mappedClass, field));
             PropertyDescriptor pd = this.mappedFields.get(field);
             if (pd != null) {
                 try {
@@ -338,8 +325,8 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
      *
      * @param mappedClass the class that each row should be mapped to
      */
-    public static <T> JdbcRowMapper<T> newInstance(Class<T> mappedClass) {
-        return new JdbcRowMapper<T>(mappedClass);
+    public static <T> JdbcRowMapper<T> newInstance(Class<T> mappedClass, MappingHandler mappingHandler) {
+        return new JdbcRowMapper<T>(mappedClass, mappingHandler);
     }
 
 }
