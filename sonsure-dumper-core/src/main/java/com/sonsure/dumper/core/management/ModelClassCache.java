@@ -24,6 +24,14 @@ public class ModelClassCache {
         return modelClassMeta;
     }
 
+    public static String getTableAnnotationName(Object annotation) {
+        if (annotation instanceof Table) {
+            return ((Table) annotation).value();
+        } else {
+            return null;
+        }
+    }
+
     public static String getColumnAnnotationName(Object annotation) {
         if (annotation instanceof Column) {
             return ((Column) annotation).value();

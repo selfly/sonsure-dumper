@@ -2,7 +2,6 @@ package com.sonsure.dumper.core.mapping;
 
 import com.sonsure.commons.utils.NameUtils;
 import com.sonsure.dumper.core.annotation.Column;
-import com.sonsure.dumper.core.annotation.Table;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ModelClassCache;
 import com.sonsure.dumper.core.management.ModelClassMeta;
@@ -35,11 +34,7 @@ public class DefaultMappingHandler extends AbstractMappingHandler {
         Object annotation = classMeta.getAnnotation();
         String tableName = null;
         if (annotation != null) {
-
-            if (annotation instanceof Table) {
-                tableName = ((Table) annotation).value();
-            }
-
+            tableName = ModelClassCache.getTableAnnotationName(annotation);
         } else {
             if (tablePreFixMap == null) {
                 //默认Java属性的骆驼命名法转换回数据库下划线“_”分隔的格式
