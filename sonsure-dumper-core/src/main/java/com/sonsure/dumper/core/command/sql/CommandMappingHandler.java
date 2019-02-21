@@ -27,11 +27,17 @@ public class CommandMappingHandler {
 
     private MappingHandler mappingHandler;
 
+    /**
+     * 参数本身无任何作用，只在调用mappingHandler时传入，方便分表时确定表名
+     */
+    private Map<String, Object> params;
+
     private Map<Column, ColumnMapping> mappingColumns = new HashMap<>();
     private Map<Table, TableMapping> mappingTables = new HashMap<>();
 
-    public CommandMappingHandler(Statement statement, MappingHandler mappingHandler) {
+    public CommandMappingHandler(Statement statement, MappingHandler mappingHandler, Map<String, Object> params) {
         this.mappingHandler = mappingHandler;
+        this.params = params;
         this.extractMappings(statement);
     }
 
@@ -243,7 +249,7 @@ public class CommandMappingHandler {
         String tableAliasName = this.getTableAliasName(table);
         mappings.put(tableAliasName, table.getName());
 
-        String mappingName = mappingHandler.getTable(table.getName(), null);
+        String mappingName = mappingHandler.getTable(table.getName(), this.params);
         TableMapping tableMapping = new TableMapping();
         tableMapping.setTable(table);
         tableMapping.setMappingName(mappingName);

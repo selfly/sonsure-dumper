@@ -4,7 +4,6 @@ import com.sonsure.commons.utils.NameUtils;
 import com.sonsure.dumper.core.annotation.Column;
 import com.sonsure.dumper.core.annotation.Table;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.management.ModelClassCache;
 import com.sonsure.dumper.core.management.ModelClassMeta;
 import com.sonsure.dumper.core.management.ModelFieldMeta;
@@ -30,7 +29,7 @@ public class DefaultMappingHandler extends AbstractMappingHandler {
     }
 
 
-    public String getTable(Class<?> entityClass, Map<String, CommandField> fieldMap) {
+    public String getTable(Class<?> entityClass, Map<String, Object> params) {
 
         ModelClassMeta classMeta = ModelClassCache.getClassMeta(entityClass);
         Object annotation = classMeta.getAnnotation();

@@ -6,7 +6,6 @@ import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class JdbcTemplateDaoImplTest {
     @Autowired
     protected JdbcDao jdbcDao;
 
-    @Before
+    //    @Before
     public void before() {
         //初始化测试数据
         jdbcDao.createDelete(UserInfo.class)
@@ -593,6 +592,19 @@ public class JdbcTemplateDaoImplTest {
         int count = jdbcDao.createNativeExecutor()
                 .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters(new Object[]{"newName", 39L})
+                .update();
+        Assert.assertTrue(count == 1);
+        UserInfo user = jdbcDao.get(UserInfo.class, 39L);
+        Assert.assertEquals(user.getLoginName(), "newName");
+    }
+
+
+    @Test
+    public void nativeExecutor4() {
+        int count = jdbcDao.createNativeExecutor()
+                .command("update UserInfo set loginName = ? where userInfoId = ?")
+                .parameter("loginName", "newName")
+                .parameter("userInfoId", 39L)
                 .update();
         Assert.assertTrue(count == 1);
         UserInfo user = jdbcDao.get(UserInfo.class, 39L);

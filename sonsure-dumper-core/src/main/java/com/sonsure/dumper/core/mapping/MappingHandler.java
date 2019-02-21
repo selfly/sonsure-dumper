@@ -1,8 +1,6 @@
 package com.sonsure.dumper.core.mapping;
 
 
-import com.sonsure.dumper.core.management.CommandField;
-
 import java.util.Map;
 
 /**
@@ -16,19 +14,19 @@ public interface MappingHandler {
      * 根据实体名获取表名
      *
      * @param className the class name
-     * @param fieldMap  the field map
+     * @param params    the params
      * @return table name
      */
-    String getTable(String className, Map<String, CommandField> fieldMap);
+    String getTable(String className, Map<String, Object> params);
 
     /**
      * 根据实体名获取表名
      *
-     * @param clazz    the clazz
-     * @param fieldMap the field map
+     * @param clazz  the clazz
+     * @param params the params
      * @return table name
      */
-    String getTable(Class<?> clazz, Map<String, CommandField> fieldMap);
+    String getTable(Class<?> clazz, Map<String, Object> params);
 
     /**
      * 根据类名获取主键字段名

@@ -3,7 +3,6 @@ package com.sonsure.dumper.core.mapping;
 import com.sonsure.commons.spring.scan.ClassPathBeanScanner;
 import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.management.CommandField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,9 +56,9 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     }
 
     @Override
-    public String getTable(String className, Map<String, CommandField> fieldMap) {
+    public String getTable(String className, Map<String, Object> params) {
         Class<?> tableClass = this.getTableClass(className);
-        return this.getTable(tableClass, fieldMap);
+        return this.getTable(tableClass, params);
     }
 
     @Override

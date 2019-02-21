@@ -31,13 +31,13 @@ public class JSqlParserCommandConversionHandler implements CommandConversionHand
 
 
     @Override
-    public String convert(String command) {
+    public String convert(String command, Map<String, Object> params) {
 
         String convertedCommand = CACHE.get(command);
         if (convertedCommand == null) {
             try {
                 Statement statement = CCJSqlParserUtil.parse(command);
-                CommandMappingHandler commandMappingHandler = new CommandMappingHandler(statement, mappingHandler);
+                CommandMappingHandler commandMappingHandler = new CommandMappingHandler(statement, mappingHandler, params);
                 StringBuilder buffer = new StringBuilder();
                 ExpressionDeParser expressionDeParser = new CommandExpressionDeParser();
                 SelectDeParser selectDeParser = new CommandSelectDeParser(expressionDeParser, buffer, commandMappingHandler);

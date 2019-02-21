@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by liyd on 17/4/12.
@@ -54,7 +55,7 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
         commandContext.setCommandCase(commandTable.getCommandCase());
         String resolvedCommand = commandContext.getCommand();
         if (!commandTable.isForceNative()) {
-            resolvedCommand = commandConversionHandler.convert(commandContext.getCommand());
+            resolvedCommand = commandConversionHandler.convert(commandContext.getCommand(), commandContext.getParameterMap());
         }
         commandContext.setCommand(resolvedCommand);
         return commandContext;
@@ -119,8 +120,8 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
         return this.getCommandExecutor().getMappingHandler().getPkField(commandTable.getModelClass());
     }
 
-    protected String getTableName(CommandTable commandTable) {
-        return this.getCommandExecutor().getMappingHandler().getTable(commandTable.getModelClass(), null);
+    protected String getTableName(CommandTable commandTable, Map<String, Object> params) {
+        return this.getCommandExecutor().getMappingHandler().getTable(commandTable.getModelClass(), params);
     }
 
     /**
