@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class SelectImpl<T extends Object> extends AbstractConditionBuilder<Select<T>> implements Select<T> {
 
-    public SelectImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
+    public SelectImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
+        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
     }
 
     /**
@@ -109,7 +109,7 @@ public class SelectImpl<T extends Object> extends AbstractConditionBuilder<Selec
 
     public long count() {
         CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-        String countCommand = this.pageHandler.getCountCommand(commandContext.getResolvedCommand(), persistExecutor.getDialect());
+        String countCommand = this.pageHandler.getCountCommand(commandContext.getCommand(), persistExecutor.getDialect());
         CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
         countCommandContext.setCommand(countCommand);
         countCommandContext.setResultType(Long.class);

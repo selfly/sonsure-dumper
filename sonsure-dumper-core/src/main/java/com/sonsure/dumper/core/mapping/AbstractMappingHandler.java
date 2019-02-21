@@ -16,6 +16,8 @@ public abstract class AbstractMappingHandler implements MappingHandler {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MappingHandler.class);
 
+    protected Map<String, Class<?>> loadedClass;
+
     /**
      * 扫描的包
      */
@@ -32,8 +34,18 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     protected Map<String, Class<?>> customClassMapping;
 
     public AbstractMappingHandler(String modelPackages) {
+        loadedClass = new HashMap<>();
+        classMapping = new HashMap<>();
+        customClassMapping = new HashMap<>();
         this.modelPackages = modelPackages;
         this.init();
+    }
+
+    public void addClassMapping(Class<?> clazz) {
+        String simpleName = clazz.getSimpleName();
+        if (!classMapping.containsKey(simpleName)) {
+            classMapping.put(clazz.getSimpleName(), clazz);
+        }
     }
 
     @Override
@@ -61,10 +73,16 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         }
         Class<?> clazz = null;
         if (StringUtils.indexOf(className, ".") != -1) {
-            clazz = ClassUtils.loadClass(className);
-        } else if (customClassMapping != null) {
+            clazz = loadedClass.get(className);
+            if (clazz == null) {
+                clazz = ClassUtils.loadClass(className);
+                loadedClass.put(className, clazz);
+            }
+        }
+        if (clazz == null && !customClassMapping.isEmpty()) {
             clazz = customClassMapping.get(className);
-        } else if (classMapping != null) {
+        }
+        if (clazz == null && !classMapping.isEmpty()) {
             clazz = classMapping.get(className);
         }
         if (clazz == null) {
@@ -82,7 +100,6 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         if (StringUtils.isBlank(this.modelPackages)) {
             return;
         }
-        classMapping = new HashMap<>();
         String[] pks = StringUtils.split(modelPackages, ",");
         for (String pk : pks) {
             List<String> classes = ClassPathBeanScanner.scanClasses(pk);

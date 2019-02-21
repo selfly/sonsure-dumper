@@ -3,6 +3,7 @@ package com.sonsure.dumper.core.command.entity;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandContextBuilder;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.management.CommandTable;
 import com.sonsure.dumper.core.management.ModelClassCache;
@@ -11,8 +12,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by liyd on 17/4/12.
@@ -32,21 +33,29 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
     protected static final String NATIVE_VALUE_CONTENT_OPEN_TOKEN = "{{";
     protected static final String NATIVE_VALUE_CONTENT_CLOSE_TOKEN = "}}";
 
-//    /**
-//     * native内容中属性前后包围符号
-//     */
-//    protected static final String NATIVE_FIELD_OPEN_TOKEN = "[";
-//    protected static final String NATIVE_FIELD_CLOSE_TOKEN = "]";
-
+    /**
+     * 执行器
+     */
     protected AbstractCommandExecutor commandExecutor;
 
-    public AbstractCommandContextBuilder(AbstractCommandExecutor commandExecutor) {
+    /**
+     * command解析器
+     */
+    protected CommandConversionHandler commandConversionHandler;
+
+    public AbstractCommandContextBuilder(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
         this.commandExecutor = commandExecutor;
+        this.commandConversionHandler = commandConversionHandler;
     }
 
     public CommandContext build(CommandTable commandTable) {
         CommandContext commandContext = this.doBuild(commandTable);
-        commandContext.setCommandUppercase(commandTable.isCommandUppercase());
+        commandContext.setCommandCase(commandTable.getCommandCase());
+        String resolvedCommand = commandContext.getCommand();
+        if (!commandTable.isForceNative()) {
+            resolvedCommand = commandConversionHandler.convert(commandContext.getCommand());
+        }
+        commandContext.setCommand(resolvedCommand);
         return commandContext;
     }
 
@@ -101,6 +110,10 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
         return sb.toString();
     }
 
+    protected String getModelName(Class<?> modelClass) {
+        return modelClass.getSimpleName();
+    }
+
     protected String getPkField(CommandTable commandTable) {
         return this.getCommandExecutor().getMappingHandler().getPkField(commandTable.getModelClass());
     }
@@ -114,8 +127,8 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
      *
      * @return
      */
-    protected Set<ModelFieldMeta> getClassFields(Class<?> clazz) {
-        return ModelClassCache.getClassFields(clazz);
+    protected Collection<ModelFieldMeta> getClassFields(Class<?> clazz) {
+        return ModelClassCache.getClassFieldMetas(clazz);
     }
 
     /**

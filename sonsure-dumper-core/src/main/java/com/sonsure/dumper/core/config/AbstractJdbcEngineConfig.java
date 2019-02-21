@@ -65,7 +65,7 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     /**
      * command大小写
      */
-    protected boolean commandUppercase;
+    protected String commandCase;
 
     /**
      * 初始化
@@ -181,12 +181,12 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     }
 
     @Override
-    public boolean isCommandUppercase() {
-        return commandUppercase;
+    public String getCommandCase() {
+        return commandCase;
     }
 
-    public void setCommandUppercase(boolean commandUppercase) {
-        this.commandUppercase = commandUppercase;
+    public void setCommandCase(String commandCase) {
+        this.commandCase = commandCase;
     }
 
     public DataSource getDataSource() {

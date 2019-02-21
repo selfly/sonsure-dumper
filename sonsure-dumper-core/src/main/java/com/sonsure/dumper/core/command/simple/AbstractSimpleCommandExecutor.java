@@ -27,8 +27,8 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     protected ResultHandler<?> resultHandler;
 
-    public AbstractSimpleCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
+    public AbstractSimpleCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
+        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
         parameters = new LinkedHashMap<>();
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         this.setNativeData();
         CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
         commandContext.setPkValueByDb(true);
-//        commandContext.setPkColumn(pkColumn);
+        commandContext.setPkColumn(pkColumn);
         return (Long) this.persistExecutor.execute(commandContext, CommandType.INSERT);
     }
 

@@ -83,7 +83,7 @@ public class CommandTable {
      */
     private Map<String, Object> extendData;
 
-    private boolean commandUppercase;
+    private String commandCase;
 
     public CommandTable() {
         operationFields = new ArrayList<CommandField>();
@@ -298,11 +298,12 @@ public class CommandTable {
         isForceNative = forceNative;
     }
 
-    public boolean isCommandUppercase() {
-        return commandUppercase;
+
+    public String getCommandCase() {
+        return commandCase;
     }
 
-    public void setCommandUppercase(boolean commandUppercase) {
-        this.commandUppercase = commandUppercase;
+    public void setCommandCase(String commandCase) {
+        this.commandCase = commandCase;
     }
 }

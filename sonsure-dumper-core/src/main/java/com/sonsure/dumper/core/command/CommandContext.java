@@ -1,6 +1,8 @@
 package com.sonsure.dumper.core.command;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 /**
@@ -50,12 +52,10 @@ public class CommandContext {
      */
     private Object pkValue;
 
-    /**
-     * 大小写
-     */
-    private boolean commandUppercase;
+    private String commandCase;
 
     public CommandContext() {
+        command = "";
         //必须是有序map
         parameterMap = new LinkedHashMap<>();
     }
@@ -68,13 +68,12 @@ public class CommandContext {
     }
 
     public String getResolvedCommand() {
-        if (command == null) {
-            command = "";
-        }
-        if (isCommandUppercase()) {
+        if (StringUtils.equalsIgnoreCase(commandCase, "upper")) {
             return command.toUpperCase();
-        } else {
+        } else if (StringUtils.equalsIgnoreCase(commandCase, "lower")) {
             return command.toLowerCase();
+        } else {
+            return command;
         }
     }
 
@@ -114,6 +113,18 @@ public class CommandContext {
                 this.parameterMap.put(name, list);
             }
         }
+    }
+
+    public void setParameterMap(Map<String, Object> parameterMap) {
+        this.parameterMap = parameterMap;
+    }
+
+    public String getCommandCase() {
+        return commandCase;
+    }
+
+    public void setCommandCase(String commandCase) {
+        this.commandCase = commandCase;
     }
 
     public String getPkField() {
@@ -176,11 +187,4 @@ public class CommandContext {
         this.pkValue = pkValue;
     }
 
-    public boolean isCommandUppercase() {
-        return commandUppercase;
-    }
-
-    public void setCommandUppercase(boolean commandUppercase) {
-        this.commandUppercase = commandUppercase;
-    }
 }

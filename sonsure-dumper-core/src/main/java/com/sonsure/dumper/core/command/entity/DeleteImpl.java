@@ -13,8 +13,8 @@ import com.sonsure.dumper.core.persist.PersistExecutor;
  */
 public class DeleteImpl<T> extends AbstractConditionBuilder<Delete<T>> implements Delete<T> {
 
-    public DeleteImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
+    public DeleteImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
+        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
     }
 
     public int execute() {

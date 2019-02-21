@@ -8,13 +8,21 @@ import com.sonsure.dumper.core.annotation.Transient;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 public class ModelClassCache {
 
     private static final Map<Class<?>, ModelClassMeta> CACHE = new WeakHashMap<Class<?>, ModelClassMeta>();
+
+    public static ModelClassMeta getClassMeta(Class<?> clazz) {
+        ModelClassMeta modelClassMeta = CACHE.get(clazz);
+        if (modelClassMeta == null) {
+            modelClassMeta = initCache(clazz);
+        }
+        return modelClassMeta;
+    }
 
 
     /**
@@ -22,12 +30,14 @@ public class ModelClassCache {
      *
      * @return class fields
      */
-    public static Set<ModelFieldMeta> getClassFields(Class<?> clazz) {
-        ModelClassMeta modelClassMeta = CACHE.get(clazz);
-        if (modelClassMeta == null) {
-            modelClassMeta = initCache(clazz);
-        }
+    public static Collection<ModelFieldMeta> getClassFieldMetas(Class<?> clazz) {
+        ModelClassMeta modelClassMeta = getClassMeta(clazz);
         return modelClassMeta.getModelFieldMetas();
+    }
+
+    public static ModelFieldMeta getClassFieldMeta(Class<?> clazz, String fieldName) {
+        ModelClassMeta classMeta = getClassMeta(clazz);
+        return classMeta.getModelFieldMeta(fieldName);
     }
 
 
@@ -55,6 +65,7 @@ public class ModelClassCache {
             }
 
             ModelFieldMeta modelFieldMeta = new ModelFieldMeta();
+            modelFieldMeta.setName(field.getName());
             modelFieldMeta.setIdAnnotation(field.getAnnotation(Id.class));
             modelFieldMeta.setColumnAnnotation(field.getAnnotation(Column.class));
 

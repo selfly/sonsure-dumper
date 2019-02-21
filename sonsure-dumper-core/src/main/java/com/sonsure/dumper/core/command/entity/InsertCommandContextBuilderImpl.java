@@ -3,6 +3,7 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.management.CommandTable;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -14,8 +15,8 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "insert into ";
 
-    public InsertCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor) {
-        super(commandExecutor);
+    public InsertCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
+        super(commandExecutor, commandConversionHandler);
     }
 
     public CommandContext doBuild(CommandTable commandTable) {
@@ -38,7 +39,7 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
         StringBuilder argsCommand = new StringBuilder("(");
 
-        command.append(this.getTableName(commandTable)).append(" (");
+        command.append(this.getModelName(commandTable.getModelClass())).append(" (");
 
         for (CommandField commandField : commandTable.getOperationFields()) {
             String fieldName = commandField.getName();

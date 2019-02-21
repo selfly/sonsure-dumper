@@ -1,5 +1,7 @@
 package com.sonsure.dumper.core.config;
 
+import com.sonsure.dumper.core.command.CommandExecutor;
+import com.sonsure.dumper.core.mapping.AbstractMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -19,10 +21,14 @@ public abstract class AbstractCommandExecutorBuilder implements CommandExecutorB
 
 
     protected MappingHandler getExecutorMappingHandler(Class<?> modelClass, JdbcEngineConfig jdbcEngineConfig) {
+        MappingHandler mappingHandler = jdbcEngineConfig.getMappingHandler();
         if (mappingHandlers != null && mappingHandlers.containsKey(modelClass)) {
-            return mappingHandlers.get(modelClass);
+            mappingHandler = mappingHandlers.get(modelClass);
         }
-        return jdbcEngineConfig.getMappingHandler();
+        if (mappingHandler instanceof AbstractMappingHandler && !CommandExecutor.class.isAssignableFrom(modelClass)) {
+            ((AbstractMappingHandler) mappingHandler).addClassMapping(modelClass);
+        }
+        return mappingHandler;
     }
 
     protected PageHandler getExecutorPageHandler(Class<?> modelClass, JdbcEngineConfig jdbcEngineConfig) {

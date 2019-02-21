@@ -19,8 +19,8 @@ import java.util.Map;
  */
 public class UpdateImpl<T> extends AbstractConditionBuilder<Update<T>> implements Update<T> {
 
-    public UpdateImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
+    public UpdateImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
+        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
     }
 
     public Update<T> set(String field, Object value) {

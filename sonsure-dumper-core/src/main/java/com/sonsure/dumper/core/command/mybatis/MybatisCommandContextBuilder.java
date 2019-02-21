@@ -2,7 +2,7 @@ package com.sonsure.dumper.core.command.mybatis;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.simple.AbstractSimpleCommandContextBuilder;
+import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.management.CommandTable;
 import org.apache.ibatis.mapping.BoundSql;
@@ -17,7 +17,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import java.util.List;
 import java.util.Map;
 
-public class MybatisCommandContextBuilder extends AbstractSimpleCommandContextBuilder {
+public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder {
 
     private SqlSessionFactory sqlSessionFactory;
 
@@ -60,9 +60,8 @@ public class MybatisCommandContextBuilder extends AbstractSimpleCommandContextBu
                 }
             }
         }
-        String sql = this.resolveCommand(boundSql.getSql(), commandTable, commandExecutor.getMappingHandler());
 
-        commandContext.setCommand(sql);
+        commandContext.setCommand(boundSql.getSql());
         return commandContext;
     }
 }

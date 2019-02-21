@@ -3,11 +3,12 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.management.CommandTable;
 import com.sonsure.dumper.core.management.ModelFieldMeta;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Created by liyd on 17/4/12.
@@ -16,8 +17,8 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "select ";
 
-    public SelectCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor) {
-        super(commandExecutor);
+    public SelectCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
+        super(commandExecutor, commandConversionHandler);
     }
 
     public CommandContext doBuild(CommandTable commandTable) {
@@ -33,7 +34,7 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
 
         if (!commandTable.isNotSelectEntityField()) {
 
-            Set<ModelFieldMeta> classFields = this.getClassFields(commandTable.getModelClass());
+            Collection<ModelFieldMeta> classFields = this.getClassFields(commandTable.getModelClass());
             for (ModelFieldMeta fieldMeta : classFields) {
                 //白名单 黑名单
                 if (!commandTable.isIncludeField(fieldMeta.getName())) {
@@ -51,7 +52,7 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
         command.append(" from ").append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias()));
 
         CommandContext whereCommandContext = this.buildWhereSql(commandTable);
-        command.append(whereCommandContext.getResolvedCommand());
+        command.append(whereCommandContext.getCommand());
 
         String groupBySql = this.buildGroupBySql(commandTable);
         command.append(groupBySql);

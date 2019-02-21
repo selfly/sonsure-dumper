@@ -19,8 +19,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> extends AbstractCommandExecutor implements ConditionBuilder<T> {
 
-    public AbstractConditionBuilder(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
+    public AbstractConditionBuilder(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
+        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
     }
 
 

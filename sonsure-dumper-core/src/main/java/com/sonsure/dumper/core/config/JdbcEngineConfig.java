@@ -63,7 +63,7 @@ public interface JdbcEngineConfig {
      *
      * @return
      */
-    boolean isCommandUppercase();
+    String getCommandCase();
 
     /**
      * 获取实体所在包，native方式时使用

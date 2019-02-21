@@ -3,8 +3,8 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.management.CommandTable;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by liyd on 17/4/14.
@@ -13,8 +13,8 @@ public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "delete from ";
 
-    public DeleteCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor) {
-        super(commandExecutor);
+    public DeleteCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
+        super(commandExecutor, commandConversionHandler);
     }
 
     public CommandContext doBuild(CommandTable commandTable) {
@@ -22,9 +22,7 @@ public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuild
         command.append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias()));
 
         CommandContext whereCommandContext = this.buildWhereSql(commandTable);
-        if (StringUtils.isNotBlank(whereCommandContext.getResolvedCommand())) {
-            command.append(whereCommandContext.getResolvedCommand());
-        }
+        command.append(whereCommandContext.getCommand());
         CommandContext commandContext = getGenericCommandContext(commandTable);
         commandContext.setCommand(command.toString());
         commandContext.addParameters(whereCommandContext.getParameterMap());

@@ -18,8 +18,8 @@ import java.util.Map;
  */
 public class InsertImpl<T extends Object> extends AbstractCommandExecutor implements Insert<T> {
 
-    public InsertImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandUppercase);
+    public InsertImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
+        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
     }
 
     public Insert<T> set(String field, Object value) {

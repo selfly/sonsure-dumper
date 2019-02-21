@@ -2,6 +2,7 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.management.CommandTable;
 import org.apache.commons.lang3.BooleanUtils;
@@ -14,8 +15,8 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "update ";
 
-    public UpdateCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor) {
-        super(commandExecutor);
+    public UpdateCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
+        super(commandExecutor, commandConversionHandler);
     }
 
 
@@ -53,7 +54,7 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
         command.deleteCharAt(command.length() - 1);
 
         CommandContext whereCommandContext = this.buildWhereSql(commandTable);
-        command.append(whereCommandContext.getResolvedCommand());
+        command.append(whereCommandContext.getCommand());
 
         commandContext.setCommand(command.toString());
         commandContext.addParameters(whereCommandContext.getParameterMap());

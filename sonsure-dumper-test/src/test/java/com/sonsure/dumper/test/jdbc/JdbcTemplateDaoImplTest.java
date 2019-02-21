@@ -66,6 +66,10 @@ public class JdbcTemplateDaoImplTest {
 
         Long id = (Long) jdbcDao.insert(user);
         Assert.assertTrue(id > 0);
+
+        UserInfo userInfo = jdbcDao.get(UserInfo.class, id);
+        Assert.assertTrue(user.getLoginName().equals(userInfo.getLoginName()));
+        Assert.assertTrue(user.getPassword().equals(userInfo.getPassword()));
     }
 
 
@@ -337,7 +341,7 @@ public class JdbcTemplateDaoImplTest {
     public void select5() {
 
         Long maxId = jdbcDao.createSelect(UserInfo.class)
-                .addSelectField("max([userInfoId]) maxid")
+                .addSelectField("max(userInfoId) maxid")
                 .notSelectEntityField()
                 .oneColResult(Long.class);
         Assert.assertTrue(maxId == 50);
@@ -482,10 +486,10 @@ public class JdbcTemplateDaoImplTest {
         jdbcDao.insert(user);
 
         Select<UserInfo> select = jdbcDao.createSelect(UserInfo.class)
-                .addSelectField("count(*) num")
+                .addSelectField("count(*) Num")
                 .include("userAge")
                 .groupBy("userAge")
-                .orderBy("num").desc()
+                .orderBy("Num").desc()
                 .forceResultToModel();
         Page<?> page = select.objPageList(1, 5);
 
@@ -575,7 +579,7 @@ public class JdbcTemplateDaoImplTest {
     public void updateNative() {
 
         jdbcDao.createUpdate(UserInfo.class)
-                .set("{{[userAge]}}", "[userAge]+1")
+                .set("{{userAge}}", "userAge+1")
                 .where("userInfoId", 17L)
                 .execute();
 
@@ -587,7 +591,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeExecutor() {
         int count = jdbcDao.createNativeExecutor()
-                .command("update UserInfo set login_name = ? where user_info_id = ?")
+                .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters(new Object[]{"newName", 39L})
                 .update();
         Assert.assertTrue(count == 1);

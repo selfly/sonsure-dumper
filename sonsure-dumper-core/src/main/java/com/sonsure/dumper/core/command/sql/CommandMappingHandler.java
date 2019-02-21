@@ -1,10 +1,7 @@
 package com.sonsure.dumper.core.command.sql;
 
 import com.sonsure.dumper.core.mapping.MappingHandler;
-import net.sf.jsqlparser.expression.Alias;
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
@@ -211,7 +208,10 @@ public class CommandMappingHandler {
             if (parameters != null) {
                 this.extractExpression(parameters.getExpressions(), mappings);
             }
-
+        } else if (expression instanceof Parenthesis) {
+            Parenthesis parenthesis = (Parenthesis) expression;
+            Expression parenthesisExpression = parenthesis.getExpression();
+            this.extractExpression(parenthesisExpression, mappings);
         } else if (expression instanceof Column) {
             this.extractColumnMapping(((Column) expression), mappings);
         }

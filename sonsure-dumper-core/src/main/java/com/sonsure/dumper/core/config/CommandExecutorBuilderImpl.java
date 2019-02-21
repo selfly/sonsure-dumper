@@ -39,45 +39,45 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.isCommandUppercase());
-            commandContextBuilder = new InsertCommandContextBuilderImpl(commandExecutor);
+                    jdbcEngineConfig.getCommandCase());
+            commandContextBuilder = new InsertCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
         } else if (commandExecutorClass == Select.class) {
             commandExecutor = new SelectImpl<>(
                     getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.isCommandUppercase());
-            commandContextBuilder = new SelectCommandContextBuilderImpl(commandExecutor);
+                    jdbcEngineConfig.getCommandCase());
+            commandContextBuilder = new SelectCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
         } else if (commandExecutorClass == Update.class) {
             commandExecutor = new UpdateImpl<>(
                     getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.isCommandUppercase());
-            commandContextBuilder = new UpdateCommandContextBuilderImpl(commandExecutor);
+                    jdbcEngineConfig.getCommandCase());
+            commandContextBuilder = new UpdateCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
         } else if (commandExecutorClass == Delete.class) {
             commandExecutor = new DeleteImpl<>(
                     getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.isCommandUppercase());
-            commandContextBuilder = new DeleteCommandContextBuilderImpl(commandExecutor);
+                    jdbcEngineConfig.getCommandCase());
+            commandContextBuilder = new DeleteCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
         } else if (commandExecutorClass == NativeExecutor.class) {
             commandExecutor = new NativeExecutorImpl(getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.isCommandUppercase());
+                    jdbcEngineConfig.getCommandCase());
             commandContextBuilder = new SimpleCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
         } else if (commandExecutorClass == MybatisExecutor.class) {
             commandExecutor = new MybatisExecutorImpl(getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
                     getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.isCommandUppercase());
+                    jdbcEngineConfig.getCommandCase());
             commandContextBuilder = new MybatisCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandConversionHandler(), jdbcEngineConfig.getMybatisSqlSessionFactory());
         }
 

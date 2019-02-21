@@ -134,7 +134,7 @@
 //     * @return column
 //     */
 //    public static String getColumn(CommandTable commandTable, String field, MappingHandler mappingHandler) {
-//        String column = getTableMetaData(commandTable, mappingHandler).getClassFields().get(field);
+//        String column = getTableMetaData(commandTable, mappingHandler).getClassFieldMetas().get(field);
 //        return column != null ? column : field;
 //    }
 //
@@ -145,8 +145,8 @@
 //     * @param mappingHandler the mapping handler
 //     * @return class fields
 //     */
-//    public static Set<String> getClassFields(CommandTable commandTable, MappingHandler mappingHandler) {
-//        return getTableMetaData(commandTable, mappingHandler).getClassFields().keySet();
+//    public static Set<String> getClassFieldMetas(CommandTable commandTable, MappingHandler mappingHandler) {
+//        return getTableMetaData(commandTable, mappingHandler).getClassFieldMetas().keySet();
 //    }
 //
 //

@@ -35,9 +35,9 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
 
     protected PersistExecutor persistExecutor;
 
-    public AbstractCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, boolean commandUppercase) {
+    public AbstractCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
         commandTable = new CommandTable();
-        commandTable.setCommandUppercase(commandUppercase);
+        commandTable.setCommandCase(commandCase);
         this.setMappingHandler(mappingHandler);
         this.setPageHandler(pageHandler);
         this.setKeyGenerator(keyGenerator);
@@ -71,7 +71,7 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         String dialect = persistExecutor.getDialect();
         long count = Long.MAX_VALUE;
         if (isCount) {
-            String countCommand = this.pageHandler.getCountCommand(commandContext.getResolvedCommand(), dialect);
+            String countCommand = this.pageHandler.getCountCommand(commandContext.getCommand(), dialect);
             CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
             countCommandContext.setCommand(countCommand);
             countCommandContext.setResultType(Long.class);
@@ -85,7 +85,7 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         pagination.setPageNum(pageNum);
         pagination.setTotalItems((int) count);
 
-        String pageCommand = this.pageHandler.getPageCommand(commandContext.getResolvedCommand(), pagination, dialect);
+        String pageCommand = this.pageHandler.getPageCommand(commandContext.getCommand(), pagination, dialect);
         CommandContext pageCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
         pageCommandContext.setCommand(pageCommand);
         List<?> list = pageQueryHandler.queryList(pageCommandContext);

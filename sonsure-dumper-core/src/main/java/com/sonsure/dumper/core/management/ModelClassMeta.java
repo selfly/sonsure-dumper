@@ -1,7 +1,8 @@
 package com.sonsure.dumper.core.management;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModelClassMeta {
 
@@ -9,16 +10,27 @@ public class ModelClassMeta {
 
     private ModelFieldMeta pkFieldMeta;
 
-    private Set<ModelFieldMeta> modelFieldMetas;
+    private Map<String, ModelFieldMeta> modelFieldMetas;
 
     public ModelClassMeta() {
-        modelFieldMetas = new HashSet<>();
+        modelFieldMetas = new HashMap<>();
     }
 
     public void addModelFieldMeta(ModelFieldMeta modelFieldMeta) {
-        this.modelFieldMetas.add(modelFieldMeta);
+        this.modelFieldMetas.put(modelFieldMeta.getName(), modelFieldMeta);
+        if (modelFieldMeta.getIdAnnotation() != null) {
+            this.pkFieldMeta = modelFieldMeta;
+        }
     }
 
+
+    public ModelFieldMeta getModelFieldMeta(String fileName) {
+        return modelFieldMetas.get(fileName);
+    }
+
+    public Collection<ModelFieldMeta> getModelFieldMetas() {
+        return modelFieldMetas.values();
+    }
 
     public ModelFieldMeta getPkFieldMeta() {
         return pkFieldMeta;
@@ -36,11 +48,5 @@ public class ModelClassMeta {
         this.annotation = annotation;
     }
 
-    public Set<ModelFieldMeta> getModelFieldMetas() {
-        return modelFieldMetas;
-    }
 
-    public void setModelFieldMetas(Set<ModelFieldMeta> modelFieldMetas) {
-        this.modelFieldMetas = modelFieldMetas;
-    }
 }
