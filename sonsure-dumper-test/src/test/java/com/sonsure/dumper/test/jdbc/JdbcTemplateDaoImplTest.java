@@ -6,6 +6,7 @@ import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class JdbcTemplateDaoImplTest {
     @Autowired
     protected JdbcDao jdbcDao;
 
-    //    @Before
+    @Before
     public void before() {
         //初始化测试数据
         jdbcDao.createDelete(UserInfo.class)

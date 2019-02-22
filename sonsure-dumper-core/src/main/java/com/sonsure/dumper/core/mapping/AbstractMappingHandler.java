@@ -2,7 +2,11 @@ package com.sonsure.dumper.core.mapping;
 
 import com.sonsure.commons.spring.scan.ClassPathBeanScanner;
 import com.sonsure.commons.utils.ClassUtils;
+import com.sonsure.commons.utils.NameUtils;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
+import com.sonsure.dumper.core.management.ModelClassCache;
+import com.sonsure.dumper.core.management.ModelClassMeta;
+import com.sonsure.dumper.core.management.ModelFieldMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +25,14 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     protected static final String PRI_FIELD_SUFFIX = "Id";
 
 
+    /**
+     * 表前缀定义, 如 com.sonsure 开头的class表名统一加ss_  com.sonsure.User -> ss_user
+     */
     protected Map<String, String> tablePreFixMap;
 
+    /**
+     * load的class
+     */
     protected Map<String, Class<?>> loadedClass;
 
     /**
@@ -67,30 +77,70 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         return this.getColumn(tableClass, fieldName);
     }
 
-    protected Class<?> getTableClass(String className) {
+    public String getTable(Class<?> entityClass, Map<String, Object> params) {
 
-        if (StringUtils.isBlank(className)) {
-            throw new SonsureJdbcException("className不能为空");
-        }
-        Class<?> clazz = null;
-        if (StringUtils.indexOf(className, ".") != -1) {
-            clazz = loadedClass.get(className);
-            if (clazz == null) {
-                clazz = ClassUtils.loadClass(className);
-                loadedClass.put(className, clazz);
+        ModelClassMeta classMeta = ModelClassCache.getClassMeta(entityClass);
+        Object annotation = classMeta.getAnnotation();
+        String tableName = null;
+        if (annotation != null) {
+            tableName = ModelClassCache.getTableAnnotationName(annotation);
+        } else {
+            if (tablePreFixMap == null) {
+                //默认Java属性的骆驼命名法转换回数据库下划线“_”分隔的格式
+                tableName = NameUtils.getUnderlineName(entityClass.getSimpleName());
+            } else {
+                String tablePreFix = "";
+                for (Map.Entry<String, String> entry : tablePreFixMap.entrySet()) {
+                    if (StringUtils.startsWith(entityClass.getName(), entry.getKey())) {
+                        tablePreFix = entry.getValue();
+                        break;
+                    }
+                }
+                tableName = tablePreFix + NameUtils.getUnderlineName(entityClass.getSimpleName());
             }
         }
-        if (clazz == null && !customClassMapping.isEmpty()) {
-            clazz = customClassMapping.get(className);
-        }
-        if (clazz == null && !classMapping.isEmpty()) {
-            clazz = classMapping.get(className);
-        }
-        if (clazz == null) {
-            throw new SonsureJdbcException("没有找到对应的class:" + className);
+
+        if (StringUtils.isBlank(tableName)) {
+            throw new SonsureJdbcException("没有找到对应的表名:" + entityClass);
         }
 
-        return clazz;
+        return tableName;
+    }
+
+    public String getPkField(Class<?> entityClass) {
+
+        ModelClassMeta classMeta = ModelClassCache.getClassMeta(entityClass);
+        ModelFieldMeta pkFieldMeta = classMeta.getPkFieldMeta();
+        if (pkFieldMeta != null) {
+            return pkFieldMeta.getName();
+        }
+        String firstLowerName = NameUtils.getFirstLowerName(entityClass.getSimpleName());
+        //主键以类名加上“Id” 如user表主键属性即userId
+        return firstLowerName + PRI_FIELD_SUFFIX;
+    }
+
+    public String getColumn(Class<?> entityClass, String fieldName) {
+        ModelFieldMeta classFieldMeta = ModelClassCache.getClassFieldMeta(entityClass, fieldName);
+
+        //count(*) as num  num是没有的
+        if (classFieldMeta == null) {
+            return fieldName;
+        }
+
+        Object columnAnnotation = classFieldMeta.getColumnAnnotation();
+        if (columnAnnotation != null) {
+            return ModelClassCache.getColumnAnnotationName(columnAnnotation);
+        }
+        return NameUtils.getUnderlineName(fieldName);
+    }
+
+    @Override
+    public String getField(Class<?> clazz, String columnName) {
+        ModelFieldMeta mappedFieldMeta = ModelClassCache.getMappedFieldMeta(clazz, columnName);
+        if (mappedFieldMeta != null) {
+            return mappedFieldMeta.getName();
+        }
+        return NameUtils.getCamelName(columnName);
     }
 
     /**
@@ -117,6 +167,32 @@ public abstract class AbstractMappingHandler implements MappingHandler {
                 }
             }
         }
+    }
+
+    protected Class<?> getTableClass(String className) {
+
+        if (StringUtils.isBlank(className)) {
+            throw new SonsureJdbcException("className不能为空");
+        }
+        Class<?> clazz = null;
+        if (StringUtils.indexOf(className, ".") != -1) {
+            clazz = loadedClass.get(className);
+            if (clazz == null) {
+                clazz = ClassUtils.loadClass(className);
+                loadedClass.put(className, clazz);
+            }
+        }
+        if (clazz == null && !customClassMapping.isEmpty()) {
+            clazz = customClassMapping.get(className);
+        }
+        if (clazz == null && !classMapping.isEmpty()) {
+            clazz = classMapping.get(className);
+        }
+        if (clazz == null) {
+            throw new SonsureJdbcException("没有找到对应的class:" + className);
+        }
+
+        return clazz;
     }
 
     public String getModelPackages() {
