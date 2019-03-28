@@ -499,6 +499,30 @@ public class JdbcTemplateDaoImplTest {
         Assert.assertTrue(objects.size() == 50);
     }
 
+//    @Test
+//    public void append() {
+
+//        GenericTokenParser tokenParser = new GenericTokenParser(":", " ", new TokenHandler() {
+//            @Override
+//            public String handleToken(String s) {
+//                return " ? ";
+//            }
+//        });
+//
+//        String sql = "select t.* from UserInfo t where t.userInfoId = ::userInfoId and userAge = :userAge ";
+//
+//        String parse = tokenParser.parse(sql);
+//
+//        System.out.println(parse);
+
+
+//        Select<UserInfo> select = jdbcDao.createSelect(UserInfo.class);
+//        select.where("userAge", ">", 5)
+//                .append("and userInfoId = (select max(userInfoId) from UserInfo)");
+//        UserInfo userInfo = select.singleResult();
+//        Assert.assertNotNull(userInfo);
+//    }
+
     @Test
     public void updateSet() {
 

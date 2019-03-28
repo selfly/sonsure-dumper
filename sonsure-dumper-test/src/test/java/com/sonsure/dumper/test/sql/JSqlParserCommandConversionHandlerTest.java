@@ -115,4 +115,10 @@ public class JSqlParserCommandConversionHandlerTest {
         String result = "SELECT USERNAME, PASSWORD FROM USER WHERE parentId IS NULL";
         Assert.assertTrue(sql.toLowerCase().equals(result.toLowerCase()));
     }
+    @Test
+    public void commandToSql10() {
+        String command = "select t.* from UserInfo t where t.userInfoId = :userInfoId and userAge = :userAge and password = ?";
+        String sql = commandConversionHandler.convert(command, null);
+        System.out.println(sql);
+    }
 }
