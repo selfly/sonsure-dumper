@@ -66,13 +66,6 @@ public interface JdbcEngineConfig {
     String getCommandCase();
 
     /**
-     * 获取实体所在包，native方式时使用
-     *
-     * @return
-     */
-    String getModelPackages();
-
-    /**
      * 获取mybatis SqlSessionFactory
      *
      * @return

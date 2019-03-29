@@ -7,6 +7,7 @@ import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.management.CommandTable;
+import com.sonsure.dumper.core.mapping.AbstractMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -53,6 +54,10 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     @Override
     public <E> T resultClass(Class<E> clazz) {
         this.resultHandler = DefaultResultHandler.newInstance(clazz);
+        MappingHandler mappingHandler = this.getMappingHandler();
+        if (mappingHandler instanceof AbstractMappingHandler) {
+            ((AbstractMappingHandler) mappingHandler).addClassMapping(clazz);
+        }
         return (T) this;
     }
 

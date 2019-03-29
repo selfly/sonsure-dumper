@@ -48,11 +48,6 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     protected PersistExecutor persistExecutor;
 
     /**
-     * 实体类所在包，多个英文逗号分隔
-     */
-    protected String modelPackages;
-
-    /**
      * 解析器
      */
     protected CommandConversionHandler commandConversionHandler;
@@ -78,7 +73,7 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
             commandExecutorFactory = new CommandExecutorFactoryImpl();
         }
         if (mappingHandler == null) {
-            mappingHandler = new DefaultMappingHandler(this.modelPackages);
+            mappingHandler = new DefaultMappingHandler();
         }
         if (pageHandler == null) {
             pageHandler = new NegotiatingPageHandler();
@@ -169,15 +164,6 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
 
     public void setPersistExecutor(PersistExecutor persistExecutor) {
         this.persistExecutor = persistExecutor;
-    }
-
-    @Override
-    public String getModelPackages() {
-        return modelPackages;
-    }
-
-    public void setModelPackages(String modelPackages) {
-        this.modelPackages = modelPackages;
     }
 
     @Override
