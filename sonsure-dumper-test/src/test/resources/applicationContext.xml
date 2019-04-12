@@ -54,7 +54,6 @@
     </bean>
 
     <bean id="jdbcTemplateEngineConfig" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineConfigImpl">
-        <property name="modelPackages" value="com.sonsure.dumper.test.model"/>
         <property name="mybatisSqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 

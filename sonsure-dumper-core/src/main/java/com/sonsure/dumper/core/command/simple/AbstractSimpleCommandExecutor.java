@@ -85,6 +85,14 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         return result;
     }
 
+    @Override
+    public <E> E oneColResult(Class<E> clazz) {
+        this.setNativeData();
+        this.commandTable.setResultType(clazz);
+        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        return (E) this.persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL);
+    }
+
     public List<?> list() {
         this.setNativeData();
         CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);

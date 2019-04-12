@@ -71,6 +71,13 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
     Object singleResult();
 
     /**
+     * 简单查询，返回单一的结果，例如Long、Integer、String等
+     *
+     * @return
+     */
+    <E> E oneColResult(Class<E> clazz);
+
+    /**
      * 列表查询
      *
      * @return

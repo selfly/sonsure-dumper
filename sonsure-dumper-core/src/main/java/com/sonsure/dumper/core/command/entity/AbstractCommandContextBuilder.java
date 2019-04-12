@@ -53,6 +53,7 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
         CommandContext commandContext = this.doBuild(commandTable);
         commandContext.setMappingHandler(this.commandExecutor.getMappingHandler());
         commandContext.setCommandCase(commandTable.getCommandCase());
+        commandContext.setResultType(commandTable.getResultType());
         String resolvedCommand = commandContext.getCommand();
         if (!commandTable.isForceNative()) {
             resolvedCommand = commandConversionHandler.convert(commandContext.getCommand(), commandContext.getParameterMap());

@@ -674,6 +674,14 @@ public class JdbcTemplateDaoImplTest {
     }
 
     @Test
+    public void nativeOneColResult() {
+        Integer integer = jdbcDao.createNativeExecutor()
+                .command("select sum(userAge) from UserInfo")
+                .oneColResult(Integer.class);
+        Assert.assertTrue(integer > 0);
+    }
+
+    @Test
     public void mybatisExecutor1() {
         Map<String, Object> params = new HashMap<>();
         params.put("id", 9L);
