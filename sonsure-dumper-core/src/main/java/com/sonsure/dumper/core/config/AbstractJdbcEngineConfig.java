@@ -9,6 +9,7 @@ import com.sonsure.dumper.core.mapping.DefaultMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.NegotiatingPageHandler;
 import com.sonsure.dumper.core.page.PageHandler;
+import com.sonsure.dumper.core.persist.Jdbc;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -82,7 +83,7 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
             commandConversionHandler = new JSqlParserCommandConversionHandler(this.mappingHandler);
         }
 
-        this.doInit();
+        this.initPersistExecutor();
 
         if (persistExecutor == null) {
             throw new SonsureJdbcException("JdbcEngineConfig实现类未初始化PersistExecutor,class:" + this.getClass().getName());
@@ -90,9 +91,9 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     }
 
     /**
-     * 子类初始化
+     * 初始化persistExecutor，具体由选型的子类执行
      */
-    protected abstract void doInit();
+    protected abstract void initPersistExecutor();
 
     public CommandExecutor getCommandExecutor(Class<?> modelClass, Class<?> commandExecutorClass) {
 
@@ -107,7 +108,9 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     public JdbcEngine buildJdbcEngine(DataSource dataSource) {
         this.dataSource = dataSource;
         this.init();
-        return new JdbcEngineImpl(this);
+        JdbcEngineImpl jdbcEngine = new JdbcEngineImpl(this);
+        Jdbc.addJdbcEngine(jdbcEngine);
+        return jdbcEngine;
     }
 
     public CommandExecutorFactory getCommandExecutorFactory() {

@@ -3,14 +3,12 @@ package com.sonsure.dumper.core.command.entity;
 import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
-import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -23,19 +21,8 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
         super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
     }
 
-
-    public T tableAlias(String tableAlias) {
-        this.commandTable.setTableAlias(tableAlias);
-        return (T) this;
-    }
-
     public T where() {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator("where")
-                .type(CommandField.Type.WHERE_ONLY)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField("where", null, null, null);
         return (T) this;
     }
 
@@ -51,15 +38,7 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
     }
 
     public T where(String field, String operator, Object... values) {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator("where")
-                .name(field)
-                .fieldOperator(operator)
-                .value(values)
-                .type(CommandField.Type.WHERE_FIELD)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField("where", field, operator, values);
         return (T) this;
     }
 
@@ -73,14 +52,7 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
     }
 
     public T condition(String field, String operator, Object... values) {
-        CommandField commandField = CommandField.builder()
-                .name(field)
-                .fieldOperator(operator)
-                .value(values)
-                .type(CommandField.Type.WHERE_CONDITION)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField(null, field, operator, values);
         return (T) this;
     }
 
@@ -100,56 +72,34 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
 
         int count = 1;
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
-
             //忽略掉null
             if (entry.getValue() == null) {
                 continue;
             }
-
             if (count == 1 && StringUtils.isNotBlank(wholeLogicalOperator)) {
-                CommandField commandField = CommandField.builder()
-                        .logicalOperator(wholeLogicalOperator)
-                        .type(CommandField.Type.WHERE_FIELD)
-                        .orig(CommandField.Orig.ENTITY)
-                        .build();
-                this.commandTable.addWhereField(commandField);
+                this.getWhereContext().addWhereField(wholeLogicalOperator, null, null, null);
             }
-
-            CommandField commandField = CommandField.builder()
-                    .logicalOperator(count > 1 ? fieldLogicalOperator : null)
-                    .name(entry.getKey())
-                    .fieldOperator("=")
-                    .value(entry.getValue())
-                    .type(CommandField.Type.WHERE_AND_FIELD)
-                    .orig(CommandField.Orig.ENTITY)
-                    .build();
-            this.commandTable.addWhereField(commandField);
+            this.getWhereContext().addWhereField(count > 1 ? fieldLogicalOperator : null, entry.getKey(), "=", entry.getValue());
             count++;
         }
-
         return (T) this;
     }
 
-    public T conditionId(Serializable value) {
-        String pkField = mappingHandler.getPkField(this.commandTable.getModelClass());
-        CommandField commandField = CommandField.builder()
-                .name(pkField)
-                .fieldOperator("=")
-                .value(value)
-                .type(CommandField.Type.WHERE_FIELD)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
-        return (T) this;
-    }
+//    public T conditionId(Serializable value) {
+//        String pkField = mappingHandler.getPkField(this.getWhereContext().getModelClass());
+//        ClassField commandField = ClassField.builder()
+//                .name(pkField)
+//                .fieldOperator("=")
+//                .value(value)
+//                .type(ClassField.Type.WHERE_FIELD)
+//                .orig(ClassField.Orig.MANUAL)
+//                .build();
+//        this.commandTable.addWhereField(commandField);
+//        return (T) this;
+//    }
 
     public T and() {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator("and")
-                .type(CommandField.Type.WHERE_AND_ONLY)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField("and", null, null, null);
         return (T) this;
     }
 
@@ -165,25 +115,12 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
     }
 
     public T and(String field, String operator, Object... values) {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator("and")
-                .name(field)
-                .fieldOperator(operator)
-                .value(values)
-                .type(CommandField.Type.WHERE_AND_FIELD)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField("and", field, operator, values);
         return (T) this;
     }
 
     public T or() {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator("or")
-                .type(CommandField.Type.WHERE_OR_ONLY)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField("or", null, null, null);
         return (T) this;
     }
 
@@ -197,35 +134,19 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
     }
 
     public T or(String field, String operator, Object... values) {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator("or")
-                .name(field)
-                .fieldOperator(operator)
-                .value(values)
-                .type(CommandField.Type.WHERE_OR_FIELD)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField("or", field, operator, values);
         return (T) this;
     }
 
     public T begin() {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator("(")
-                .type(CommandField.Type.WHERE_BEGIN)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField("(", null, null, null);
         return (T) this;
     }
 
     public T end() {
-        CommandField commandField = CommandField.builder()
-                .logicalOperator(")")
-                .type(CommandField.Type.WHERE_END)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addWhereField(commandField);
+        this.getWhereContext().addWhereField(")", null, null, null);
         return (T) this;
     }
+
+    protected abstract WhereContext getWhereContext();
 }

@@ -2,7 +2,6 @@
 //
 //import com.sonsure.commons.model.Page;
 //import com.sonsure.dumper.core.command.entity.Select;
-//import com.sonsure.dumper.core.persist.Jdbc;
 //import com.sonsure.dumper.core.persist.JdbcDao;
 //import com.sonsure.dumper.test.model.KUserInfo;
 //import com.sonsure.dumper.test.model.UserInfo;
@@ -23,7 +22,7 @@
 //
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
-//public class JdbcTemplateDaoImplTest {
+//public class JdbcTest {
 //
 //    @Autowired
 //    protected JdbcDao jdbcDao;
@@ -676,7 +675,7 @@
 //
 //    @Test
 //    public void nativeOneColResult() {
-//        Integer integer = Jdbc.nativeExecutor()
+//        Integer integer = jdbcDao.createNativeExecutor()
 //                .command("select sum(userAge) from UserInfo")
 //                .oneColResult(Integer.class);
 //        Assert.assertTrue(integer > 0);

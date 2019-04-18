@@ -6,7 +6,7 @@ import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.management.CommandField;
+import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
@@ -24,11 +24,11 @@ public class UpdateImpl<T> extends AbstractConditionBuilder<Update<T>> implement
     }
 
     public Update<T> set(String field, Object value) {
-        CommandField commandField = CommandField.builder()
+        ClassField commandField = ClassField.builder()
                 .name(field)
                 .value(value)
-                .type(CommandField.Type.UPDATE)
-                .orig(CommandField.Orig.MANUAL)
+                .type(ClassField.Type.UPDATE)
+                .orig(ClassField.Orig.MANUAL)
                 .build();
         this.commandTable.addOperationField(commandField);
         return this;
@@ -45,13 +45,13 @@ public class UpdateImpl<T> extends AbstractConditionBuilder<Update<T>> implement
             throw new SonsureJdbcException("主键属性值不能为空:" + pkField);
         }
 
-        CommandField pkCommandField = CommandField.builder()
+        ClassField pkCommandField = ClassField.builder()
                 .logicalOperator("where")
                 .name(pkField)
                 .fieldOperator("=")
                 .value(pkValue)
-                .type(CommandField.Type.WHERE_FIELD)
-                .orig(CommandField.Orig.ENTITY)
+                .type(ClassField.Type.WHERE_FIELD)
+                .orig(ClassField.Orig.ENTITY)
                 .build();
         this.commandTable.addWhereField(pkCommandField);
         //移除
@@ -59,11 +59,11 @@ public class UpdateImpl<T> extends AbstractConditionBuilder<Update<T>> implement
 
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
             //不忽略null，最后构建时根据updateNull设置处理null值
-            CommandField commandField = CommandField.builder()
+            ClassField commandField = ClassField.builder()
                     .name(entry.getKey())
                     .value(entry.getValue())
-                    .type(CommandField.Type.UPDATE)
-                    .orig(CommandField.Orig.ENTITY)
+                    .type(ClassField.Type.UPDATE)
+                    .orig(ClassField.Orig.ENTITY)
                     .build();
             this.commandTable.addOperationField(commandField);
         }
@@ -74,11 +74,11 @@ public class UpdateImpl<T> extends AbstractConditionBuilder<Update<T>> implement
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
             //不忽略null，最后构建时根据updateNull设置处理null值
-            CommandField commandField = CommandField.builder()
+            ClassField commandField = ClassField.builder()
                     .name(entry.getKey())
                     .value(entry.getValue())
-                    .type(CommandField.Type.UPDATE)
-                    .orig(CommandField.Orig.ENTITY)
+                    .type(ClassField.Type.UPDATE)
+                    .orig(ClassField.Orig.ENTITY)
                     .build();
             this.commandTable.addOperationField(commandField);
         }

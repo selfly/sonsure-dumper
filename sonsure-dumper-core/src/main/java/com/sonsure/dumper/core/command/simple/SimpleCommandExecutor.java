@@ -23,19 +23,18 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
     /**
      * 参数
      *
-     * @param name  the name
      * @param value the value
      * @return mybatis executor
      */
-    T parameter(String name, Object value);
+    T parameters(Object... value);
 
-    /**
-     * 是否强制native，command不做任何加工
-     *
-     * @param isForceNative
-     * @return
-     */
-    T forceNative(boolean isForceNative);
+//    /**
+//     * 是否强制native，command不做任何加工
+//     *
+//     * @param isForceNative
+//     * @return
+//     */
+//    T forceNative(boolean isForceNative);
 
     /**
      * 返回结果类对象

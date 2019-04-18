@@ -9,15 +9,25 @@ import java.util.List;
 /**
  * Created by liyd on 17/4/12.
  */
-public interface Select<T extends Object> extends ConditionBuilder<Select<T>> {
+public interface Select extends ConditionBuilder<Select> {
 
     /**
-     * 白名单
+     * from表
      *
-     * @param fields
+     * @param cls
      * @return
      */
-    Select<T> include(String... fields);
+    Select from(Class<?> cls);
+
+    /**
+     * from表
+     *
+     * @param cls
+     * @param alias
+     * @param clsAndAlias
+     * @return
+     */
+    Select from(Class<?> cls, String alias, Object... clsAndAlias);
 
     /**
      * 黑名单
@@ -25,7 +35,7 @@ public interface Select<T extends Object> extends ConditionBuilder<Select<T>> {
      * @param fields
      * @return
      */
-    Select<T> exclude(String... fields);
+    Select exclude(String... fields);
 
     /**
      * 添加查询字段
@@ -33,14 +43,14 @@ public interface Select<T extends Object> extends ConditionBuilder<Select<T>> {
      * @param fields
      * @return
      */
-    Select<T> addSelectField(String... fields);
+    Select extraField(String... fields);
 
-    /**
-     * 不查询实体类属性
-     *
-     * @return
-     */
-    Select<T> notSelectEntityField();
+//    /**
+//     * 不查询实体类属性
+//     *
+//     * @return
+//     */
+//    Select notSelectEntityField();
 
     /**
      * 添加 group by属性
@@ -48,7 +58,7 @@ public interface Select<T extends Object> extends ConditionBuilder<Select<T>> {
      * @param fields
      * @return
      */
-    Select<T> groupBy(String... fields);
+    Select groupBy(String... fields);
 
     /**
      * 排序属性
@@ -56,38 +66,71 @@ public interface Select<T extends Object> extends ConditionBuilder<Select<T>> {
      * @param fields
      * @return
      */
-    Select<T> orderBy(String... fields);
+    Select orderBy(String... fields);
 
-    /**
-     * 主键排序
-     *
-     * @return
-     */
-    Select<T> orderById();
+//    /**
+//     * 主键排序
+//     *
+//     * @return
+//     */
+//    Select orderById();
 
     /**
      * asc排序
      *
      * @return
      */
-    Select<T> asc();
+    Select asc();
 
     /**
      * desc 排序
      *
      * @return
      */
-    Select<T> desc();
+    Select desc();
+
+//    /**
+//     * 强制处理结果成泛型实体模型
+//     * 仅对objectResult、objList、objectPageList方法结果有效
+//     * 调用该方法后将对返回的Object类型(一般为Map<String,Object>)强制转换成泛型实体，
+//     * 泛型实体不包含的属性如果继承了{@link com.sonsure.commons.model.Model}将放入ExtensionProperty，否则将丢失
+//     *
+//     * @return
+//     */
+//    Select forceResultToModel();
 
     /**
-     * 强制处理结果成泛型实体模型
-     * 仅对objectResult、objList、objectPageList方法结果有效
-     * 调用该方法后将对返回的Object类型(一般为Map<String,Object>)强制转换成泛型实体，
-     * 泛型实体不包含的属性如果继承了{@link com.sonsure.commons.model.Model}将放入ExtensionProperty，否则将丢失
+     * 分页信息
      *
+     * @param pageNum
+     * @param pageSize
      * @return
      */
-    Select<T> forceResultToModel();
+    Select paginate(int pageNum, int pageSize);
+
+    /**
+     * 分页信息
+     *
+     * @param pageable the pageable
+     * @return select
+     */
+    Select paginate(Pageable pageable);
+
+    /**
+     * 分页信息
+     *
+     * @param offset the offset
+     * @param size   the size
+     * @return select select
+     */
+    Select limit(int offset, int size);
+
+    /**
+     * 是否count查询
+     *
+     * @return select
+     */
+    Select isCount(boolean isCount);
 
     /**
      * count查询
@@ -99,182 +142,118 @@ public interface Select<T extends Object> extends ConditionBuilder<Select<T>> {
     /**
      * 单个结果
      *
-     * @return
+     * @param <T> the type parameter
+     * @param cls the cls
+     * @return t
      */
-    T singleResult();
+    <T> T singleResult(Class<T> cls);
+
+    /**
+     * 单个结果
+     *
+     * @return t object
+     */
+    Object singleResult();
 
     /**
      * 第一条结果
      *
-     * @return
+     * @param <T> the type parameter
+     * @param cls the cls
+     * @return t
      */
-    T firstResult();
+    <T> T firstResult(Class<T> cls);
+
+    /**
+     * 第一条结果
+     *
+     * @return t object
+     */
+    Object firstResult();
 
     /**
      * 列表查询
      *
-     * @return
+     * @param <T> the type parameter
+     * @param cls the cls
+     * @return list
      */
-    List<T> list();
+    <T> List<T> list(Class<T> cls);
+
+    /**
+     * 列表查询
+     *
+     * @return list
+     */
+    List<Object> list();
 
     /**
      * 分页列表查询
      *
-     * @param pageable
-     * @return
+     * @param <T> the type parameter
+     * @param cls the cls
+     * @return page
      */
-    Page<T> pageList(Pageable pageable);
+    <T> Page<T> page(Class<T> cls);
 
     /**
      * 分页列表查询
      *
-     * @param pageable the pageable
-     * @param isCount  the is count
-     * @return page list
+     * @return page page
      */
-    Page<T> pageList(Pageable pageable, boolean isCount);
+    Page<Object> page();
 
-    /**
-     * 分页列表查询
-     *
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    Page<T> pageList(int pageNum, int pageSize);
+//    /**
+//     * 查询结果，返回结果会有多个值，多数情况下为Map<column,value>
+//     *
+//     * @return
+//     */
+//    Object objResult();
 
-    /**
-     * 分页列表查询
-     *
-     * @param pageNum  the page num
-     * @param pageSize the page size
-     * @param isCount  the is count
-     * @return page list
-     */
-    Page<T> pageList(int pageNum, int pageSize, boolean isCount);
+//    /**
+//     * 返回第一条记录的结果
+//     *
+//     * @return
+//     */
+//    Object objFirstResult();
 
-    /**
-     * 查询结果，返回结果会有多个值，多数情况下为Map<column,value>
-     *
-     * @return
-     */
-    Object objResult();
+//    /**
+//     * 查询结果，objectResult方法的列表查询，返回结果多数情况下为List<Map<column,value>>
+//     *
+//     * @return
+//     */
+//    List<Object> objList();
 
-    /**
-     * 返回第一条记录的结果
-     *
-     * @return
-     */
-    Object objFirstResult();
+//    /**
+//     * 简单查询，返回单一的结果，例如Long、Integer、String等
+//     *
+//     * @return
+//     */
+//    <T> T oneColResult(Class<T> clazz);
 
-    /**
-     * 查询结果，objectResult方法的列表查询，返回结果多数情况下为List<Map<column,value>>
-     *
-     * @return
-     */
-    List<?> objList();
+//    /**
+//     * 简单查询，返回单一的结果，只取第一条
+//     *
+//     * @return
+//     */
+//    <T> T oneColFirstResult(Class<T> clazz);
 
-    /**
-     * objectList分页查询
-     *
-     * @param pageable
-     * @return
-     */
-    Page<?> objPageList(Pageable pageable);
-
-    /**
-     * objectList分页查询
-     *
-     * @param pageable the pageable
-     * @param isCount  the is count
-     * @return page list
-     */
-    Page<?> objPageList(Pageable pageable, boolean isCount);
-
-    /**
-     * objectList分页查询
-     *
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    Page<?> objPageList(int pageNum, int pageSize);
-
-    /**
-     * objectList分页查询
-     *
-     * @param pageNum  the page num
-     * @param pageSize the page size
-     * @param isCount  the is count
-     * @return page list
-     */
-    Page<?> objPageList(int pageNum, int pageSize, boolean isCount);
-
-    /**
-     * 简单查询，返回单一的结果，例如Long、Integer、String等
-     *
-     * @return
-     */
-    <E> E oneColResult(Class<E> clazz);
-
-    /**
-     * 简单查询，返回单一的结果，只取第一条
-     *
-     * @return
-     */
-    <E> E oneColFirstResult(Class<E> clazz);
-
-    /**
-     * 查询结果，返回单一的结果列表，例如List<Long>
-     *
-     * @return
-     */
-    <E> List<E> oneColList(Class<E> clazz);
+//    /**
+//     * 查询结果，返回单一的结果列表，例如List<Long>
+//     *
+//     * @return
+//     */
+//    <T> List<T> oneColList(Class<T> clazz);
 
 
-    /**
-     * singleColumnList分页查询
-     *
-     * @param <E>      the type parameter
-     * @param clazz    the clazz
-     * @param pageable the pageable
-     * @return page list
-     */
-    <E> Page<E> oneColPageList(Class<E> clazz, Pageable pageable);
-
-
-    /**
-     * singleColumnList分页查询
-     *
-     * @param <E>      the type parameter
-     * @param clazz    the clazz
-     * @param pageable the pageable
-     * @param isCount  the is count
-     * @return page list
-     */
-    <E> Page<E> oneColPageList(Class<E> clazz, Pageable pageable, boolean isCount);
-
-    /**
-     * singleColumnList分页查询
-     *
-     * @param <E>      the type parameter
-     * @param clazz    the clazz
-     * @param pageNum  the page num
-     * @param pageSize the page size
-     * @return page list
-     */
-    <E> Page<E> oneColPageList(Class<E> clazz, int pageNum, int pageSize);
-
-    /**
-     * singleColumnList分页查询
-     *
-     * @param <E>      the type parameter
-     * @param clazz    the clazz
-     * @param pageNum  the page num
-     * @param pageSize the page size
-     * @param isCount  the is count
-     * @return page list
-     */
-    <E> Page<E> oneColPageList(Class<E> clazz, int pageNum, int pageSize, boolean isCount);
+//    /**
+//     * singleColumnList分页查询
+//     *
+//     * @param <T>      the type parameter
+//     * @param clazz    the clazz
+//     * @param pageable the pageable
+//     * @return page list
+//     */
+//    <T> Page<T> oneColPageList(Class<T> clazz, Pageable pageable);
 
 }

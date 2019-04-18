@@ -127,7 +127,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> Select<T> createSelect(Class<T> entityClass);
+    <T> Select createSelect(Class<T> entityClass);
 
 
     /**

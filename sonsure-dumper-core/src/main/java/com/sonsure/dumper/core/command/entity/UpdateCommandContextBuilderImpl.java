@@ -2,9 +2,9 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
-import com.sonsure.dumper.core.management.CommandField;
-import com.sonsure.dumper.core.management.CommandTable;
+import com.sonsure.dumper.core.management.ClassField;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,15 +20,15 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
     }
 
 
-    public CommandContext doBuild(CommandTable commandTable) {
+    public CommandContext doBuild(ExecutorContext commandTable) {
 
-        CommandContext commandContext = getGenericCommandContext(commandTable);
+        CommandContext commandContext = getCommonCommandContext(commandTable);
 
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
         command.append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias())).append(" set ");
 
         String pkField = this.getPkField(commandTable);
-        for (CommandField commandField : commandTable.getOperationFields()) {
+        for (ClassField commandField : commandTable.getOperationFields()) {
             //主键 不管怎么更新都不更新主键
             if (StringUtils.equals(pkField, commandField.getName())) {
                 continue;

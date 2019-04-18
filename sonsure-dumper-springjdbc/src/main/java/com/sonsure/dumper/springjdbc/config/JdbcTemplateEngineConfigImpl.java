@@ -12,8 +12,8 @@ public class JdbcTemplateEngineConfigImpl extends AbstractJdbcEngineConfig {
 
     private JdbcOperations jdbcOperations;
 
-    protected void doInit() {
-
+    @Override
+    protected void initPersistExecutor() {
         if (this.persistExecutor == null) {
             if (jdbcOperations == null) {
                 jdbcOperations = new JdbcTemplate(dataSource);

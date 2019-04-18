@@ -3,10 +3,11 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
-import com.sonsure.dumper.core.management.CommandField;
-import com.sonsure.dumper.core.management.CommandTable;
+import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.persist.KeyGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by liyd on 17/4/14.
@@ -19,51 +20,50 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
         super(commandExecutor, commandConversionHandler);
     }
 
-    public CommandContext doBuild(CommandTable commandTable) {
+    public CommandContext doBuild(ExecutorContext executorContext) {
 
-        CommandContext commandContext = getGenericCommandContext(commandTable);
-        KeyGenerator keyGenerator = getCommandExecutor().getKeyGenerator();
-        if (keyGenerator != null) {
-            String pkField = this.getPkField(commandTable);
-            Object generateKeyValue = keyGenerator.generateKeyValue(commandTable.getModelClass());
-            commandContext.setPkValue(generateKeyValue);
-            CommandField commandField = CommandField.builder()
-                    .name(pkField)
-                    .value(generateKeyValue)
-                    .type(keyGenerator.isPkValueByDb() ? CommandField.Type.INSERT_PK_NATIVE : CommandField.Type.INSERT)
-                    .orig(CommandField.Orig.GENERATOR)
-                    .build();
-            commandTable.addOperationField(commandField);
-        }
+        InsertContext insertContext = (InsertContext) executorContext;
+        CommandContext commandContext = getCommonCommandContext(insertContext);
+
+        String pkField = this.getPkField(insertContext.getModelClass());
 
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
         StringBuilder argsCommand = new StringBuilder("(");
 
-        command.append(this.getModelName(commandTable.getModelClass())).append(" (");
+        command.append(this.getModelName(insertContext.getModelClass())).append(" (");
 
-        for (CommandField commandField : commandTable.getOperationFields()) {
-            String fieldName = commandField.getName();
-            //数据库生成值，不能传参
-            if (commandField.getType() == CommandField.Type.INSERT_PK_NATIVE) {
-                //如果已经设置了主键值，则不用主键生成器生成 主键生成器field在build时上面代码中添加，所以肯定在人为设置之后
-                if (commandContext.getParameterNames().contains(fieldName)) {
-                    continue;
+        boolean hasPkParam = false;
+        for (ClassField classField : insertContext.getInsertFields()) {
+            String fieldName = classField.getName();
+            if (StringUtils.equalsIgnoreCase(pkField, fieldName)) {
+                hasPkParam = true;
+            }
+            command.append(fieldName).append(",");
+            argsCommand.append("?").append(",");
+            commandContext.addParameter(classField.getValue());
+        }
+        if (!hasPkParam) {
+            KeyGenerator keyGenerator = getCommandExecutor().getKeyGenerator();
+            if (keyGenerator != null) {
+                Object generateKeyValue = keyGenerator.generateKeyValue(insertContext.getModelClass());
+                //设置主键值，insert之后返回用
+                commandContext.setPkValue(generateKeyValue);
+                //由数据库生成
+                if (keyGenerator.isPkValueByDb()) {
+                    command.append(pkField).append(",");
+                    argsCommand.append("?").append(",");
+                } else {
+                    //非数据库生成，则不能传参方式，例如是oracle的序列名
+                    command.append(pkField).append(",");
+                    argsCommand.append(generateKeyValue).append(",");
                 }
-                command.append(fieldName).append(",");
-                argsCommand.append(commandField.getValue()).append(",");
-            } else {
-                command.append(fieldName).append(",");
-                argsCommand.append("?").append(",");
-                commandContext.addParameter(fieldName, commandField.getValue());
             }
         }
         command.deleteCharAt(command.length() - 1);
         argsCommand.deleteCharAt(argsCommand.length() - 1);
         argsCommand.append(")");
         command.append(")").append(" values ").append(argsCommand);
-
         commandContext.setCommand(command.toString());
-
         return commandContext;
     }
 }

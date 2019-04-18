@@ -2,9 +2,9 @@ package com.sonsure.dumper.core.command.mybatis;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
-import com.sonsure.dumper.core.management.CommandTable;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -27,12 +27,12 @@ public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder 
     }
 
     @Override
-    public CommandContext doBuild(CommandTable commandTable) {
+    public CommandContext doBuild(ExecutorContext commandTable) {
 
         CommandContext commandContext = new CommandContext();
 
-        String command = (String) commandTable.getExtendData(CommandTable.ExtendDataKey.COMMAND.name());
-        Map<String, Object> parameters = (Map<String, Object>) commandTable.getExtendData(CommandTable.ExtendDataKey.PARAMETERS.name());
+        String command = (String) commandTable.getExtendData(ExecutorContext.ExtendDataKey.COMMAND.name());
+        Map<String, Object> parameters = (Map<String, Object>) commandTable.getExtendData(ExecutorContext.ExtendDataKey.PARAMETERS.name());
 
         MappedStatement statement = sqlSessionFactory.getConfiguration().getMappedStatement(command);
         Configuration configuration = sqlSessionFactory.getConfiguration();

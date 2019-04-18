@@ -6,50 +6,47 @@ import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
-import com.sonsure.dumper.core.management.CommandTable;
 import com.sonsure.dumper.core.mapping.AbstractMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by liyd on 17/4/25.
  */
 public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecutor<T>> extends AbstractCommandExecutor implements SimpleCommandExecutor<T> {
 
-    protected String command;
-
-    protected Map<String, Object> parameters;
+    protected SimpleExecutorContext simpleExecutorContext;
 
     protected ResultHandler<?> resultHandler;
 
     public AbstractSimpleCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
         super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
-        parameters = new LinkedHashMap<>();
+        simpleExecutorContext = new SimpleExecutorContext();
     }
 
     @Override
     public T command(String command) {
-        this.command = command;
+        this.simpleExecutorContext.setCommand(command);
         return (T) this;
     }
 
     @Override
-    public T parameter(String name, Object value) {
-        this.parameters.put(name, value);
+    public T parameters(Object... value) {
+        for (Object val : value) {
+            this.simpleExecutorContext.addParameter(value);
+        }
         return (T) this;
     }
 
-    @Override
-    public T forceNative(boolean isForceNative) {
-        this.commandTable.setForceNative(isForceNative);
-        return (T) this;
-    }
+//    @Override
+//    public T forceNative(boolean isForceNative) {
+//        this.commandTable.setForceNative(isForceNative);
+//        return (T) this;
+//    }
 
     @Override
     public <E> T resultClass(Class<E> clazz) {
@@ -68,16 +65,14 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     public long count() {
-        this.setNativeData();
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         commandContext.setResultType(Long.class);
         Object result = this.persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL);
         return (Long) result;
     }
 
     public Object singleResult() {
-        this.setNativeData();
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         Object result = this.persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP);
         if (resultHandler != null) {
             return this.handleResult(result, resultHandler);
@@ -87,15 +82,13 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     @Override
     public <E> E oneColResult(Class<E> clazz) {
-        this.setNativeData();
-        this.commandTable.setResultType(clazz);
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        this.simpleExecutorContext.setResultType(clazz);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         return (E) this.persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL);
     }
 
     public List<?> list() {
-        this.setNativeData();
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         List<?> result = (List<?>) this.persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
         if (resultHandler != null) {
             return this.handleResult(result, resultHandler);
@@ -108,7 +101,6 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     public Page<?> pageList(int pageNum, int pageSize, boolean isCount) {
-        this.setNativeData();
         Page<?> page = this.doPageList(pageNum, pageSize, isCount, new PageQueryHandler() {
             @Override
             public List<?> queryList(CommandContext commandContext) {
@@ -134,36 +126,26 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     @Override
     public void insert() {
-        this.setNativeData();
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         commandContext.setPkValueByDb(false);
         this.persistExecutor.execute(commandContext, CommandType.INSERT);
     }
 
     @Override
     public Long insert(String pkColumn) {
-        this.setNativeData();
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         commandContext.setPkValueByDb(true);
         commandContext.setPkColumn(pkColumn);
         return (Long) this.persistExecutor.execute(commandContext, CommandType.INSERT);
     }
 
     public int update() {
-        this.setNativeData();
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         return (Integer) this.persistExecutor.execute(commandContext, CommandType.UPDATE);
     }
 
     public void execute() {
-        this.setNativeData();
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
         this.persistExecutor.execute(commandContext, CommandType.EXECUTE);
     }
-
-    protected void setNativeData() {
-        this.commandTable.addExtendData(CommandTable.ExtendDataKey.COMMAND.name(), this.command);
-        this.commandTable.addExtendData(CommandTable.ExtendDataKey.PARAMETERS.name(), this.parameters);
-    }
-
 }

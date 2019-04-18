@@ -3,9 +3,9 @@ package com.sonsure.dumper.core.command.simple;
 
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
-import com.sonsure.dumper.core.management.CommandTable;
 
 import java.util.Map;
 
@@ -18,9 +18,9 @@ public class SimpleCommandContextBuilder extends AbstractCommandContextBuilder {
         super(commandExecutor, commandConversionHandler);
     }
 
-    public CommandContext doBuild(CommandTable commandTable) {
-        String command = (String) commandTable.getExtendData(CommandTable.ExtendDataKey.COMMAND.name());
-        Map<String, Object> parameters = (Map<String, Object>) commandTable.getExtendData(CommandTable.ExtendDataKey.PARAMETERS.name());
+    public CommandContext doBuild(ExecutorContext commandTable) {
+        String command = (String) commandTable.getExtendData(ExecutorContext.ExtendDataKey.COMMAND.name());
+        Map<String, Object> parameters = (Map<String, Object>) commandTable.getExtendData(ExecutorContext.ExtendDataKey.PARAMETERS.name());
         CommandContext commandContext = new CommandContext();
         commandContext.setCommand(command);
         if (parameters != null) {

@@ -1,7 +1,5 @@
 package com.sonsure.dumper.core.command.entity;
 
-import java.io.Serializable;
-
 /**
  * 条件构建
  * 实现标识接口
@@ -10,13 +8,13 @@ import java.io.Serializable;
  */
 public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityCommandExecutor {
 
-    /**
-     * 表别名
-     *
-     * @param tableAlias
-     * @return
-     */
-    C tableAlias(String tableAlias);
+//    /**
+//     * 表别名
+//     *
+//     * @param tableAlias
+//     * @return
+//     */
+//    C tableAlias(String tableAlias);
 
     /**
      * where 关键字
@@ -108,13 +106,13 @@ public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityC
      */
     C conditionEntity(Object entity, String wholeLogicalOperator, String fieldLogicalOperator);
 
-    /**
-     * id条件
-     *
-     * @param value
-     * @return
-     */
-    C conditionId(Serializable value);
+//    /**
+//     * id条件
+//     *
+//     * @param value
+//     * @return
+//     */
+//    C conditionId(Serializable value);
 
     /**
      * and

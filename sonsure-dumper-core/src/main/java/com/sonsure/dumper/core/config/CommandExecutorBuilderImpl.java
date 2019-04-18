@@ -34,7 +34,7 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
         CommandContextBuilder commandContextBuilder = null;
 
         if (commandExecutorClass == Insert.class) {
-            commandExecutor = new InsertImpl<>(
+            commandExecutor = new InsertImpl(
                     getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
@@ -42,7 +42,7 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
                     jdbcEngineConfig.getCommandCase());
             commandContextBuilder = new InsertCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
         } else if (commandExecutorClass == Select.class) {
-            commandExecutor = new SelectImpl<>(
+            commandExecutor = new SelectImpl(
                     getExecutorMappingHandler(modelClass, jdbcEngineConfig),
                     getExecutorPageHandler(modelClass, jdbcEngineConfig),
                     getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
@@ -81,7 +81,6 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
             commandContextBuilder = new MybatisCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandConversionHandler(), jdbcEngineConfig.getMybatisSqlSessionFactory());
         }
 
-        commandExecutor.setModelClass(modelClass);
         commandExecutor.setCommandContextBuilder(commandContextBuilder);
         return commandExecutor;
     }
