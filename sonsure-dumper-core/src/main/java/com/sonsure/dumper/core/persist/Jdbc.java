@@ -56,6 +56,15 @@ public class Jdbc {
         return getDefaultJdbcEngineFacade().insert().forEntity(entity).execute();
     }
 
+    public static int update(Object entity) {
+        return getDefaultJdbcEngineFacade().update().setForEntityWhereId(entity).execute();
+    }
+
+    public static int delete(Class<?> cls, Serializable id) {
+        String pkField = getDefaultJdbcEngineFacade().getJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(cls);
+        return getDefaultJdbcEngineFacade().delete().from(cls).where(pkField, id).execute();
+    }
+
     public static NativeExecutor nativeExecutor() {
         return null;
     }

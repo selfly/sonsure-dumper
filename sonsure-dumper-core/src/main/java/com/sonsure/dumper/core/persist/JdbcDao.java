@@ -94,12 +94,11 @@ public interface JdbcDao {
     /**
      * 删除
      *
-     * @param entityClass
-     * @param id
-     * @param <T>
-     * @return
+     * @param entityClass the entity class
+     * @param id          the id
+     * @return int
      */
-    <T> int delete(Class<T> entityClass, Serializable id);
+    int delete(Class<?> entityClass, Serializable id);
 
     /**
      * 根据实体条件删除
@@ -138,20 +137,16 @@ public interface JdbcDao {
     /**
      * 创建delete对象
      *
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @return delete
      */
-    <T> Delete<T> createDelete(Class<T> entityClass);
+    Delete createDelete();
 
     /**
      * 创建update对象
      *
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @return update update
      */
-    <T> Update<T> createUpdate(Class<T> entityClass);
+    Update createUpdate();
 
     /**
      * 创建native executor对象

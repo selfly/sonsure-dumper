@@ -64,17 +64,17 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.createInsert().forEntity(entity).execute();
     }
 
-    public <T> int delete(Class<T> entityClass, Serializable id) {
-//        return this.createDelete(entityClass).where().conditionId(id).execute();
-        return 0;
+    public int delete(Class<?> entityClass, Serializable id) {
+        String pkField = getJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(entityClass);
+        return this.createDelete().from(entityClass).where(pkField, id).execute();
     }
 
     public <T> int delete(T entity) {
-        return this.createDelete(entity.getClass()).where().conditionEntity(entity).execute();
+        return this.createDelete().where().conditionEntity(entity).execute();
     }
 
     public <T> int update(T entity) {
-        return this.createUpdate(entity.getClass()).setForEntityWhereId(entity).execute();
+        return this.createUpdate().setForEntityWhereId(entity).execute();
     }
 
     public Select createSelect() {
@@ -85,11 +85,11 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.getJdbcEngine().createExecutor(Insert.class);
     }
 
-    public <T> Delete<T> createDelete(Class<T> entityClass) {
+    public Delete createDelete() {
         return this.getJdbcEngine().createExecutor(Delete.class);
     }
 
-    public <T> Update<T> createUpdate(Class<T> entityClass) {
+    public Update createUpdate() {
         return this.getJdbcEngine().createExecutor(Update.class);
     }
 

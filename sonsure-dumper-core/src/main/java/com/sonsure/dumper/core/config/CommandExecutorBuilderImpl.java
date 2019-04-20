@@ -40,10 +40,10 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
             commandExecutor = new SelectImpl(jdbcEngineConfig);
             commandContextBuilder = new SelectCommandContextBuilderImpl();
         } else if (commandExecutorClass == Update.class) {
-            commandExecutor = new UpdateImpl<>(jdbcEngineConfig);
+            commandExecutor = new UpdateImpl(jdbcEngineConfig);
             commandContextBuilder = new UpdateCommandContextBuilderImpl();
         } else if (commandExecutorClass == Delete.class) {
-            commandExecutor = new DeleteImpl<>(jdbcEngineConfig);
+            commandExecutor = new DeleteImpl(jdbcEngineConfig);
             commandContextBuilder = new DeleteCommandContextBuilderImpl();
         } else if (commandExecutorClass == NativeExecutor.class) {
             commandExecutor = new NativeExecutorImpl(jdbcEngineConfig);

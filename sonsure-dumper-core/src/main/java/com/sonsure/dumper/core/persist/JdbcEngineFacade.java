@@ -1,7 +1,9 @@
 package com.sonsure.dumper.core.persist;
 
+import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
+import com.sonsure.dumper.core.command.entity.Update;
 import com.sonsure.dumper.core.config.JdbcEngine;
 
 import java.io.Serializable;
@@ -41,6 +43,14 @@ public class JdbcEngineFacade {
 
     public Insert insertInto(Class<?> cls) {
         return this.insert().into(cls);
+    }
+
+    public Update update() {
+        return jdbcEngine.createExecutor(Update.class);
+    }
+
+    public Delete delete() {
+        return jdbcEngine.createExecutor(Delete.class);
     }
 
     public JdbcEngine getJdbcEngine() {

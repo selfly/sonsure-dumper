@@ -13,15 +13,18 @@ public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuild
     private static final String COMMAND_OPEN = "delete from ";
 
     public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
-//        StringBuilder command = new StringBuilder(COMMAND_OPEN);
-//        command.append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias()));
-//
-//        CommandContext whereCommandContext = this.buildWhereSql(commandTable);
-//        command.append(whereCommandContext.getCommand());
-//        CommandContext commandContext = getCommonCommandContext(commandTable);
-//        commandContext.setCommand(command.toString());
-//        commandContext.addParameters(whereCommandContext.getParameterMap());
+        DeleteContext deleteContext = (DeleteContext) executorContext;
+        StringBuilder command = new StringBuilder(COMMAND_OPEN);
+        command.append(this.getModelAliasName(deleteContext.getModelClass(), null));
 
-        return null;
+        CommandContext commandContext = getCommonCommandContext(deleteContext);
+
+        CommandContext whereCommandContext = this.buildWhereSql(deleteContext);
+        if (whereCommandContext != null) {
+            command.append(whereCommandContext.getCommand());
+            commandContext.addParameters(whereCommandContext.getParameters());
+        }
+        commandContext.setCommand(command.toString());
+        return commandContext;
     }
 }

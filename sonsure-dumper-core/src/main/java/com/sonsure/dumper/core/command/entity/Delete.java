@@ -3,7 +3,15 @@ package com.sonsure.dumper.core.command.entity;
 /**
  * Created by liyd on 17/4/14.
  */
-public interface Delete<T> extends ConditionBuilder<Delete<T>> {
+public interface Delete extends ConditionBuilder<Delete> {
+
+    /**
+     * 指定表
+     *
+     * @param cls
+     * @return
+     */
+    Delete from(Class<?> cls);
 
     /**
      * 执行

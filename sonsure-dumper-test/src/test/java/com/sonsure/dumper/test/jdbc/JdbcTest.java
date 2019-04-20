@@ -62,4 +62,32 @@ public class JdbcTest {
         Assert.assertTrue(user.getPassword().equals(userInfo.getPassword()));
     }
 
+    @Test
+    public void update() {
+        UserInfo user = new UserInfo();
+        user.setUserInfoId(21L);
+        user.setPassword("666666");
+        user.setLoginName("666777");
+        user.setGmtModify(new Date());
+
+        int count = Jdbc.update(user);
+
+        Assert.assertTrue(count == 1);
+
+        UserInfo user1 = Jdbc.get(UserInfo.class, 20L);
+        Assert.assertNotNull(user1);
+        Assert.assertTrue(user1.getUserInfoId().equals(20L));
+        Assert.assertTrue(user1.getLoginName().equals("666777"));
+        Assert.assertTrue(user1.getPassword().equals("666666"));
+        Assert.assertNotNull(user1.getGmtModify());
+    }
+
+    @Test
+    public void delete() {
+        int count = Jdbc.delete(UserInfo.class, 39L);
+        Assert.assertTrue(count == 1);
+        UserInfo user = Jdbc.get(UserInfo.class, 39L);
+        Assert.assertNull(user);
+    }
+
 }

@@ -22,10 +22,10 @@ public class JdbcTemplateDaoImplTest {
     @Autowired
     protected JdbcDao jdbcDao;
 
-//    @Before
+    //    @Before
     public void before() {
         //初始化测试数据
-        jdbcDao.createDelete(UserInfo.class)
+        jdbcDao.createDelete().from(UserInfo.class)
                 .execute();
         for (int i = 1; i < 51; i++) {
             UserInfo user = new UserInfo();
@@ -67,32 +67,32 @@ public class JdbcTemplateDaoImplTest {
         Assert.assertTrue(user.getPassword().equals(userInfo.getPassword()));
     }
 
-//
-//    @Test
-//    public void jdbcDaoUpdate() {
-//        UserInfo user = new UserInfo();
-//        user.setUserInfoId(20L);
-//        user.setPassword("666666");
-//        user.setLoginName("666777");
-//        user.setGmtModify(new Date());
-//        int count = jdbcDao.update(user);
-//        Assert.assertTrue(count == 1);
-//
-//        UserInfo user1 = jdbcDao.get(UserInfo.class, 20L);
-//        Assert.assertNotNull(user1);
-//        Assert.assertTrue(user1.getUserInfoId().equals(20L));
-//        Assert.assertTrue(user1.getLoginName().equals("666777"));
-//        Assert.assertTrue(user1.getPassword().equals("666666"));
-//        Assert.assertNotNull(user1.getGmtModify());
-//    }
-//
-//    @Test
-//    public void jdbcDaoDelete() {
-//        int count = jdbcDao.delete(UserInfo.class, 38L);
-//        Assert.assertTrue(count == 1);
-//        UserInfo user = jdbcDao.get(UserInfo.class, 38L);
-//        Assert.assertNull(user);
-//    }
+
+    @Test
+    public void jdbcDaoUpdate() {
+        UserInfo user = new UserInfo();
+        user.setUserInfoId(20L);
+        user.setPassword("666666");
+        user.setLoginName("666777");
+        user.setGmtModify(new Date());
+        int count = jdbcDao.update(user);
+        Assert.assertTrue(count == 1);
+
+        UserInfo user1 = jdbcDao.get(UserInfo.class, 20L);
+        Assert.assertNotNull(user1);
+        Assert.assertTrue(user1.getUserInfoId().equals(20L));
+        Assert.assertTrue(user1.getLoginName().equals("666777"));
+        Assert.assertTrue(user1.getPassword().equals("666666"));
+        Assert.assertNotNull(user1.getGmtModify());
+    }
+
+    @Test
+    public void jdbcDaoDelete() {
+        int count = jdbcDao.delete(UserInfo.class, 38L);
+        Assert.assertTrue(count == 1);
+        UserInfo user = jdbcDao.get(UserInfo.class, 38L);
+        Assert.assertNull(user);
+    }
 //
 //
 //    @Test

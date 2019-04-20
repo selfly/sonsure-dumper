@@ -3,6 +3,9 @@ package com.sonsure.dumper.core.command.entity;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
+import com.sonsure.dumper.core.management.ClassField;
+import com.sonsure.dumper.core.management.ClassFieldWrapper;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by liyd on 17/4/14.
@@ -13,42 +16,51 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
-        CommandContext commandContext = getCommonCommandContext(executorContext);
+        UpdateContext updateContext = (UpdateContext) executorContext;
+        CommandContext commandContext = getCommonCommandContext(updateContext);
 
-//        StringBuilder command = new StringBuilder(COMMAND_OPEN);
-//        command.append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias())).append(" set ");
-//
-//        String pkField = this.getPkField(commandTable);
-//        for (ClassField commandField : commandTable.getOperationFields()) {
-//            //主键 不管怎么更新都不更新主键
-//            if (StringUtils.equals(pkField, commandField.getName())) {
-//                continue;
-//            }
-//            //null值
-//            if (commandField.getValue() == null && commandTable.isIgnoreNull()) {
-//                continue;
-//            }
-//
-//            Object[] objects = this.decideNativeField(commandTable, commandField);
-//
-//            command.append(objects[3]).append(" = ");
-//            if (commandField.getValue() == null) {
-//                command.append("null");
-//            } else if (BooleanUtils.toBoolean(objects[1].toString())) {
-//                command.append(objects[4]);
-//            } else {
-//                command.append("?");
-//                commandContext.addParameter(((String) objects[2]), commandField.getValue());
-//            }
-//            command.append(",");
-//        }
-//        command.deleteCharAt(command.length() - 1);
-//
-//        CommandContext whereCommandContext = this.buildWhereSql(commandTable);
-//        command.append(whereCommandContext.getCommand());
-//
-//        commandContext.setCommand(command.toString());
-//        commandContext.addParameters(whereCommandContext.getParameterMap());
+        StringBuilder command = new StringBuilder(COMMAND_OPEN);
+        command.append(this.getModelAliasName(updateContext.getModelClass(), null)).append(" set ");
+
+        String pkField = this.getPkField(updateContext.getModelClass(), jdbcEngineConfig.getMappingHandler());
+        for (ClassField classField : updateContext.getSetFields()) {
+            //主键 不管怎么更新都不更新主键
+            if (StringUtils.equals(pkField, classField.getName())) {
+                continue;
+            }
+            //null值
+            if (classField.getValue() == null && updateContext.isIgnoreNull()) {
+                continue;
+            }
+
+            ClassFieldWrapper fieldWrapper = new ClassFieldWrapper(classField);
+
+
+//                 * 0 是否原生属性
+//                    * 1 是否原生value
+//                    * 2 field名
+//                    * 3 带表别名的field名 如果没有表别名，field名一致
+//                    * 4 解析过的value 只对String有效
+//     */
+
+            command.append(fieldWrapper.getFieldName()).append(" = ");
+            if (classField.getValue() == null) {
+                command.append("null");
+            } else if (fieldWrapper.isNative()) {
+                command.append(fieldWrapper.getValue());
+            } else {
+                command.append("?");
+                commandContext.addParameter(classField.getValue());
+            }
+            command.append(",");
+        }
+        command.deleteCharAt(command.length() - 1);
+
+        CommandContext whereCommandContext = this.buildWhereSql(updateContext);
+        command.append(whereCommandContext.getCommand());
+
+        commandContext.setCommand(command.toString());
+        commandContext.addParameters(whereCommandContext.getParameters());
 
         return commandContext;
     }
