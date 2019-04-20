@@ -7,6 +7,7 @@ import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ModelClassCache;
 import com.sonsure.dumper.core.management.ModelClassMeta;
 import com.sonsure.dumper.core.management.ModelFieldMeta;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,15 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         String simpleName = clazz.getSimpleName();
         if (!classMapping.containsKey(simpleName)) {
             classMapping.put(clazz.getSimpleName(), clazz);
+        }
+    }
+
+    public void addClassMapping(Class<?>[] classes) {
+        if (ArrayUtils.isEmpty(classes)) {
+            return;
+        }
+        for (Class<?> aClass : classes) {
+            this.addClassMapping(aClass);
         }
     }
 

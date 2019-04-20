@@ -2,49 +2,62 @@ package com.sonsure.dumper.core.persist;
 
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
-import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Jdbc {
 
-    protected static Map<String, JdbcEngine> jdbcEngineMap = new HashMap<>();
+    protected static Map<String, JdbcEngineFacade> jdbcFacadeMap = new HashMap<>();
 
-    protected static ThreadLocal<JdbcEngine> jdbcEngineThreadLocal = new ThreadLocal<>();
+    protected static JdbcEngineFacade defaultJdbcEngineFacade;
 
-    protected static JdbcEngine defaultJdbcEngine;
-
-    public static void use(String name) {
-        JdbcEngine jdbcEngine = jdbcEngineMap.get(name);
-        if (jdbcEngine == null) {
-            throw new SonsureJdbcException("指定的JdbcEngine不存在:" + name);
+    public static JdbcEngineFacade use(String name) {
+        JdbcEngineFacade jdbcFacade = jdbcFacadeMap.get(name);
+        if (jdbcFacade == null) {
+            throw new SonsureJdbcException("指定的JDBC配置名称不存在:" + name);
         }
-        jdbcEngineThreadLocal.set(jdbcEngine);
+        return jdbcFacade;
     }
 
-    public static JdbcEngine getJdbcEngine() {
-        JdbcEngine jdbcEngine = jdbcEngineThreadLocal.get();
-        if (jdbcEngine != null) {
-            return jdbcEngine;
+    public static void addJdbcFacade(JdbcEngineFacade jdbcEngineFacade) {
+        jdbcFacadeMap.put(jdbcEngineFacade.getName(), jdbcEngineFacade);
+        if (jdbcEngineFacade.isDefault()) {
+            if (defaultJdbcEngineFacade != null && defaultJdbcEngineFacade != jdbcEngineFacade) {
+                throw new SonsureJdbcException("只能设置一个默认的JDBC配置");
+            }
+            defaultJdbcEngineFacade = jdbcEngineFacade;
         }
-        if (defaultJdbcEngine == null) {
-            throw new SonsureJdbcException("没有指定使用的JdbcEngine，且没有配置默认的JdbcEngine");
-        }
-        return defaultJdbcEngine;
     }
 
-    public static void addJdbcEngine(JdbcEngine jdbcEngine) {
-        defaultJdbcEngine = jdbcEngine;
+    public static JdbcEngineFacade getDefaultJdbcEngineFacade() {
+        if (defaultJdbcEngineFacade == null) {
+            throw new SonsureJdbcException("没有默认的Jdbc配置");
+        }
+        return defaultJdbcEngineFacade;
     }
+
 
     public static Select select() {
-        return getJdbcEngine().createExecutor(Select.class);
+        return getDefaultJdbcEngineFacade().select();
+    }
+
+    public static Select selectFrom(Class<?> cls) {
+        return select().from(cls);
+    }
+
+    public static <T> T get(Class<T> cls, Serializable id) {
+        return getDefaultJdbcEngineFacade().get(cls, id);
+    }
+
+    public static Object insert(Object entity) {
+        return getDefaultJdbcEngineFacade().insert().forEntity(entity).execute();
     }
 
     public static NativeExecutor nativeExecutor() {
-        return getJdbcEngine().createExecutor(NativeExecutor.class);
+        return null;
     }
 
 

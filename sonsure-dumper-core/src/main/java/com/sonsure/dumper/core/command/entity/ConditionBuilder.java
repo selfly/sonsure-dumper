@@ -112,7 +112,7 @@ public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityC
 //     * @param value
 //     * @return
 //     */
-//    C conditionId(Serializable value);
+//    C conditionPk(Serializable value);
 
     /**
      * and

@@ -6,10 +6,8 @@ import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -22,8 +20,8 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 
     protected SelectContext selectContext;
 
-    public SelectImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
+    public SelectImpl(JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
         selectContext = new SelectContext();
     }
 
@@ -114,18 +112,21 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 
     @Override
     public long count() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext);
-        String countCommand = this.pageHandler.getCountCommand(commandContext.getCommand(), persistExecutor.getDialect());
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        PersistExecutor persistExecutor = this.jdbcEngineConfig.getPersistExecutor();
+        String countCommand = this.jdbcEngineConfig.getPageHandler().getCountCommand(commandContext.getCommand(), persistExecutor.getDialect());
         CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
         countCommandContext.setCommand(countCommand);
         countCommandContext.setResultType(Long.class);
-        Object result = this.persistExecutor.execute(countCommandContext, CommandType.QUERY_ONE_COL);
+        Object result = persistExecutor.execute(countCommandContext, CommandType.QUERY_ONE_COL);
         return (Long) result;
     }
 
     @Override
     public <T> T singleResult(Class<T> cls) {
-        return null;
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        commandContext.setResultType(cls);
+        return (T) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_SINGLE_RESULT);
     }
 
     @Override

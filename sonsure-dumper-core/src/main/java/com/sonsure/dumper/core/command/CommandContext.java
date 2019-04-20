@@ -12,20 +12,9 @@ import java.util.List;
 public class CommandContext {
 
 //    /**
-//     * 对应实体类，如果是native多表联查等操作可能为null
-//     */
-//    private Class<?> modelClass;
-//
-//
-//    /**
 //     * 主键对应field
 //     */
 //    private String pkField;
-//
-//    /**
-//     * 主键列
-//     */
-//    private String pkColumn;
 
     /**
      * 命令，一般指sql
@@ -52,12 +41,11 @@ public class CommandContext {
     /**
      * 主键值，pkValueByDb=false才有
      */
-    private Object pkValue;
-//
+    private GenerateKey generateKey;
+
+    //
 //    private String commandCase;
 //
-//    private MappingHandler mappingHandler;
-
     public CommandContext() {
         parameterNames = new ArrayList<>();
         parameters = new ArrayList<>();
@@ -95,13 +83,21 @@ public class CommandContext {
         this.resultType = resultType;
     }
 
-    public Object getPkValue() {
-        return pkValue;
+    public GenerateKey getGenerateKey() {
+        return generateKey;
     }
 
-    public void setPkValue(Object pkValue) {
-        this.pkValue = pkValue;
+    public void setGenerateKey(GenerateKey generateKey) {
+        this.generateKey = generateKey;
     }
+
+//    public MappingHandler getMappingHandler() {
+//        return mappingHandler;
+//    }
+//
+//    public void setMappingHandler(MappingHandler mappingHandler) {
+//        this.mappingHandler = mappingHandler;
+//    }
 
     //
 //    public Class<?> getResolvedResultType() {

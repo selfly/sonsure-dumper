@@ -8,6 +8,27 @@ import com.sonsure.dumper.core.command.CommandExecutor;
  */
 public interface JdbcEngine {
 
+    /**
+     * 名称
+     *
+     * @return
+     */
+    String getName();
+
+    /**
+     * 是否默认
+     *
+     * @return
+     */
+    boolean isDefault();
+
+    /**
+     * jdbc 配置
+     *
+     * @return
+     */
+    JdbcEngineConfig getJdbcEngineConfig();
+
 
     /**
      * 创建执行器
@@ -17,15 +38,5 @@ public interface JdbcEngine {
      * @return
      */
     <T extends CommandExecutor> T createExecutor(Class<T> commandExecutorClass);
-
-    /**
-     * 创建执行器
-     *
-     * @param <T>  the type parameter
-     * @param modelClass the model class
-     * @param commandExecutorClass 执行器class
-     * @return t
-     */
-    <T extends CommandExecutor> T createExecutor(Class<?> modelClass, Class<T> commandExecutorClass);
 
 }

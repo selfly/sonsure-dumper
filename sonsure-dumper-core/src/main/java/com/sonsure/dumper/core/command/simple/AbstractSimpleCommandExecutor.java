@@ -6,11 +6,7 @@ import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
-import com.sonsure.dumper.core.mapping.AbstractMappingHandler;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 import java.util.List;
 
@@ -23,8 +19,8 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     protected ResultHandler<?> resultHandler;
 
-    public AbstractSimpleCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
+    public AbstractSimpleCommandExecutor(JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
         simpleExecutorContext = new SimpleExecutorContext();
     }
 
@@ -51,10 +47,10 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     @Override
     public <E> T resultClass(Class<E> clazz) {
         this.resultHandler = DefaultResultHandler.newInstance(clazz);
-        MappingHandler mappingHandler = this.getMappingHandler();
-        if (mappingHandler instanceof AbstractMappingHandler) {
-            ((AbstractMappingHandler) mappingHandler).addClassMapping(clazz);
-        }
+//        MappingHandler mappingHandler = this.getMappingHandler();
+//        if (mappingHandler instanceof AbstractMappingHandler) {
+//            ((AbstractMappingHandler) mappingHandler).addClassMapping(clazz);
+//        }
         return (T) this;
     }
 
@@ -65,15 +61,15 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     public long count() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext, getJdbcEngineConfig());
         commandContext.setResultType(Long.class);
-        Object result = this.persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL);
+        Object result = getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL);
         return (Long) result;
     }
 
     public Object singleResult() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
-        Object result = this.persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext, getJdbcEngineConfig());
+        Object result = getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
         if (resultHandler != null) {
             return this.handleResult(result, resultHandler);
         }
@@ -82,14 +78,14 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     @Override
     public <E> E oneColResult(Class<E> clazz) {
-        this.simpleExecutorContext.setResultType(clazz);
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
-        return (E) this.persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL);
+//        this.simpleExecutorContext.setResultType(clazz);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext, getJdbcEngineConfig());
+        return (E) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL);
     }
 
     public List<?> list() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
-        List<?> result = (List<?>) this.persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext, getJdbcEngineConfig());
+        List<?> result = (List<?>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
         if (resultHandler != null) {
             return this.handleResult(result, resultHandler);
         }
@@ -101,17 +97,18 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     public Page<?> pageList(int pageNum, int pageSize, boolean isCount) {
-        Page<?> page = this.doPageList(pageNum, pageSize, isCount, new PageQueryHandler() {
-            @Override
-            public List<?> queryList(CommandContext commandContext) {
-                return (List<?>) persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-            }
-        });
-        if (this.resultHandler != null && page.getList() != null) {
-            List<?> list = this.handleResult(page.getList(), resultHandler);
-            return new Page<>(list, page.getPagination());
-        }
-        return page;
+//        Page<?> page = this.doPageList(pageNum, pageSize, isCount, new PageQueryHandler() {
+//            @Override
+//            public List<?> queryList(CommandContext commandContext) {
+//                return (List<?>) persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
+//            }
+//        });
+//        if (this.resultHandler != null && page.getList() != null) {
+//            List<?> list = this.handleResult(page.getList(), resultHandler);
+//            return new Page<>(list, page.getPagination());
+//        }
+//        return page;
+        return null;
     }
 
     @Override
@@ -126,26 +123,27 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     @Override
     public void insert() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext, getJdbcEngineConfig());
         commandContext.setPkValueByDb(false);
-        this.persistExecutor.execute(commandContext, CommandType.INSERT);
+        getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.INSERT);
     }
 
     @Override
     public Long insert(String pkColumn) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
-        commandContext.setPkValueByDb(true);
-        commandContext.setPkColumn(pkColumn);
-        return (Long) this.persistExecutor.execute(commandContext, CommandType.INSERT);
+//        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
+//        commandContext.setPkValueByDb(true);
+//        commandContext.setPkColumn(pkColumn);
+//        return (Long) this.persistExecutor.execute(commandContext, CommandType.INSERT);
+        return null;
     }
 
     public int update() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
-        return (Integer) this.persistExecutor.execute(commandContext, CommandType.UPDATE);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext, getJdbcEngineConfig());
+        return (Integer) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.UPDATE);
     }
 
     public void execute() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext);
-        this.persistExecutor.execute(commandContext, CommandType.EXECUTE);
+        CommandContext commandContext = this.commandContextBuilder.build(this.simpleExecutorContext, getJdbcEngineConfig());
+        getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.EXECUTE);
     }
 }

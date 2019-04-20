@@ -1,6 +1,8 @@
 package com.sonsure.dumper.springjdbc.persist;
 
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.GenerateKey;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.persist.AbstractPersistExecutor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
@@ -24,7 +26,8 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     private JdbcOperations jdbcOperations;
 
-    public JdbcTemplatePersistExecutor(JdbcOperations jdbcOperations) {
+    public JdbcTemplatePersistExecutor(JdbcOperations jdbcOperations, JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
         this.jdbcOperations = jdbcOperations;
     }
 
@@ -39,13 +42,13 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     @Override
     public Object insert(final CommandContext commandContext) {
-        final String pkColumn = commandContext.getPkColumn();
+        final GenerateKey generateKey = commandContext.getGenerateKey();
         //数据库生成 或没有设置主键值 处理
-        if (commandContext.isPkValueByDb() || !commandContext.getParameterNames().contains(pkColumn)) {
+        if (commandContext.isPkValueByDb()) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcOperations.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement ps = con.prepareStatement(commandContext.getResolvedCommand(), new String[]{pkColumn});
+                    PreparedStatement ps = con.prepareStatement(commandContext.getResolvedCommand(), new String[]{generateKey.getColumn()});
                     ArgumentPreparedStatementSetter pss = new ArgumentPreparedStatementSetter(commandContext.getParameters()
                             .toArray());
                     pss.setValues(ps);
@@ -57,19 +60,19 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             return number == null ? null : number.longValue();
         } else {
             jdbcOperations.update(commandContext.getResolvedCommand(), commandContext.getParameters().toArray());
-            return commandContext.getPkValue();
+            return generateKey.getValue();
         }
     }
 
     @Override
     public List<?> queryForList(CommandContext commandContext) {
-        return jdbcOperations.query(commandContext.getResolvedCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResolvedResultType(), commandContext.getMappingHandler()));
+        return jdbcOperations.query(commandContext.getResolvedCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResultType(), getJdbcEngineConfig().getMappingHandler()));
     }
 
     @Override
     public Object querySingleResult(CommandContext commandContext) {
         //采用list方式查询，当记录不存在时返回null而不会抛出异常,多于一条时会抛异常
-        List<?> list = jdbcOperations.query(commandContext.getResolvedCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResolvedResultType(), commandContext.getMappingHandler()));
+        List<?> list = jdbcOperations.query(commandContext.getResolvedCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResultType(), getJdbcEngineConfig().getMappingHandler()));
         return DataAccessUtils.singleResult(list);
     }
 

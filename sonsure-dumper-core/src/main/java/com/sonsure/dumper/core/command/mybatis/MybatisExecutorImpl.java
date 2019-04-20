@@ -2,10 +2,7 @@ package com.sonsure.dumper.core.command.mybatis;
 
 
 import com.sonsure.dumper.core.command.simple.AbstractSimpleCommandExecutor;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 import java.util.Map;
 
@@ -15,14 +12,14 @@ import java.util.Map;
 public class MybatisExecutorImpl extends AbstractSimpleCommandExecutor<MybatisExecutor> implements MybatisExecutor {
 
 
-    public MybatisExecutorImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
+    public MybatisExecutorImpl(JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
     }
 
     @Override
     public MybatisExecutor parameters(Map<String, Object> parameters) {
         if (parameters != null) {
-            this.parameters.putAll(parameters);
+//            this.parameters.putAll(parameters);
         }
         return this;
     }

@@ -1,10 +1,9 @@
 package com.sonsure.dumper.core.command.entity;
 
 
-import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.ExecutorContext;
-import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.management.CommandClass;
@@ -20,11 +19,7 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "select ";
 
-    public SelectCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
-        super(commandExecutor, commandConversionHandler);
-    }
-
-    public CommandContext doBuild(ExecutorContext executorContext) {
+    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
         SelectContext selectContext = (SelectContext) executorContext;
         StringBuilder command = new StringBuilder(COMMAND_OPEN);

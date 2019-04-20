@@ -1,78 +1,72 @@
-//package com.sonsure.dumper.test.jdbc;
-//
-//import com.sonsure.commons.model.Page;
-//import com.sonsure.dumper.core.command.entity.Select;
-//import com.sonsure.dumper.core.persist.Jdbc;
-//import com.sonsure.dumper.core.persist.JdbcDao;
-//import com.sonsure.dumper.test.model.KUserInfo;
-//import com.sonsure.dumper.test.model.UserInfo;
-//import org.junit.Assert;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.dao.IncorrectResultSizeDataAccessException;
-//import org.springframework.test.context.ContextConfiguration;
-//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-//
-//import java.util.*;
-//
-///**
-// * Created by liyd on 17/4/12.
-// */
-//
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
-//public class JdbcTemplateDaoImplTest {
-//
-//    @Autowired
-//    protected JdbcDao jdbcDao;
-//
+package com.sonsure.dumper.test.jdbc;
+
+import com.sonsure.dumper.core.persist.JdbcDao;
+import com.sonsure.dumper.test.model.UserInfo;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Date;
+
+/**
+ * Created by liyd on 17/4/12.
+ */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+public class JdbcTemplateDaoImplTest {
+
+    @Autowired
+    protected JdbcDao jdbcDao;
+
 //    @Before
-//    public void before() {
-//        //初始化测试数据
-//        jdbcDao.createDelete(UserInfo.class)
-//                .execute();
-//        for (int i = 1; i < 51; i++) {
-//            UserInfo user = new UserInfo();
-//            user.setUserInfoId(Long.valueOf(i));
-//            user.setLoginName("name-" + i);
-//            user.setPassword("123456-" + i);
-//            user.setUserAge(i);
-//            user.setGmtCreate(new Date());
-//
-//            jdbcDao.insert(user);
-//        }
-//    }
-//
-//
-//    @Test
-//    public void jdbcDaoGet() {
-//        UserInfo user = jdbcDao.get(UserInfo.class, 30L);
-//        Assert.assertNotNull(user);
-//        Assert.assertTrue(user.getUserInfoId().equals(30L));
-//        Assert.assertTrue(user.getLoginName().equals("name-30"));
-//        Assert.assertTrue(user.getPassword().equals("123456-30"));
-//    }
-//
-//
-//    @Test
-//    public void jdbcDaoInsert() {
-//
-//        UserInfo user = new UserInfo();
-//        user.setLoginName("liyd2017");
-//        user.setPassword("2017");
-//        user.setUserAge(18);
-//        user.setGmtCreate(new Date());
-//
-//        Long id = (Long) jdbcDao.insert(user);
-//        Assert.assertTrue(id > 0);
-//
-//        UserInfo userInfo = jdbcDao.get(UserInfo.class, id);
-//        Assert.assertTrue(user.getLoginName().equals(userInfo.getLoginName()));
-//        Assert.assertTrue(user.getPassword().equals(userInfo.getPassword()));
-//    }
-//
+    public void before() {
+        //初始化测试数据
+        jdbcDao.createDelete(UserInfo.class)
+                .execute();
+        for (int i = 1; i < 51; i++) {
+            UserInfo user = new UserInfo();
+            user.setUserInfoId(Long.valueOf(i));
+            user.setLoginName("name-" + i);
+            user.setPassword("123456-" + i);
+            user.setUserAge(i);
+            user.setGmtCreate(new Date());
+
+            jdbcDao.insert(user);
+        }
+    }
+
+
+    @Test
+    public void jdbcDaoGet() {
+        UserInfo user = jdbcDao.get(UserInfo.class, 30L);
+        Assert.assertNotNull(user);
+        Assert.assertTrue(user.getUserInfoId().equals(30L));
+        Assert.assertTrue(user.getLoginName().equals("name-30"));
+        Assert.assertTrue(user.getPassword().equals("123456-30"));
+    }
+
+
+    @Test
+    public void jdbcDaoInsert() {
+
+        UserInfo user = new UserInfo();
+        user.setLoginName("liyd2017");
+        user.setPassword("2017");
+        user.setUserAge(18);
+        user.setGmtCreate(new Date());
+
+        Long id = (Long) jdbcDao.insert(user);
+        Assert.assertTrue(id > 0);
+
+        UserInfo userInfo = jdbcDao.get(UserInfo.class, id);
+        Assert.assertTrue(user.getLoginName().equals(userInfo.getLoginName()));
+        Assert.assertTrue(user.getPassword().equals(userInfo.getPassword()));
+    }
+
 //
 //    @Test
 //    public void jdbcDaoUpdate() {
@@ -793,5 +787,5 @@
 //
 //        Assert.assertTrue(page.getList().size() == 10);
 //    }
-//
-//}
+
+}

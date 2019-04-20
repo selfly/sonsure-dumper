@@ -2,10 +2,7 @@ package com.sonsure.dumper.core.command;
 
 
 import com.sonsure.dumper.core.command.simple.ResultHandler;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,39 +14,14 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
 
     protected CommandContextBuilder commandContextBuilder;
 
-    /**
-     * 以下属性若不设置，默认使用jdbcEngineConfig中配置
-     **/
+    protected JdbcEngineConfig jdbcEngineConfig;
 
-    protected MappingHandler mappingHandler;
-
-    protected PageHandler pageHandler;
-
-    protected KeyGenerator keyGenerator;
-
-    protected PersistExecutor persistExecutor;
-
-    public AbstractCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        this.setMappingHandler(mappingHandler);
-        this.setPageHandler(pageHandler);
-        this.setKeyGenerator(keyGenerator);
-        this.setPersistExecutor(persistExecutor);
-    }
-
-    public void setMappingHandler(MappingHandler mappingHandler) {
-        this.mappingHandler = mappingHandler;
+    public AbstractCommandExecutor(JdbcEngineConfig jdbcEngineConfig) {
+        this.jdbcEngineConfig = jdbcEngineConfig;
     }
 
     public void setCommandContextBuilder(CommandContextBuilder commandContextBuilder) {
         this.commandContextBuilder = commandContextBuilder;
-    }
-
-    public void setPersistExecutor(PersistExecutor persistExecutor) {
-        this.persistExecutor = persistExecutor;
-    }
-
-    public void setPageHandler(PageHandler pageHandler) {
-        this.pageHandler = pageHandler;
     }
 
 //    @SuppressWarnings({"rawtypes", "unchecked"})
@@ -104,24 +76,8 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         return commandContextBuilder;
     }
 
-    public PersistExecutor getPersistExecutor() {
-        return persistExecutor;
-    }
-
-    public MappingHandler getMappingHandler() {
-        return mappingHandler;
-    }
-
-    public PageHandler getPageHandler() {
-        return pageHandler;
-    }
-
-    public KeyGenerator getKeyGenerator() {
-        return keyGenerator;
-    }
-
-    public void setKeyGenerator(KeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
+    public JdbcEngineConfig getJdbcEngineConfig() {
+        return jdbcEngineConfig;
     }
 
     protected interface PageQueryHandler {

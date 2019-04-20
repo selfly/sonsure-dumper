@@ -1,15 +1,12 @@
 package com.sonsure.dumper.core.config;
 
 
-import com.sonsure.dumper.core.command.CommandExecutor;
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 import org.apache.ibatis.session.SqlSessionFactory;
-
-import javax.sql.DataSource;
 
 /**
  * jdbc配置类
@@ -19,13 +16,25 @@ import javax.sql.DataSource;
 public interface JdbcEngineConfig {
 
     /**
-     * 获取CommandExecutor
+     * 名称
      *
-     * @param modelClass           the model class
-     * @param commandExecutorClass the command executor class
-     * @return command executor
+     * @return
      */
-    CommandExecutor getCommandExecutor(Class<?> modelClass, Class<?> commandExecutorClass);
+    String getName();
+
+    /**
+     * 是否默认
+     *
+     * @return
+     */
+    boolean isDefault();
+
+    /**
+     * 获取CommandExecutorFactory
+     *
+     * @return
+     */
+    CommandExecutorFactory getCommandExecutorFactory();
 
     /**
      * 获取MappingHandler
@@ -59,11 +68,11 @@ public interface JdbcEngineConfig {
     PersistExecutor getPersistExecutor();
 
     /**
-     * command大小写
+     * 获取command解析器
      *
      * @return
      */
-    String getCommandCase();
+    CommandConversionHandler getCommandConversionHandler();
 
     /**
      * 获取mybatis SqlSessionFactory
@@ -72,20 +81,11 @@ public interface JdbcEngineConfig {
      */
     SqlSessionFactory getMybatisSqlSessionFactory();
 
-
     /**
-     * 获取command解析器
+     * command大小写
      *
      * @return
      */
-    CommandConversionHandler getCommandConversionHandler();
-
-    /**
-     * 获取JdbcEngine
-     *
-     * @param dataSource the data source
-     * @return jdbc engine
-     */
-    JdbcEngine buildJdbcEngine(DataSource dataSource);
+    String getCommandCase();
 
 }

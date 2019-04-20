@@ -5,10 +5,7 @@ import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 import java.util.Map;
 
@@ -19,8 +16,8 @@ public class InsertImpl extends AbstractCommandExecutor implements Insert {
 
     private InsertContext insertContext;
 
-    public InsertImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
+    public InsertImpl(JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
         insertContext = new InsertContext();
     }
 
@@ -49,7 +46,7 @@ public class InsertImpl extends AbstractCommandExecutor implements Insert {
     }
 
     public Object execute() {
-        CommandContext commandContext = this.commandContextBuilder.build(insertContext);
-        return this.persistExecutor.execute(commandContext, CommandType.INSERT);
+        CommandContext commandContext = this.commandContextBuilder.build(insertContext, getJdbcEngineConfig());
+        return getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.INSERT);
     }
 }

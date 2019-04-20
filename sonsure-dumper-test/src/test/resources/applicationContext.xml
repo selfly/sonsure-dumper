@@ -48,18 +48,17 @@
         </property>
     </bean>
 
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="configLocation" value="mybatis/mybatis-config.xml"/>
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
+    <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--<property name="configLocation" value="mybatis/mybatis-config.xml"/>-->
+        <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--</bean>-->
 
-    <bean id="jdbcTemplateEngineConfig" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineConfigImpl">
-        <property name="mybatisSqlSessionFactory" ref="sqlSessionFactory"/>
-    </bean>
+    <!--<bean id="jdbcTemplateEngineConfig" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineConfigImpl">-->
+        <!--<property name="mybatisSqlSessionFactory" ref="sqlSessionFactory"/>-->
+    <!--</bean>-->
 
     <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">
         <property name="dataSource" ref="dataSource"/>
-        <property name="jdbcEngineConfig" ref="jdbcTemplateEngineConfig"/>
     </bean>
 
 </beans>

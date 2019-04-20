@@ -11,6 +11,7 @@ import com.sonsure.dumper.core.command.mybatis.MybatisExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -24,13 +25,11 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
 
     protected DataSource dataSource;
 
-    protected JdbcEngineConfig jdbcEngineConfig;
-
     protected JdbcEngine jdbcEngine;
 
     public <T> T get(Class<T> entityClass, Serializable id) {
-        //return this.createSelect(entityClass).where().conditionId(id).singleResult();
-        return null;
+        String pkField = getJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(entityClass);
+        return this.createSelect().from(entityClass).where(pkField, id).singleResult(entityClass);
     }
 
     public <T> List<T> queryAll(Class<T> entityClass) {
@@ -54,19 +53,20 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
     }
 
     public <T> T querySingleResult(T entity) {
-        return (T) this.createSelect(entity.getClass()).where().conditionEntity(entity).singleResult();
+        return (T) this.createSelect().from(entity.getClass()).where().conditionEntity(entity).singleResult();
     }
 
     public <T> T queryFirstResult(T entity) {
-        return (T) this.createSelect(entity.getClass()).where().conditionEntity(entity).firstResult();
+        return (T) this.createSelect().from(entity.getClass()).where().conditionEntity(entity).firstResult();
     }
 
-    public <T> Object insert(T entity) {
-        return this.createInsert(entity.getClass()).setForEntity(entity).execute();
+    public Object insert(Object entity) {
+        return this.createInsert().forEntity(entity).execute();
     }
 
     public <T> int delete(Class<T> entityClass, Serializable id) {
-        return this.createDelete(entityClass).where().conditionId(id).execute();
+//        return this.createDelete(entityClass).where().conditionId(id).execute();
+        return 0;
     }
 
     public <T> int delete(T entity) {
@@ -77,20 +77,20 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.createUpdate(entity.getClass()).setForEntityWhereId(entity).execute();
     }
 
-    public <T> Select createSelect(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Select.class);
+    public Select createSelect() {
+        return this.getJdbcEngine().createExecutor(Select.class);
     }
 
-    public <T> Insert<T> createInsert(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Insert.class);
+    public Insert createInsert() {
+        return this.getJdbcEngine().createExecutor(Insert.class);
     }
 
     public <T> Delete<T> createDelete(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Delete.class);
+        return this.getJdbcEngine().createExecutor(Delete.class);
     }
 
     public <T> Update<T> createUpdate(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Update.class);
+        return this.getJdbcEngine().createExecutor(Update.class);
     }
 
     public NativeExecutor createNativeExecutor() {
@@ -104,10 +104,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
 
     public JdbcEngine getJdbcEngine() {
         if (this.jdbcEngine == null) {
-            if (jdbcEngineConfig == null) {
-                jdbcEngineConfig = this.getDefaultJdbcEngineConfig();
-            }
-            this.jdbcEngine = jdbcEngineConfig.buildJdbcEngine(getDataSource());
+            throw new SonsureJdbcException("jdbcEngine不能为空");
         }
         return this.jdbcEngine;
     }
@@ -123,15 +120,8 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return dataSource;
     }
 
-    public JdbcEngineConfig getJdbcEngineConfig() {
-        return jdbcEngineConfig;
-    }
-
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public void setJdbcEngineConfig(JdbcEngineConfig jdbcEngineConfig) {
-        this.jdbcEngineConfig = jdbcEngineConfig;
-    }
 }

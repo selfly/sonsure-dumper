@@ -1,11 +1,12 @@
 package com.sonsure.dumper.core.command.entity;
 
 
-import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.ExecutorContext;
-import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
+import com.sonsure.dumper.core.command.GenerateKey;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.management.ClassField;
+import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,16 +17,18 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "insert into ";
 
-    public InsertCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
-        super(commandExecutor, commandConversionHandler);
-    }
-
-    public CommandContext doBuild(ExecutorContext executorContext) {
+    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
         InsertContext insertContext = (InsertContext) executorContext;
         CommandContext commandContext = getCommonCommandContext(insertContext);
+        MappingHandler mappingHandler = jdbcEngineConfig.getMappingHandler();
+        String pkField = this.getPkField(insertContext.getModelClass(), mappingHandler);
+        String pkColumn = mappingHandler.getColumn(insertContext.getModelClass(), pkField);
+        GenerateKey generateKey = new GenerateKey();
+        generateKey.setClazz(insertContext.getModelClass());
+        generateKey.setColumn(pkColumn);
 
-        String pkField = this.getPkField(insertContext.getModelClass());
+        commandContext.setGenerateKey(generateKey);
 
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
         StringBuilder argsCommand = new StringBuilder("(");
@@ -43,11 +46,11 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
             commandContext.addParameter(classField.getValue());
         }
         if (!hasPkParam) {
-            KeyGenerator keyGenerator = getCommandExecutor().getKeyGenerator();
+            KeyGenerator keyGenerator = jdbcEngineConfig.getKeyGenerator();
             if (keyGenerator != null) {
                 Object generateKeyValue = keyGenerator.generateKeyValue(insertContext.getModelClass());
                 //设置主键值，insert之后返回用
-                commandContext.setPkValue(generateKeyValue);
+                commandContext.setGenerateKey(generateKey);
                 //由数据库生成
                 if (keyGenerator.isPkValueByDb()) {
                     command.append(pkField).append(",");

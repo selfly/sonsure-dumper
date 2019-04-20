@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WhereContext extends ExecutorContext {
+public abstract class WhereContext implements ExecutorContext {
 
     /**
      * where的属性/列

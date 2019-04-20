@@ -3,10 +3,7 @@ package com.sonsure.dumper.core.command.entity;
 import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -17,8 +14,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> extends AbstractCommandExecutor implements ConditionBuilder<T> {
 
-    public AbstractConditionBuilder(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
+    public AbstractConditionBuilder(JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
     }
 
     public T where() {
@@ -85,8 +82,8 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
         return (T) this;
     }
 
-//    public T conditionId(Serializable value) {
-//        String pkField = mappingHandler.getPkField(this.getWhereContext().getModelClass());
+//    public T conditionPk(Serializable value) {
+//        String pkField = this.getJdbcEngineConfig().getMappingHandler().getPkField(this.getWhereContext().getModelClass());
 //        ClassField commandField = ClassField.builder()
 //                .name(pkField)
 //                .fieldOperator("=")

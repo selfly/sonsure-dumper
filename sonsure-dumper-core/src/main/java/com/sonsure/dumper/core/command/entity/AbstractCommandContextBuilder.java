@@ -1,62 +1,52 @@
 package com.sonsure.dumper.core.command.entity;
 
-import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandContextBuilder;
 import com.sonsure.dumper.core.command.ExecutorContext;
-import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.management.ClassFieldWrapper;
 import com.sonsure.dumper.core.management.ModelClassCache;
 import com.sonsure.dumper.core.management.ModelFieldMeta;
+import com.sonsure.dumper.core.mapping.AbstractMappingHandler;
+import com.sonsure.dumper.core.mapping.MappingHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by liyd on 17/4/12.
  */
 public abstract class AbstractCommandContextBuilder implements CommandContextBuilder {
 
-    /**
-     * 执行器
-     */
-    protected AbstractCommandExecutor commandExecutor;
+    public CommandContext build(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
-    /**
-     * command解析器
-     */
-    protected CommandConversionHandler commandConversionHandler;
+        CommandContext commandContext = this.doBuild(executorContext, jdbcEngineConfig);
+        MappingHandler mappingHandler = jdbcEngineConfig.getMappingHandler();
+        if (mappingHandler instanceof AbstractMappingHandler) {
+            Class<?>[] modelClasses = executorContext.getModelClasses();
+            ((AbstractMappingHandler) mappingHandler).addClassMapping(modelClasses);
+        }
 
-    public AbstractCommandContextBuilder(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
-        this.commandExecutor = commandExecutor;
-        this.commandConversionHandler = commandConversionHandler;
-    }
-
-    public CommandContext build(ExecutorContext executorContext) {
-
-        CommandContext commandContext = this.doBuild(executorContext);
-//        commandContext.setMappingHandler(this.commandExecutor.getMappingHandler());
 //        commandContext.setCommandCase(commandTable.getCommandCase());
-//        commandContext.setResultType(commandTable.getResultType());
-//        String resolvedCommand = commandContext.getCommand();
+        String resolvedCommand = commandContext.getCommand();
+        Map<String, Object> params = new HashMap<>();
 //        if (!commandTable.isForceNative()) {
-//            resolvedCommand = commandConversionHandler.convert(commandContext.getCommand(), commandContext.getParameterMap());
+        resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
 //        }
-//        commandContext.setCommand(resolvedCommand);
+        commandContext.setCommand(resolvedCommand);
         return commandContext;
     }
 
     /**
      * 构建执行内容
      *
-     * @param commandTable the command table
+     * @param executorContext  the executor context
+     * @param jdbcEngineConfig the jdbc engine config
      * @return command context
      */
-    public abstract CommandContext doBuild(ExecutorContext commandTable);
+    public abstract CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig);
 
     /**
      * 获取带别名的field
@@ -105,8 +95,8 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
         return modelClass.getSimpleName();
     }
 
-    protected String getPkField(Class<?> modelClass) {
-        return this.getCommandExecutor().getMappingHandler().getPkField(modelClass);
+    protected String getPkField(Class<?> modelClass, MappingHandler mappingHandler) {
+        return mappingHandler.getPkField(modelClass);
     }
 
 //    protected String getTableName(ExecutorContext commandTable, Map<String, Object> params) {
@@ -321,13 +311,5 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
                 whereCommand.append(") ");
             }
         }
-    }
-
-    public AbstractCommandExecutor getCommandExecutor() {
-        return commandExecutor;
-    }
-
-    public void setCommandExecutor(AbstractCommandExecutor commandExecutor) {
-        this.commandExecutor = commandExecutor;
     }
 }

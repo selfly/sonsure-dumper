@@ -1,17 +1,23 @@
 package com.sonsure.dumper.core.command.simple;
 
 import com.sonsure.dumper.core.command.ExecutorContext;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleExecutorContext extends ExecutorContext {
+public class SimpleExecutorContext implements ExecutorContext {
 
     protected String command;
     protected List<Object> parameters;
 
     public SimpleExecutorContext() {
         this.parameters = new ArrayList<>();
+    }
+
+    @Override
+    public Class<?>[] getModelClasses() {
+        return ArrayUtils.EMPTY_CLASS_ARRAY;
     }
 
     public void addParameter(Object value) {

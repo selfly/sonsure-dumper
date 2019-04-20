@@ -123,21 +123,17 @@ public interface JdbcDao {
     /**
      * 创建select对象
      *
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @return select select
      */
-    <T> Select createSelect(Class<T> entityClass);
+    Select createSelect();
 
 
     /**
      * 创建insert对象
      *
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @return insert insert
      */
-    <T> Insert<T> createInsert(Class<T> entityClass);
+    Insert createInsert();
 
     /**
      * 创建delete对象

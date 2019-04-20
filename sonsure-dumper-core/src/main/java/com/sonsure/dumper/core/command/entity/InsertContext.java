@@ -6,7 +6,7 @@ import com.sonsure.dumper.core.management.ClassField;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InsertContext extends ExecutorContext {
+public class InsertContext implements ExecutorContext {
 
     /**
      * 对应实体类
@@ -20,6 +20,11 @@ public class InsertContext extends ExecutorContext {
 
     public InsertContext() {
         insertFields = new ArrayList<>();
+    }
+
+    @Override
+    public Class<?>[] getModelClasses() {
+        return new Class<?>[]{modelClass};
     }
 
     public void addInsertField(String field, Object value) {

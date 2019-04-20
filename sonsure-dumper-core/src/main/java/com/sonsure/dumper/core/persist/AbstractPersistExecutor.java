@@ -3,6 +3,7 @@ package com.sonsure.dumper.core.persist;
 
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,6 +18,12 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
     protected String dialect;
 
     protected boolean forceObtainDialect = false;
+
+    protected JdbcEngineConfig jdbcEngineConfig;
+
+    public AbstractPersistExecutor(JdbcEngineConfig jdbcEngineConfig) {
+        this.jdbcEngineConfig = jdbcEngineConfig;
+    }
 
     @Override
     public String getDialect() {
@@ -139,6 +146,10 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
 
 
     protected abstract String doGetDialect();
+
+    public JdbcEngineConfig getJdbcEngineConfig() {
+        return jdbcEngineConfig;
+    }
 
     public void setDialect(String dialect) {
         this.dialect = dialect;

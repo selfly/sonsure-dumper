@@ -23,62 +23,34 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
     }
 
     @Override
-    public boolean support(Class<?> modelClass, Class<?> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
+    public boolean support(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
         return commandExecutorClasses.contains(commandExecutorClass);
     }
 
     @Override
-    public CommandExecutor build(Class<?> modelClass, Class<?> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
+    public CommandExecutor build(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
 
         AbstractCommandExecutor commandExecutor = null;
         CommandContextBuilder commandContextBuilder = null;
 
         if (commandExecutorClass == Insert.class) {
-            commandExecutor = new InsertImpl(
-                    getExecutorMappingHandler(modelClass, jdbcEngineConfig),
-                    getExecutorPageHandler(modelClass, jdbcEngineConfig),
-                    getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
-                    getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.getCommandCase());
-            commandContextBuilder = new InsertCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
+            commandExecutor = new InsertImpl(jdbcEngineConfig);
+            commandContextBuilder = new InsertCommandContextBuilderImpl();
         } else if (commandExecutorClass == Select.class) {
-            commandExecutor = new SelectImpl(
-                    getExecutorMappingHandler(modelClass, jdbcEngineConfig),
-                    getExecutorPageHandler(modelClass, jdbcEngineConfig),
-                    getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
-                    getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.getCommandCase());
-            commandContextBuilder = new SelectCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
+            commandExecutor = new SelectImpl(jdbcEngineConfig);
+            commandContextBuilder = new SelectCommandContextBuilderImpl();
         } else if (commandExecutorClass == Update.class) {
-            commandExecutor = new UpdateImpl<>(
-                    getExecutorMappingHandler(modelClass, jdbcEngineConfig),
-                    getExecutorPageHandler(modelClass, jdbcEngineConfig),
-                    getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
-                    getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.getCommandCase());
-            commandContextBuilder = new UpdateCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
+            commandExecutor = new UpdateImpl<>(jdbcEngineConfig);
+            commandContextBuilder = new UpdateCommandContextBuilderImpl();
         } else if (commandExecutorClass == Delete.class) {
-            commandExecutor = new DeleteImpl<>(
-                    getExecutorMappingHandler(modelClass, jdbcEngineConfig),
-                    getExecutorPageHandler(modelClass, jdbcEngineConfig),
-                    getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
-                    getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.getCommandCase());
-            commandContextBuilder = new DeleteCommandContextBuilderImpl(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
+            commandExecutor = new DeleteImpl<>(jdbcEngineConfig);
+            commandContextBuilder = new DeleteCommandContextBuilderImpl();
         } else if (commandExecutorClass == NativeExecutor.class) {
-            commandExecutor = new NativeExecutorImpl(getExecutorMappingHandler(modelClass, jdbcEngineConfig),
-                    getExecutorPageHandler(modelClass, jdbcEngineConfig),
-                    getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
-                    getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.getCommandCase());
-            commandContextBuilder = new SimpleCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandConversionHandler());
+            commandExecutor = new NativeExecutorImpl(jdbcEngineConfig);
+            commandContextBuilder = new SimpleCommandContextBuilder();
         } else if (commandExecutorClass == MybatisExecutor.class) {
-            commandExecutor = new MybatisExecutorImpl(getExecutorMappingHandler(modelClass, jdbcEngineConfig),
-                    getExecutorPageHandler(modelClass, jdbcEngineConfig),
-                    getExecutorKeyGenerator(modelClass, jdbcEngineConfig),
-                    getExecutorPersistExecutor(modelClass, jdbcEngineConfig),
-                    jdbcEngineConfig.getCommandCase());
-            commandContextBuilder = new MybatisCommandContextBuilder(commandExecutor, jdbcEngineConfig.getCommandConversionHandler(), jdbcEngineConfig.getMybatisSqlSessionFactory());
+            commandExecutor = new MybatisExecutorImpl(jdbcEngineConfig);
+            commandContextBuilder = new MybatisCommandContextBuilder();
         }
 
         commandExecutor.setCommandContextBuilder(commandContextBuilder);

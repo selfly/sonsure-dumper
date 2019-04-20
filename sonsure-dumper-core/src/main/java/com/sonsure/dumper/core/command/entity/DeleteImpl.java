@@ -3,22 +3,24 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 /**
  * Created by liyd on 17/4/14.
  */
 public class DeleteImpl<T> extends AbstractConditionBuilder<Delete<T>> implements Delete<T> {
 
-    public DeleteImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
+    public DeleteImpl(JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
     }
 
     public int execute() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-        return (Integer) this.persistExecutor.execute(commandContext, CommandType.DELETE);
+        CommandContext commandContext = this.commandContextBuilder.build(null, getJdbcEngineConfig());
+        return (Integer) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.DELETE);
+    }
+
+    @Override
+    protected WhereContext getWhereContext() {
+        return null;
     }
 }

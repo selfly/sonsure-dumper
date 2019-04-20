@@ -57,6 +57,15 @@ public class SelectContext extends WhereContext {
         orderByFields = new ArrayList<>();
     }
 
+    @Override
+    public Class<?>[] getModelClasses() {
+        List<Class<?>> classes = new ArrayList<>();
+        for (CommandClass fromClass : fromClasses) {
+            classes.add(fromClass.getCls());
+        }
+        return classes.toArray(new Class<?>[classes.size()]);
+    }
+
     public void addFromClass(Class<?> cls) {
         this.addFromClass(cls, null);
     }
