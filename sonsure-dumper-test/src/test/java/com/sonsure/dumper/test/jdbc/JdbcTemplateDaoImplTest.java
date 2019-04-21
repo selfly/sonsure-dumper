@@ -1,5 +1,6 @@
 package com.sonsure.dumper.test.jdbc;
 
+import com.sonsure.commons.model.Page;
 import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.junit.Assert;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by liyd on 17/4/12.
@@ -93,131 +95,138 @@ public class JdbcTemplateDaoImplTest {
         UserInfo user = jdbcDao.get(UserInfo.class, 38L);
         Assert.assertNull(user);
     }
-//
-//
-//    @Test
-//    public void jdbcDaoQueryAll() {
-//        List<UserInfo> users = jdbcDao.queryAll(UserInfo.class);
-//        Assert.assertNotNull(users);
-//        Assert.assertTrue(users.size() == 50);
-//    }
-//
-//    @Test
-//    public void jdbcDaoQueryList() {
-//        UserInfo user = new UserInfo();
-//        user.setUserAge(10);
-//        List<UserInfo> users = jdbcDao.queryList(user);
-//        Assert.assertNotNull(users);
-//        Assert.assertTrue(users.size() == 1);
-//    }
-//
-//    @Test
-//    public void jdbcDaoQueryPageList() {
-//        UserInfo user = new UserInfo();
-//        user.setPageSize(10);
-//        Page<UserInfo> page = jdbcDao.queryPageList(user);
-//        Assert.assertNotNull(page);
-//        Assert.assertTrue(page.getList().size() == 10);
-//    }
-//
-//
-//    @Test
-//    public void jdbcDaoQueryPageList2() {
-//        UserInfo user = new UserInfo();
-//        user.setPageSize(10);
-//        user.setUserAge(10);
-//        Page<UserInfo> page = jdbcDao.queryPageList(user);
-//        Assert.assertNotNull(page);
-//        Assert.assertTrue(page.getList().size() == 1);
-//    }
-//
-//
-//    @Test
-//    public void jdbcDaoQueryCount() {
-//        UserInfo user = new UserInfo();
-//        user.setUserAge(10);
-//        long count = jdbcDao.queryCount(user);
-//        Assert.assertTrue(count == 1);
-//    }
-//
-//    @Test
-//    public void jdbcDaoQueryCount2() {
-//        UserInfo user = new UserInfo();
-//        long count = jdbcDao.queryCount(user);
-//        Assert.assertTrue(count == 50);
-//    }
-//
-//    @Test
-//    public void jdbcDaoQuerySingleResult() {
-//        UserInfo tmp = new UserInfo();
-//        tmp.setUserAge(10);
-//        UserInfo user = jdbcDao.querySingleResult(tmp);
-//        Assert.assertNotNull(user);
-//        Assert.assertTrue(user.getUserInfoId().equals(10L));
-//        Assert.assertTrue(user.getLoginName().equals("name-10"));
-//        Assert.assertTrue(user.getUserAge().equals(10));
-//        Assert.assertNotNull(user.getGmtCreate());
-//    }
-//
-//
-//    @Test
-//    public void jdbcDaoQueryFirstResult() {
-//        UserInfo tmp = new UserInfo();
-//        tmp.setUserAge(10);
-//        UserInfo user = jdbcDao.queryFirstResult(tmp);
-//        Assert.assertNotNull(user);
-//        Assert.assertTrue(user.getUserInfoId().equals(10L));
-//        Assert.assertTrue(user.getLoginName().equals("name-10"));
-//        Assert.assertTrue(user.getUserAge().equals(10));
-//        Assert.assertNotNull(user.getGmtCreate());
-//    }
-//
-//    @Test
-//    public void jdbcDaoDelete2() {
-//        UserInfo user = new UserInfo();
-//        user.setLoginName("name-17");
-//        int count = jdbcDao.delete(user);
-//        Assert.assertTrue(count == 1);
-//
-//        UserInfo tmp = new UserInfo();
-//        tmp.setLoginName("name-17");
-//        UserInfo user1 = jdbcDao.querySingleResult(tmp);
-//        Assert.assertNull(user1);
-//    }
-//
-//    @Test
-//    public void insert() {
-//
-//        UserInfo user = new UserInfo();
-//        user.setLoginName("name-60");
-//        user.setPassword("606060");
-//        user.setUserAge(60);
-//        user.setGmtCreate(new Date());
-//
-//        Long id = (Long) jdbcDao.createInsert(UserInfo.class).setForEntity(user).execute();
-//
-//        UserInfo user1 = jdbcDao.get(UserInfo.class, id);
-//        Assert.assertNotNull(user1);
-//        Assert.assertTrue(user1.getUserInfoId().equals(id));
-//        Assert.assertTrue(user1.getLoginName().equals("name-60"));
-//        Assert.assertTrue(user1.getPassword().equals("606060"));
-//    }
-//
-//    @Test
-//    public void insert2() {
-//
-//        Long id = (Long) jdbcDao.createInsert(UserInfo.class)
-//                .set("loginName", "name123")
-//                .set("password", "123321")
-//                .execute();
-//
-//        UserInfo user1 = jdbcDao.get(UserInfo.class, id);
-//        Assert.assertNotNull(user1);
-//        Assert.assertTrue(user1.getUserInfoId().equals(id));
-//        Assert.assertTrue(user1.getLoginName().equals("name123"));
-//        Assert.assertTrue(user1.getPassword().equals("123321"));
-//    }
-//
+
+
+    @Test
+    public void jdbcDaoFind() {
+        List<UserInfo> users = jdbcDao.find(UserInfo.class);
+        Assert.assertNotNull(users);
+        Assert.assertTrue(users.size() == 50);
+    }
+
+    @Test
+    public void jdbcDaoFind1() {
+        UserInfo user = new UserInfo();
+        user.setUserAge(10);
+        List<UserInfo> users = jdbcDao.find(user);
+        Assert.assertNotNull(users);
+        Assert.assertTrue(users.size() == 1);
+    }
+
+    @Test
+    public void jdbcDaoPageResult() {
+        UserInfo user = new UserInfo();
+        user.setPageSize(10);
+        Page<UserInfo> page = jdbcDao.pageResult(user);
+        Assert.assertNotNull(page);
+        Assert.assertTrue(page.getList().size() == 10);
+    }
+
+
+    @Test
+    public void jdbcDaoPageResult2() {
+        UserInfo user = new UserInfo();
+        user.setPageSize(10);
+        user.setUserAge(10);
+        Page<UserInfo> page = jdbcDao.pageResult(user);
+        Assert.assertNotNull(page);
+        Assert.assertTrue(page.getList().size() == 1);
+    }
+
+
+    @Test
+    public void jdbcDaoCount() {
+        UserInfo user = new UserInfo();
+        user.setUserAge(10);
+        long count = jdbcDao.findCount(user);
+        Assert.assertTrue(count == 1);
+    }
+
+    @Test
+    public void jdbcDaoQueryCount2() {
+        long count = jdbcDao.findCount(UserInfo.class);
+        Assert.assertTrue(count == 50);
+    }
+
+    @Test
+    public void jdbcDaoSingleResult() {
+        UserInfo tmp = new UserInfo();
+        tmp.setUserAge(10);
+        UserInfo user = jdbcDao.singleResult(tmp);
+        Assert.assertNotNull(user);
+        Assert.assertTrue(user.getUserInfoId().equals(10L));
+        Assert.assertTrue(user.getLoginName().equals("name-10"));
+        Assert.assertTrue(user.getUserAge().equals(10));
+        Assert.assertNotNull(user.getGmtCreate());
+    }
+
+
+    @Test
+    public void jdbcDaoFirstResult() {
+        UserInfo tmp = new UserInfo();
+        tmp.setUserAge(10);
+        UserInfo user = jdbcDao.firstResult(tmp);
+        Assert.assertNotNull(user);
+        Assert.assertTrue(user.getUserInfoId().equals(10L));
+        Assert.assertTrue(user.getLoginName().equals("name-10"));
+        Assert.assertTrue(user.getUserAge().equals(10));
+        Assert.assertNotNull(user.getGmtCreate());
+    }
+
+    @Test
+    public void jdbcDaoDelete2() {
+        UserInfo user = new UserInfo();
+        user.setLoginName("name-17");
+        int count = jdbcDao.delete(user);
+        Assert.assertTrue(count == 1);
+
+        UserInfo tmp = new UserInfo();
+        tmp.setLoginName("name-17");
+        UserInfo user1 = jdbcDao.singleResult(tmp);
+        Assert.assertNull(user1);
+    }
+
+    @Test
+    public void jdbcDaoDelete3() {
+        int count = jdbcDao.delete(UserInfo.class);
+        Assert.assertTrue(count > 0);
+        long result = jdbcDao.findCount(UserInfo.class);
+        Assert.assertTrue(result == 0);
+    }
+
+    @Test
+    public void insert() {
+
+        UserInfo user = new UserInfo();
+        user.setLoginName("name-60");
+        user.setPassword("606060");
+        user.setUserAge(60);
+        user.setGmtCreate(new Date());
+
+        Long id = (Long) jdbcDao.insert(user);
+
+        UserInfo user1 = jdbcDao.get(UserInfo.class, id);
+        Assert.assertNotNull(user1);
+        Assert.assertTrue(user1.getUserInfoId().equals(id));
+        Assert.assertTrue(user1.getLoginName().equals("name-60"));
+        Assert.assertTrue(user1.getPassword().equals("606060"));
+    }
+
+    @Test
+    public void insert2() {
+
+        Long id = (Long) jdbcDao.insertInto(UserInfo.class)
+                .set("loginName", "name123")
+                .set("password", "123321")
+                .execute();
+
+        UserInfo user1 = jdbcDao.get(UserInfo.class, id);
+        Assert.assertNotNull(user1);
+        Assert.assertTrue(user1.getUserInfoId().equals(id));
+        Assert.assertTrue(user1.getLoginName().equals("name123"));
+        Assert.assertTrue(user1.getPassword().equals("123321"));
+    }
+
 //    @Test
 //    public void insertForAnnotation() {
 //

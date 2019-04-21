@@ -27,41 +27,51 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
 
     protected JdbcEngine jdbcEngine;
 
+    @Override
     public <T> T get(Class<T> entityClass, Serializable id) {
-        String pkField = getJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(entityClass);
-        return this.createSelect().from(entityClass).where(pkField, id).singleResult(entityClass);
+        return this.getJdbcEngine().get(entityClass, id);
     }
 
-    public <T> List<T> queryAll(Class<T> entityClass) {
-//        return this.createSelect(entityClass).orderById().desc().list();
-        return null;
+    @Override
+    public <T> List<T> find(Class<T> entityClass) {
+        return this.getJdbcEngine().find(entityClass);
     }
 
-    public <T> List<T> queryList(T entity) {
-//        return (List<T>) this.createSelect(entity.getClass()).where().conditionEntity(entity).orderById().desc().list();
-        return null;
+    @Override
+    public <T> List<T> find(T entity) {
+        return this.getJdbcEngine().find(entity);
     }
 
-    public <T extends Pageable> Page<T> queryPageList(T entity) {
-//        return (Page<T>) this.createSelect(entity.getClass()).where().conditionEntity(entity).orderById().desc().pageList(entity);
-        return null;
+    @Override
+    public <T extends Pageable> Page<T> pageResult(T entity) {
+        return (Page<T>) this.getJdbcEngine().pageResult(entity);
     }
 
-    public <T> long queryCount(T entity) {
-//        return this.createSelect(entity.getClass()).where().conditionEntity(entity).count();
-        return 0;
+    @Override
+    public long findCount(Object entity) {
+        return this.getJdbcEngine().findCount(entity);
     }
 
-    public <T> T querySingleResult(T entity) {
-        return (T) this.createSelect().from(entity.getClass()).where().conditionEntity(entity).singleResult();
+    @Override
+    public long findCount(Class<?> cls) {
+        return this.getJdbcEngine().findCount(cls);
     }
 
-    public <T> T queryFirstResult(T entity) {
-        return (T) this.createSelect().from(entity.getClass()).where().conditionEntity(entity).firstResult();
+    public <T> T singleResult(T entity) {
+        return (T) this.getJdbcEngine().singleResult(entity);
+    }
+
+    public <T> T firstResult(T entity) {
+        return (T) this.getJdbcEngine().firstResult(entity);
     }
 
     public Object insert(Object entity) {
-        return this.createInsert().forEntity(entity).execute();
+        return this.getJdbcEngine().insert(entity);
+    }
+
+    @Override
+    public Insert insertInto(Class<?> cls) {
+        return this.getJdbcEngine().insertInto(cls);
     }
 
     public int delete(Class<?> entityClass, Serializable id) {
@@ -69,8 +79,13 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.createDelete().from(entityClass).where(pkField, id).execute();
     }
 
-    public <T> int delete(T entity) {
-        return this.createDelete().where().conditionEntity(entity).execute();
+    public int delete(Object entity) {
+        return this.getJdbcEngine().delete(entity);
+    }
+
+    @Override
+    public int delete(Class<?> cls) {
+        return this.getJdbcEngine().delete(cls);
     }
 
     public <T> int update(T entity) {
@@ -78,19 +93,19 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
     }
 
     public Select createSelect() {
-        return this.getJdbcEngine().createExecutor(Select.class);
+        return this.getJdbcEngine().select();
     }
 
     public Insert createInsert() {
-        return this.getJdbcEngine().createExecutor(Insert.class);
+        return this.getJdbcEngine().insert();
     }
 
     public Delete createDelete() {
-        return this.getJdbcEngine().createExecutor(Delete.class);
+        return this.getJdbcEngine().delete();
     }
 
     public Update createUpdate() {
-        return this.getJdbcEngine().createExecutor(Update.class);
+        return this.getJdbcEngine().update();
     }
 
     public NativeExecutor createNativeExecutor() {

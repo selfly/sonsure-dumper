@@ -131,12 +131,18 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 
     @Override
     public Object singleResult() {
+
+//        commandTable.setResultType(this.commandTable.getModelClass());
+////        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
+////        return (T) this.persistExecutor.execute(commandContext, CommandType.QUERY_SINGLE_RESULT);
         return null;
     }
 
     @Override
     public <T> T firstResult(Class<T> cls) {
-        return null;
+        this.paginate(1, 1).isCount(false);
+        Page<T> page = this.pageResult(cls);
+        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
     }
 
     @Override
@@ -146,7 +152,9 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 
     @Override
     public <T> List<T> list(Class<T> cls) {
-        return null;
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        commandContext.setResultType(cls);
+        return (List<T>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_LIST);
     }
 
     @Override
@@ -155,8 +163,15 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
     }
 
     @Override
-    public <T> Page<T> page(Class<T> cls) {
-        return null;
+    public <T> Page<T> pageResult(Class<T> cls) {
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        commandContext.setResultType(cls);
+        return (Page<T>) this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler() {
+            @Override
+            public List<?> queryList(CommandContext commandContext) {
+                return (List<?>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_LIST);
+            }
+        });
     }
 
     @Override
@@ -279,12 +294,6 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 //        return this.oneColPageList(clazz, pageNum, pageSize, true);
 //    }
 //
-//    @SuppressWarnings("unchecked")
-//    public T singleResult() {
-//        commandTable.setResultType(this.commandTable.getModelClass());
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//        return (T) this.persistExecutor.execute(commandContext, CommandType.QUERY_SINGLE_RESULT);
-//    }
 //
 //    @Override
 //    public T firstResult() {

@@ -91,7 +91,11 @@ public class CommandContext {
         this.generateKey = generateKey;
     }
 
-//    public MappingHandler getMappingHandler() {
+    public void setParameters(List<Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    //    public MappingHandler getMappingHandler() {
 //        return mappingHandler;
 //    }
 //

@@ -1,47 +1,52 @@
 package com.sonsure.dumper.core.persist;
 
+import com.sonsure.commons.model.Page;
+import com.sonsure.commons.model.Pageable;
+import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
+import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Jdbc {
 
-    protected static Map<String, JdbcEngineFacade> jdbcFacadeMap = new HashMap<>();
+    protected final static Map<String, JdbcEngine> jdbcEngineMap = new HashMap<>();
 
-    protected static JdbcEngineFacade defaultJdbcEngineFacade;
+    protected static JdbcEngine defaultJdbcEngine;
 
-    public static JdbcEngineFacade use(String name) {
-        JdbcEngineFacade jdbcFacade = jdbcFacadeMap.get(name);
-        if (jdbcFacade == null) {
+    public static JdbcEngine use(String name) {
+        JdbcEngine jdbcEngine = jdbcEngineMap.get(name);
+        if (jdbcEngine == null) {
             throw new SonsureJdbcException("指定的JDBC配置名称不存在:" + name);
         }
-        return jdbcFacade;
+        return jdbcEngine;
     }
 
-    public static void addJdbcFacade(JdbcEngineFacade jdbcEngineFacade) {
-        jdbcFacadeMap.put(jdbcEngineFacade.getName(), jdbcEngineFacade);
-        if (jdbcEngineFacade.isDefault()) {
-            if (defaultJdbcEngineFacade != null && defaultJdbcEngineFacade != jdbcEngineFacade) {
+    public static void addJdbcEngine(JdbcEngine jdbcEngine) {
+        jdbcEngineMap.put(jdbcEngine.getName(), jdbcEngine);
+        if (jdbcEngine.isDefault()) {
+            if (defaultJdbcEngine != null && defaultJdbcEngine != jdbcEngine) {
                 throw new SonsureJdbcException("只能设置一个默认的JDBC配置");
             }
-            defaultJdbcEngineFacade = jdbcEngineFacade;
+            defaultJdbcEngine = jdbcEngine;
         }
     }
 
-    public static JdbcEngineFacade getDefaultJdbcEngineFacade() {
-        if (defaultJdbcEngineFacade == null) {
+    public static JdbcEngine getDefaultJdbcEngine() {
+        if (defaultJdbcEngine == null) {
             throw new SonsureJdbcException("没有默认的Jdbc配置");
         }
-        return defaultJdbcEngineFacade;
+        return defaultJdbcEngine;
     }
 
 
     public static Select select() {
-        return getDefaultJdbcEngineFacade().select();
+        return getDefaultJdbcEngine().select();
     }
 
     public static Select selectFrom(Class<?> cls) {
@@ -49,20 +54,62 @@ public class Jdbc {
     }
 
     public static <T> T get(Class<T> cls, Serializable id) {
-        return getDefaultJdbcEngineFacade().get(cls, id);
+        return getDefaultJdbcEngine().get(cls, id);
     }
 
     public static Object insert(Object entity) {
-        return getDefaultJdbcEngineFacade().insert().forEntity(entity).execute();
+        return getDefaultJdbcEngine().insert().forEntity(entity).execute();
+    }
+
+    public static Insert insertInto(Class<?> cls) {
+        return getDefaultJdbcEngine().insertInto(cls);
     }
 
     public static int update(Object entity) {
-        return getDefaultJdbcEngineFacade().update().setForEntityWhereId(entity).execute();
+        return getDefaultJdbcEngine().update().setForEntityWhereId(entity).execute();
     }
 
     public static int delete(Class<?> cls, Serializable id) {
-        String pkField = getDefaultJdbcEngineFacade().getJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(cls);
-        return getDefaultJdbcEngineFacade().delete().from(cls).where(pkField, id).execute();
+        String pkField = getDefaultJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(cls);
+        return getDefaultJdbcEngine().delete().from(cls).where(pkField, id).execute();
+    }
+
+    public static int delete(Object entity) {
+        return getDefaultJdbcEngine().delete(entity);
+    }
+
+    public static int delete(Class<?> cls) {
+        return getDefaultJdbcEngine().delete(cls);
+    }
+
+    public static <T> List<T> find(Class<T> cls) {
+        String pkField = getDefaultJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(cls);
+        return getDefaultJdbcEngine().selectFrom(cls).orderBy(pkField).desc().list(cls);
+    }
+
+    public static <T> List<T> find(T entity) {
+        String pkField = getDefaultJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(entity.getClass());
+        return (List<T>) getDefaultJdbcEngine().selectFrom(entity.getClass()).where().conditionEntity(entity).orderBy(pkField).desc().list(entity.getClass());
+    }
+
+    public static <T extends Pageable> Page<T> pageResult(T entity) {
+        return getDefaultJdbcEngine().pageResult(entity);
+    }
+
+    public static long findCount(Object entity) {
+        return getDefaultJdbcEngine().findCount(entity);
+    }
+
+    public static long findCount(Class<?> cls) {
+        return getDefaultJdbcEngine().findCount(cls);
+    }
+
+    public static <T> T singleResult(T entity) {
+        return getDefaultJdbcEngine().singleResult(entity);
+    }
+
+    public static <T> T firstResult(T entity) {
+        return getDefaultJdbcEngine().firstResult(entity);
     }
 
     public static NativeExecutor nativeExecutor() {

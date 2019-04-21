@@ -35,7 +35,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> List<T> queryAll(Class<T> entityClass);
+    <T> List<T> find(Class<T> entityClass);
 
     /**
      * 根据实体条件查询列表,根据默认主键desc排序
@@ -44,7 +44,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> List<T> queryList(T entity);
+    <T> List<T> find(T entity);
 
     /**
      * 查询分页列表
@@ -53,16 +53,23 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T extends Pageable> Page<T> queryPageList(T entity);
+    <T extends Pageable> Page<T> pageResult(T entity);
 
     /**
      * 根据实体条件查询记录数
      *
      * @param entity
-     * @param <T>
      * @return
      */
-    <T> long queryCount(T entity);
+    long findCount(Object entity);
+
+    /**
+     * 根据实体条件查询记录数
+     *
+     * @param cls the cls
+     * @return long
+     */
+    long findCount(Class<?> cls);
 
     /**
      * 根据实体条件查询单个结果
@@ -71,7 +78,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> T querySingleResult(T entity);
+    <T> T singleResult(T entity);
 
     /**
      * 根据实体条件查询首个结果
@@ -80,7 +87,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> T queryFirstResult(T entity);
+    <T> T firstResult(T entity);
 
     /**
      * 插入
@@ -90,6 +97,14 @@ public interface JdbcDao {
      * @return
      */
     <T> Object insert(T entity);
+
+    /**
+     * 创建insert对象
+     *
+     * @param cls
+     * @return
+     */
+    Insert insertInto(Class<?> cls);
 
     /**
      * 删除
@@ -103,11 +118,18 @@ public interface JdbcDao {
     /**
      * 根据实体条件删除
      *
-     * @param <T>    the type parameter
      * @param entity the entity
-     * @return int
+     * @return int int
      */
-    <T> int delete(T entity);
+    int delete(Object entity);
+
+    /**
+     * 删除所有对象
+     *
+     * @param cls the cls
+     * @return int int
+     */
+    int delete(Class<?> cls);
 
     /**
      * 更新

@@ -1,6 +1,9 @@
 package com.sonsure.dumper.core.command;
 
 
+import com.sonsure.commons.bean.BeanKit;
+import com.sonsure.commons.model.Page;
+import com.sonsure.commons.model.Pagination;
 import com.sonsure.dumper.core.command.simple.ResultHandler;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
@@ -24,34 +27,25 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         this.commandContextBuilder = commandContextBuilder;
     }
 
-//    @SuppressWarnings({"rawtypes", "unchecked"})
-//    protected Page<?> doPageList(int pageNum, int pageSize, boolean isCount, PageQueryHandler pageQueryHandler) {
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//
-//        String dialect = persistExecutor.getDialect();
-//        long count = Long.MAX_VALUE;
-//        if (isCount) {
-//            String countCommand = this.pageHandler.getCountCommand(commandContext.getCommand(), dialect);
-//            CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
-//            countCommandContext.setCommand(countCommand);
-//            countCommandContext.setResultType(Long.class);
-//            Object result = this.persistExecutor.execute(countCommandContext, CommandType.QUERY_ONE_COL);
-//            count = (Long) result;
-//        }
-//
-//
-//        Pagination pagination = new Pagination();
-//        pagination.setPageSize(pageSize);
-//        pagination.setPageNum(pageNum);
-//        pagination.setTotalItems((int) count);
-//
-//        String pageCommand = this.pageHandler.getPageCommand(commandContext.getCommand(), pagination, dialect);
-//        CommandContext pageCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
-//        pageCommandContext.setCommand(pageCommand);
-//        List<?> list = pageQueryHandler.queryList(pageCommandContext);
-//
-//        return new Page<>(list, pagination);
-//    }
+    protected Page<?> doPageResult(CommandContext commandContext, Pagination pagination, boolean isCount, PageQueryHandler pageQueryHandler) {
+        String dialect = getJdbcEngineConfig().getPersistExecutor().getDialect();
+        long count = Long.MAX_VALUE;
+        if (isCount) {
+            String countCommand = getJdbcEngineConfig().getPageHandler().getCountCommand(commandContext.getCommand(), dialect);
+            CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
+            countCommandContext.setCommand(countCommand);
+            countCommandContext.setResultType(Long.class);
+            Object result = getJdbcEngineConfig().getPersistExecutor().execute(countCommandContext, CommandType.QUERY_ONE_COL);
+            count = (Long) result;
+        }
+        pagination.setTotalItems((int) count);
+        String pageCommand = getJdbcEngineConfig().getPageHandler().getPageCommand(commandContext.getCommand(), pagination, dialect);
+        CommandContext pageCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
+        pageCommandContext.setCommand(pageCommand);
+        List<?> list = pageQueryHandler.queryList(pageCommandContext);
+
+        return new Page<>(list, pagination);
+    }
 
     protected <E> E handleResult(Object result, ResultHandler<E> resultHandler) {
         if (result == null) {

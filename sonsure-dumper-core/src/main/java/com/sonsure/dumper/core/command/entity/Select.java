@@ -194,7 +194,7 @@ public interface Select extends ConditionBuilder<Select> {
      * @param cls the cls
      * @return page
      */
-    <T> Page<T> page(Class<T> cls);
+    <T> Page<T> pageResult(Class<T> cls);
 
     /**
      * 分页列表查询
