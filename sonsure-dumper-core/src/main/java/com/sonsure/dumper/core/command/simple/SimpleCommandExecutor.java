@@ -3,6 +3,8 @@ package com.sonsure.dumper.core.command.simple;
 
 import com.sonsure.dumper.core.command.QueryCommandExecutor;
 
+import java.io.Serializable;
+
 /**
  * Created by liyd on 17/4/25.
  */
@@ -24,88 +26,14 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
      */
     T nativeSql(boolean nativeSql);
 
-//    /**
-//     * 返回结果类对象
-//     *
-//     * @param clazz
-//     * @param <E>
-//     * @return
-//     */
-//    <E> T resultClass(Class<E> clazz);
-//
-//    /**
-//     * 结果处理器
-//     *
-//     * @param resultHandler
-//     * @param <E>
-//     * @return
-//     */
-//    <E> T resultHandler(ResultHandler<E> resultHandler);
-//
-//
-//    /**
-//     * count查询
-//     *
-//     * @return
-//     */
-//    long count();
-//
-//    /**
-//     * 单个结果
-//     *
-//     * @return
-//     */
-//    Object singleResult();
-//
-//    /**
-//     * 简单查询，返回单一的结果，例如Long、Integer、String等
-//     *
-//     * @return
-//     */
-//    <E> E oneColResult(Class<E> clazz);
-//
-//    /**
-//     * 列表查询
-//     *
-//     * @return
-//     */
-//    List<?> list();
-//
-//    /**
-//     * 分页列表查询
-//     *
-//     * @param pageable the pageable
-//     * @param isCount  the is count
-//     * @return page list
-//     */
-//    Page<?> pageList(Pageable pageable, boolean isCount);
-//
-//    /**
-//     * 分页列表查询
-//     *
-//     * @param pageable
-//     * @return
-//     */
-//    Page<?> pageList(Pageable pageable);
-//
-//    /**
-//     * 分页列表查询
-//     *
-//     * @param pageNum  the page num
-//     * @param pageSize the page size
-//     * @return page list
-//     */
-//    Page<?> pageList(int pageNum, int pageSize);
-//
-//    /**
-//     * 分页列表查询
-//     *
-//     * @param pageNum  the page num
-//     * @param pageSize the page size
-//     * @param isCount  the is count
-//     * @return page list
-//     */
-//    Page<?> pageList(int pageNum, int pageSize, boolean isCount);
+    /**
+     * 结果处理器
+     *
+     * @param resultHandler
+     * @param <E>
+     * @return
+     */
+    <E> T resultHandler(ResultHandler<E> resultHandler);
 
     /**
      * 插入
@@ -113,12 +41,12 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
     void insert();
 
     /**
-     * 插入 返回自增主键
+     * 插入 返回主键
      *
      * @param pkColumn
      * @return
      */
-    Long insert(String pkColumn);
+    Serializable insert(String pkColumn);
 
     /**
      * 更新

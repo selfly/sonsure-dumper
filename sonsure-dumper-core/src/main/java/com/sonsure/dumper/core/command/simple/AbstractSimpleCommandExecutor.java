@@ -8,6 +8,7 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,21 +36,11 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         return (T) this;
     }
 
-//    @Override
-//    public <E> T resultClass(Class<E> clazz) {
-//        this.resultHandler = DefaultResultHandler.newInstance(clazz);
-////        MappingHandler mappingHandler = this.getMappingHandler();
-////        if (mappingHandler instanceof AbstractMappingHandler) {
-////            ((AbstractMappingHandler) mappingHandler).addClassMapping(clazz);
-////        }
-//        return (T) this;
-//    }
-//
-//    @Override
-//    public <E> T resultHandler(ResultHandler<E> resultHandler) {
-//        this.resultHandler = resultHandler;
-//        return (T) this;
-//    }
+    @Override
+    public <E> T resultHandler(ResultHandler<E> resultHandler) {
+        this.resultHandler = resultHandler;
+        return (T) this;
+    }
 
     @Override
     public long count() {
@@ -81,36 +72,6 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         List<Object> result = (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
         return result;
     }
-
-//    public Page<?> pageList(Pageable pageable, boolean isCount) {
-//        return this.pageList(pageable.getPageNum(), pageable.getPageSize(), isCount);
-//    }
-//
-//    public Page<?> pageList(int pageNum, int pageSize, boolean isCount) {
-////        Page<?> page = this.doPageList(pageNum, pageSize, isCount, new PageQueryHandler() {
-////            @Override
-////            public List<?> queryList(CommandContext commandContext) {
-////                return (List<?>) persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-////            }
-////        });
-////        if (this.resultHandler != null && page.getList() != null) {
-//            List<?> list = this.handleResult(page.getList(), resultHandler);
-////            return new Page<>(list, page.getPagination());
-////        }
-////        return page;
-//        return null;
-//    }
-
-//    @Override
-//    public Page<?> pageList(Pageable pageable) {
-//        return this.pageList(pageable.getPageNum(), pageable.getPageSize(), true);
-//    }
-//
-//    @Override
-//    public Page<?> pageList(int pageNum, int pageSize) {
-//        return this.pageList(pageNum, pageSize, true);
-//    }
-
 
     @Override
     public T paginate(int pageNum, int pageSize) {
@@ -218,7 +179,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     @Override
-    public Long insert(String pkColumn) {
+    public Serializable insert(String pkColumn) {
 //        CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext);
 //        commandContext.setPkValueByDb(true);
 //        commandContext.setPkColumn(pkColumn);

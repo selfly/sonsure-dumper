@@ -220,50 +220,12 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
         return result;
     }
 
-    //
-//    @Override
-//    public Object objFirstResult() {
-//        Page<?> page = this.objPageList(1, 1, false);
-//        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
-//    }
-//
     public List<Object> objList() {
         CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
         List<Object> result = (List<Object>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
         return result;
     }
-//
-//    @Override
-//    public Page<?> objPageList(Pageable pageable) {
-//        return this.objPageList(pageable, true);
-//    }
-//
-//    @Override
-//    public Page<?> objPageList(Pageable pageable, boolean isCount) {
-//        return this.objPageList(pageable.getPageNum(), pageable.getPageSize(), isCount);
-//    }
-//
-//    @Override
-//    public Page<?> objPageList(int pageNum, int pageSize) {
-//        return this.objPageList(pageNum, pageSize, true);
-//    }
-//
-//    @Override
-//    public Page<?> objPageList(int pageNum, int pageSize, boolean isCount) {
-//        Page<?> page = this.doPageList(pageNum, pageSize, isCount, new PageQueryHandler() {
-//            @Override
-//            public List<?> queryList(CommandContext commandContext) {
-//                return (List<?>) persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-//            }
-//        });
-//        if (isForceResultToModel) {
-//            List<?> list = this.handleResult(page.getList(), DefaultResultHandler.newInstance(commandTable.getModelClass()));
-//            return new Page<>(list, page.getPagination());
-//        }
-//        return page;
-//    }
-//
-//
+
 //    @Override
 //    public <E> E oneColFirstResult(Class<E> clazz) {
 //        Page<E> page = this.oneColPageList(clazz, 1, 1, false);
@@ -271,11 +233,6 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 //    }
 //
 
-//    @Override
-//    public <E> Page<E> oneColPageList(Class<E> clazz, Pageable pageable, boolean isCount) {
-//        return this.oneColPageList(clazz, pageable.getPageNum(), pageable.getPageSize(), isCount);
-//    }
-//
 //    @Override
 //    public <E> Page<E> oneColPageList(Class<E> clazz, int pageNum, int pageSize, boolean isCount) {
 //        this.commandTable.setResultType(clazz);
@@ -286,52 +243,11 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 //            }
 //        });
 //    }
-//
-//    @Override
-//    public <E> Page<E> oneColPageList(Class<E> clazz, Pageable pageable) {
-//        return this.oneColPageList(clazz, pageable, true);
-//    }
-//
-//    @Override
-//    public <E> Page<E> oneColPageList(Class<E> clazz, int pageNum, int pageSize) {
-//        return this.oneColPageList(clazz, pageNum, pageSize, true);
-//    }
-//
-//
+
 //    @Override
 //    public T firstResult() {
 //        Page<T> page = this.pageList(1, 1, false);
 //        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
 //    }
 //
-//    @SuppressWarnings("unchecked")
-//    public List<T> list() {
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//        return (List<T>) this.persistExecutor.execute(commandContext, CommandType.QUERY_FOR_LIST);
-//    }
-//
-//    @Override
-//    public Page<T> pageList(Pageable pageable, boolean isCount) {
-//        return this.pageList(pageable.getPageNum(), pageable.getPageSize(), isCount);
-//    }
-//
-//    public Page<T> pageList(Pageable pageable) {
-//        return this.pageList(pageable.getPageNum(), pageable.getPageSize(), true);
-//    }
-//
-//    @SuppressWarnings("unchecked")
-//    public Page<T> pageList(int pageNum, int pageSize) {
-//        return this.pageList(pageNum, pageSize, true);
-//    }
-//
-//    @Override
-//    public Page<T> pageList(int pageNum, int pageSize, boolean isCount) {
-//        return (Page<T>) this.doPageList(pageNum, pageSize, isCount, new PageQueryHandler() {
-//            @Override
-//            public List<?> queryList(CommandContext commandContext) {
-//                return (List<?>) persistExecutor.execute(commandContext, CommandType.QUERY_FOR_LIST);
-//            }
-//        });
-//    }
-
 }
