@@ -8,14 +8,6 @@ package com.sonsure.dumper.core.command.entity;
  */
 public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>> extends EntityCommandExecutor {
 
-//    /**
-//     * 表别名
-//     *
-//     * @param tableAlias
-//     * @return
-//     */
-//    C tableAlias(String tableAlias);
-
     /**
      * where 关键字
      *
