@@ -6,7 +6,7 @@ package com.sonsure.dumper.core.command.entity;
  * <p>
  * Created by liyd on 17/4/11.
  */
-public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityCommandExecutor {
+public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>> extends EntityCommandExecutor {
 
 //    /**
 //     * 表别名
@@ -105,14 +105,6 @@ public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityC
      * @return
      */
     C conditionEntity(Object entity, String wholeLogicalOperator, String fieldLogicalOperator);
-
-//    /**
-//     * id条件
-//     *
-//     * @param value
-//     * @return
-//     */
-//    C conditionPk(Serializable value);
 
     /**
      * and

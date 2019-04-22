@@ -14,9 +14,9 @@ import java.util.Map;
  * Created by liyd on 17/4/11.
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> extends AbstractCommandExecutor implements ConditionBuilder<T> {
+public abstract class AbstractConditionCommandExecutor<T extends ConditionCommandExecutor<T>> extends AbstractCommandExecutor implements ConditionCommandExecutor<T> {
 
-    public AbstractConditionBuilder(JdbcEngineConfig jdbcEngineConfig) {
+    public AbstractConditionCommandExecutor(JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
     }
 
@@ -92,19 +92,6 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
         }
         return (T) this;
     }
-
-//    public T conditionPk(Serializable value) {
-//        String pkField = this.getJdbcEngineConfig().getMappingHandler().getPkField(this.getWhereContext().getModelClass());
-//        ClassField commandField = ClassField.builder()
-//                .name(pkField)
-//                .fieldOperator("=")
-//                .value(value)
-//                .type(ClassField.Type.WHERE_FIELD)
-//                .orig(ClassField.Orig.MANUAL)
-//                .build();
-//        this.commandTable.addWhereField(commandField);
-//        return (T) this;
-//    }
 
     public T and() {
         this.getWhereContext().addWhereField("and", null, null, null);
