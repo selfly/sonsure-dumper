@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by liyd on 17/4/12.
  */
-public class SelectImpl extends AbstractConditionBuilder<Select> implements Select {
+public class SelectImpl extends AbstractConditionCommandExecutor<Select> implements Select {
 
     protected SelectContext selectContext;
 

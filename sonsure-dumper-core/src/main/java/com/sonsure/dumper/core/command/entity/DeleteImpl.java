@@ -8,7 +8,7 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
 /**
  * Created by liyd on 17/4/14.
  */
-public class DeleteImpl extends AbstractConditionBuilder<Delete> implements Delete {
+public class DeleteImpl extends AbstractConditionCommandExecutor<Delete> implements Delete {
 
     protected DeleteContext deleteContext;
 

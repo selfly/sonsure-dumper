@@ -6,7 +6,7 @@ import com.sonsure.dumper.core.command.QueryCommandExecutor;
 /**
  * Created by liyd on 17/4/12.
  */
-public interface Select extends QueryCommandExecutor<Select>, ConditionBuilder<Select> {
+public interface Select extends QueryCommandExecutor<Select>, ConditionCommandExecutor<Select> {
 
     /**
      * from表

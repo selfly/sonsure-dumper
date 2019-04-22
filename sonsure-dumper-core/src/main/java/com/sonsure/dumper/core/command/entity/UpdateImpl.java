@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by liyd on 17/4/14.
  */
-public class UpdateImpl extends AbstractConditionBuilder<Update> implements Update {
+public class UpdateImpl extends AbstractConditionCommandExecutor<Update> implements Update {
 
     protected UpdateContext updateContext;
 

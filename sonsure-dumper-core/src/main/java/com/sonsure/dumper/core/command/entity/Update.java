@@ -3,7 +3,7 @@ package com.sonsure.dumper.core.command.entity;
 /**
  * Created by liyd on 17/4/14.
  */
-public interface Update extends ConditionBuilder<Update> {
+public interface Update extends ConditionCommandExecutor<Update> {
 
     /**
      * 指定表
