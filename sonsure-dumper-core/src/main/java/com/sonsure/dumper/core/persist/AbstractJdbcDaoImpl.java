@@ -76,7 +76,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
 
     public int delete(Class<?> entityClass, Serializable id) {
         String pkField = getJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(entityClass);
-        return this.createDelete().from(entityClass).where(pkField, id).execute();
+        return this.deleteFrom(entityClass).where(pkField, id).execute();
     }
 
     public int delete(Object entity) {
@@ -92,16 +92,36 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.createUpdate().setForEntityWhereId(entity).execute();
     }
 
-    public Select createSelect() {
+    @Override
+    public Update update(Class<?> cls) {
+        return this.getJdbcEngine().update(cls);
+    }
+
+    @Override
+    public Select selectFrom(Class<?> cls) {
+        return this.getJdbcEngine().selectFrom(cls);
+    }
+
+    public Select select() {
         return this.getJdbcEngine().select();
+    }
+
+    @Override
+    public Select select(String... fields) {
+        return this.getJdbcEngine().select(fields);
     }
 
     public Insert createInsert() {
         return this.getJdbcEngine().insert();
     }
 
-    public Delete createDelete() {
+    public Delete delete() {
         return this.getJdbcEngine().delete();
+    }
+
+    @Override
+    public Delete deleteFrom(Class<?> cls) {
+        return this.getJdbcEngine().deleteFrom(cls);
     }
 
     public Update createUpdate() {
@@ -139,4 +159,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         this.dataSource = dataSource;
     }
 
+    public void setJdbcEngine(JdbcEngine jdbcEngine) {
+        this.jdbcEngine = jdbcEngine;
+    }
 }

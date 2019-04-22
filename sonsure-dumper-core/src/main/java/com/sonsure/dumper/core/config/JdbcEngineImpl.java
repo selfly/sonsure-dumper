@@ -35,8 +35,13 @@ public class JdbcEngineImpl implements JdbcEngine {
         return jdbcEngineConfig.isDefault();
     }
 
+    public <T extends CommandExecutor> T createExecutor(Class<T> commandExecutorClass, Object param) {
+        return (T) this.jdbcEngineConfig.getCommandExecutorFactory().getCommandExecutor(commandExecutorClass, param, this.jdbcEngineConfig);
+    }
+
+    @Override
     public <T extends CommandExecutor> T createExecutor(Class<T> commandExecutorClass) {
-        return (T) this.jdbcEngineConfig.getCommandExecutorFactory().getCommandExecutor(commandExecutorClass, this.jdbcEngineConfig);
+        return this.createExecutor(commandExecutorClass, null);
     }
 
     @Override
@@ -47,6 +52,11 @@ public class JdbcEngineImpl implements JdbcEngine {
     @Override
     public Select select() {
         return this.createExecutor(Select.class);
+    }
+
+    @Override
+    public Select select(String... fields) {
+        return this.createExecutor(Select.class, fields);
     }
 
     @Override
@@ -119,8 +129,18 @@ public class JdbcEngineImpl implements JdbcEngine {
     }
 
     @Override
+    public Update update(Class<?> cls) {
+        return this.update().table(cls);
+    }
+
+    @Override
     public Delete delete() {
         return this.createExecutor(Delete.class);
+    }
+
+    @Override
+    public Delete deleteFrom(Class<?> cls) {
+        return this.delete().from(cls);
     }
 
     @Override

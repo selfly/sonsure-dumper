@@ -12,6 +12,8 @@ public interface ExecutorContext {
      */
     Class<?>[] getModelClasses();
 
+    boolean isNativeSql();
+
 //    /**
 //     * 实体类型
 //     */

@@ -1,11 +1,14 @@
 package com.sonsure.dumper.test.jdbc;
 
 import com.sonsure.commons.model.Page;
+import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.persist.Jdbc;
+import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -219,4 +222,96 @@ public class JdbcTest {
         Assert.assertTrue(user1.getLoginName().equals("name123"));
         Assert.assertTrue(user1.getPassword().equals("123321"));
     }
+
+    @Test
+    public void insertForAnnotation() {
+
+        KUserInfo ku = new KUserInfo();
+        ku.setLoginName("selfly");
+        ku.setPassword("123456");
+        ku.setUserAge(18);
+        ku.setGmtCreate(new Date());
+        ku.setGmtModify(new Date());
+
+        Long id = (Long) Jdbc.insert(ku);
+
+        KUserInfo kUserInfo = Jdbc.get(KUserInfo.class, id);
+        Assert.assertEquals("selfly", kUserInfo.getLoginName());
+        Assert.assertEquals("123456", kUserInfo.getPassword());
+    }
+
+    @Test
+    public void select() {
+
+        Jdbc.delete(UserInfo.class);
+        for (int i = 60; i < 70; i++) {
+            UserInfo user = new UserInfo();
+            user.setUserInfoId(Long.valueOf(i));
+            user.setLoginName("name2-19");
+            user.setPassword("123456-" + i);
+            user.setUserAge(19);
+            user.setGmtCreate(new Date());
+            Jdbc.insert(user);
+        }
+
+        Select select1 = Jdbc.selectFrom(UserInfo.class)
+                .where("userAge", 19);
+        long count1 = select1.count();
+        Assert.assertTrue(count1 == 10);
+
+        List<UserInfo> list1 = select1.list(UserInfo.class);
+        Assert.assertTrue(list1.size() == 10);
+
+        Page<UserInfo> page1 = select1.paginate(1, 5).pageResult(UserInfo.class);
+        Assert.assertTrue(page1.getList().size() == 5);
+
+        Select select2 = Jdbc.selectFrom(UserInfo.class)
+                .where("userAge", 19)
+                .and("loginName", "name2-19");
+        long count2 = select2.count();
+        Assert.assertTrue(count2 == 10);
+
+        List<UserInfo> list2 = select2.list(UserInfo.class);
+        Assert.assertTrue(list2.size() == 10);
+
+        Page<UserInfo> page2 = select2.paginate(1, 5).pageResult(UserInfo.class);
+        Assert.assertTrue(page2.getList().size() == 5);
+    }
+
+    @Test
+    public void select2() {
+
+        Jdbc.delete(UserInfo.class);
+        for (int i = 1; i < 3; i++) {
+            UserInfo user = new UserInfo();
+            user.setUserInfoId(Long.valueOf(i));
+            user.setLoginName("name-19");
+            user.setPassword("123456-" + i);
+            user.setUserAge(21);
+            user.setGmtCreate(new Date());
+            Jdbc.insert(user);
+        }
+        try {
+            UserInfo user = Jdbc.selectFrom(UserInfo.class)
+                    .where()
+                    .begin()
+                    .condition("loginName", "name-19")
+                    .or("userAge", 21)
+                    .end()
+                    .singleResult(UserInfo.class);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            Assert.assertTrue("Incorrect result size: expected 1, actual 2".equals(e.getMessage()));
+        }
+
+        UserInfo user2 = Jdbc.selectFrom(UserInfo.class)
+                .where()
+                .begin()
+                .condition("loginName", "name-19")
+                .or("userAge", 21)
+                .end()
+                .and("password", "123456-1")
+                .singleResult(UserInfo.class);
+        Assert.assertNotNull(user2);
+    }
+
 }

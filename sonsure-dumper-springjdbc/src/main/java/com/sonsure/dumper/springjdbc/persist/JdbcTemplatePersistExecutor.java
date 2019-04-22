@@ -48,7 +48,7 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcOperations.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement ps = con.prepareStatement(commandContext.getResolvedCommand(), new String[]{generateKey.getColumn()});
+                    PreparedStatement ps = con.prepareStatement(commandContext.getCommand(), new String[]{generateKey.getColumn()});
                     ArgumentPreparedStatementSetter pss = new ArgumentPreparedStatementSetter(commandContext.getParameters()
                             .toArray());
                     pss.setValues(ps);
@@ -59,53 +59,53 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             //可能显示设置了主键值，没有生成
             return number == null ? null : number.longValue();
         } else {
-            jdbcOperations.update(commandContext.getResolvedCommand(), commandContext.getParameters().toArray());
+            jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
             return generateKey.getValue();
         }
     }
 
     @Override
     public List<?> queryForList(CommandContext commandContext) {
-        return jdbcOperations.query(commandContext.getResolvedCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResultType(), getJdbcEngineConfig().getMappingHandler()));
+        return jdbcOperations.query(commandContext.getCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResultType(), getJdbcEngineConfig().getMappingHandler()));
     }
 
     @Override
     public Object querySingleResult(CommandContext commandContext) {
         //采用list方式查询，当记录不存在时返回null而不会抛出异常,多于一条时会抛异常
-        List<?> list = jdbcOperations.query(commandContext.getResolvedCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResultType(), getJdbcEngineConfig().getMappingHandler()));
+        List<?> list = jdbcOperations.query(commandContext.getCommand(), commandContext.getParameters().toArray(), JdbcRowMapper.newInstance(commandContext.getResultType(), getJdbcEngineConfig().getMappingHandler()));
         return DataAccessUtils.singleResult(list);
     }
 
     @Override
     public Map<String, Object> queryForMap(CommandContext commandContext) {
         //直接queryForMap没有记录时会抛出异常，采用list方式查询，当记录不存在时返回null而不会抛出异常,多于一条时会抛异常
-        List<Map<String, Object>> maps = jdbcOperations.queryForList(commandContext.getResolvedCommand(), commandContext.getParameters().toArray());
+        List<Map<String, Object>> maps = jdbcOperations.queryForList(commandContext.getCommand(), commandContext.getParameters().toArray());
         return DataAccessUtils.singleResult(maps);
     }
 
     @Override
     public List<Map<String, Object>> queryForMapList(CommandContext commandContext) {
-        return jdbcOperations.queryForList(commandContext.getResolvedCommand(), commandContext.getParameters().toArray());
+        return jdbcOperations.queryForList(commandContext.getCommand(), commandContext.getParameters().toArray());
     }
 
     @Override
     public Object queryOneCol(CommandContext commandContext) {
-        return jdbcOperations.queryForObject(commandContext.getResolvedCommand(), commandContext.getParameters().toArray(), commandContext.getResultType());
+        return jdbcOperations.queryForObject(commandContext.getCommand(), commandContext.getParameters().toArray(), commandContext.getResultType());
     }
 
     @Override
     public List<?> queryOneColList(CommandContext commandContext) {
-        return jdbcOperations.queryForList(commandContext.getResolvedCommand(), commandContext.getResultType(), commandContext.getParameters().toArray());
+        return jdbcOperations.queryForList(commandContext.getCommand(), commandContext.getResultType(), commandContext.getParameters().toArray());
     }
 
     @Override
     public int update(CommandContext commandContext) {
-        return jdbcOperations.update(commandContext.getResolvedCommand(), commandContext.getParameters().toArray());
+        return jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
     }
 
     @Override
     public int delete(CommandContext commandContext) {
-        return jdbcOperations.update(commandContext.getResolvedCommand(), commandContext.getParameters().toArray());
+        return jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
     }
 
     @Override

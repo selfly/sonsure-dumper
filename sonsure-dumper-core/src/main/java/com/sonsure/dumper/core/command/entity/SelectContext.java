@@ -5,6 +5,7 @@ import com.sonsure.commons.model.Pagination;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.management.CommandClass;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -64,6 +65,15 @@ public class SelectContext extends WhereContext {
             classes.add(fromClass.getCls());
         }
         return classes.toArray(new Class<?>[classes.size()]);
+    }
+
+    public void addSelectFields(String[] fields) {
+        if (ArrayUtils.isEmpty(fields)) {
+            return;
+        }
+        for (String field : fields) {
+            this.selectFields.add(this.getClassField(field));
+        }
     }
 
     public void addFromClass(Class<?> cls) {
@@ -207,7 +217,12 @@ public class SelectContext extends WhereContext {
         if (this.excludeFields == null || this.excludeFields.isEmpty()) {
             return false;
         }
-        return this.excludeFields.contains(field);
+        ClassField classField = this.getClassField(field);
+        for (ClassField excludeField : excludeFields) {
+            if (StringUtils.equals(classField.getTableAlias(), excludeField.getTableAlias()) && StringUtils.equals(classField.getName(), excludeField.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
-
 }

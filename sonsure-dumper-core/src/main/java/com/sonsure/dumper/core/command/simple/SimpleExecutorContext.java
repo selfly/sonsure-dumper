@@ -1,27 +1,43 @@
 package com.sonsure.dumper.core.command.simple;
 
+import com.sonsure.commons.model.Pageable;
+import com.sonsure.commons.model.Pagination;
 import com.sonsure.dumper.core.command.ExecutorContext;
 import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SimpleExecutorContext implements ExecutorContext {
 
     protected String command;
-    protected List<Object> parameters;
 
-    public SimpleExecutorContext() {
-        this.parameters = new ArrayList<>();
+    protected boolean isNativeSql;
+
+    /**
+     * 分页查询时是否用count查询总记录数,默认true
+     */
+    protected boolean isCount = true;
+
+    protected Pagination pagination;
+
+
+    public void paginate(int pageNum, int pageSize) {
+        this.pagination = new Pagination();
+        this.pagination.setPageNum(pageNum);
+        this.pagination.setPageSize(pageSize);
+    }
+
+    public void paginate(Pageable pageable) {
+        this.paginate(pageable.getPageNum(), pageable.getPageSize());
+    }
+
+    public void limit(int offset, int size) {
+        this.pagination = new Pagination();
+        this.pagination.setOffset(offset);
+        this.pagination.setPageSize(size);
     }
 
     @Override
     public Class<?>[] getModelClasses() {
         return ArrayUtils.EMPTY_CLASS_ARRAY;
-    }
-
-    public void addParameter(Object value) {
-        this.parameters.add(value);
     }
 
     public String getCommand() {
@@ -32,11 +48,25 @@ public class SimpleExecutorContext implements ExecutorContext {
         this.command = command;
     }
 
-    public List<Object> getParameters() {
-        return parameters;
+    @Override
+    public boolean isNativeSql() {
+        return isNativeSql;
     }
 
-    public void setParameters(List<Object> parameters) {
-        this.parameters = parameters;
+    public void setNativeSql(boolean nativeSql) {
+        isNativeSql = nativeSql;
     }
+
+    public boolean isCount() {
+        return isCount;
+    }
+
+    public void setCount(boolean count) {
+        isCount = count;
+    }
+
+    public Pagination getPagination() {
+        return pagination;
+    }
+
 }

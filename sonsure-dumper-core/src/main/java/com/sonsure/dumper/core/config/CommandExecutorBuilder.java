@@ -8,17 +8,19 @@ public interface CommandExecutorBuilder {
      * 是否支持
      *
      * @param commandExecutorClass the command executor class
+     * @param param                the param
      * @param jdbcEngineConfig     the jdbc engine config
-     * @return boolean
+     * @return boolean boolean
      */
-    boolean support(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig);
+    boolean support(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig);
 
     /**
      * 构建CommandExecutor
      *
      * @param commandExecutorClass the command executor class
+     * @param param                the param
      * @param jdbcEngineConfig     the jdbc engine config
      * @return command executor
      */
-    CommandExecutor build(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig);
+    CommandExecutor build(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig);
 }

@@ -7,9 +7,9 @@ import com.sonsure.dumper.core.command.entity.*;
 import com.sonsure.dumper.core.command.mybatis.MybatisCommandContextBuilder;
 import com.sonsure.dumper.core.command.mybatis.MybatisExecutor;
 import com.sonsure.dumper.core.command.mybatis.MybatisExecutorImpl;
+import com.sonsure.dumper.core.command.natives.NativeCommandContextBuilder;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutorImpl;
-import com.sonsure.dumper.core.command.simple.SimpleCommandContextBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,12 +23,12 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
     }
 
     @Override
-    public boolean support(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
+    public boolean support(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig) {
         return commandExecutorClasses.contains(commandExecutorClass);
     }
 
     @Override
-    public CommandExecutor build(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
+    public CommandExecutor build(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig) {
 
         AbstractCommandExecutor commandExecutor = null;
         CommandContextBuilder commandContextBuilder = null;
@@ -37,7 +37,11 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
             commandExecutor = new InsertImpl(jdbcEngineConfig);
             commandContextBuilder = new InsertCommandContextBuilderImpl();
         } else if (commandExecutorClass == Select.class) {
-            commandExecutor = new SelectImpl(jdbcEngineConfig);
+            if (param == null) {
+                commandExecutor = new SelectImpl(jdbcEngineConfig);
+            } else {
+                commandExecutor = new SelectImpl(jdbcEngineConfig, ((String[]) param));
+            }
             commandContextBuilder = new SelectCommandContextBuilderImpl();
         } else if (commandExecutorClass == Update.class) {
             commandExecutor = new UpdateImpl(jdbcEngineConfig);
@@ -47,7 +51,7 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
             commandContextBuilder = new DeleteCommandContextBuilderImpl();
         } else if (commandExecutorClass == NativeExecutor.class) {
             commandExecutor = new NativeExecutorImpl(jdbcEngineConfig);
-            commandContextBuilder = new SimpleCommandContextBuilder();
+            commandContextBuilder = new NativeCommandContextBuilder();
         } else if (commandExecutorClass == MybatisExecutor.class) {
             commandExecutor = new MybatisExecutorImpl(jdbcEngineConfig);
             commandContextBuilder = new MybatisCommandContextBuilder();

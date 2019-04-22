@@ -4,8 +4,10 @@ import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
-import org.apache.commons.lang3.StringUtils;
+import com.sonsure.dumper.core.management.ClassField;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,16 +70,25 @@ public abstract class AbstractConditionBuilder<T extends ConditionBuilder<T>> ex
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
 
         int count = 1;
+        List<ClassField> fieldList = new ArrayList<>();
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
             //忽略掉null
             if (entry.getValue() == null) {
                 continue;
             }
-            if (count == 1 && StringUtils.isNotBlank(wholeLogicalOperator)) {
-                this.getWhereContext().addWhereField(wholeLogicalOperator, null, null, null);
-            }
-            this.getWhereContext().addWhereField(count > 1 ? fieldLogicalOperator : null, entry.getKey(), "=", entry.getValue());
+            ClassField classField = new ClassField(entry.getKey());
+            classField.setLogicalOperator(count > 1 ? fieldLogicalOperator : null);
+            classField.setFieldOperator("=");
+            classField.setValue(entry.getValue());
+            fieldList.add(classField);
             count++;
+        }
+        //防止属性全为null的情况
+        if (!fieldList.isEmpty()) {
+            this.getWhereContext().addWhereField(wholeLogicalOperator, null, null, null);
+            this.begin();
+            this.getWhereContext().addWhereFields(fieldList);
+            this.end();
         }
         return (T) this;
     }

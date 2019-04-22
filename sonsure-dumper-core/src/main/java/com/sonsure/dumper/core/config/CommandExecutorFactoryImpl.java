@@ -18,22 +18,22 @@ public class CommandExecutorFactoryImpl implements CommandExecutorFactory {
     }
 
     @Override
-    public CommandExecutor getCommandExecutor(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
-        CommandExecutorBuilder commandExecutorBuilder = this.getCommandExecutorBuilder(commandExecutorClass, jdbcEngineConfig);
-        CommandExecutor commandExecutor = commandExecutorBuilder.build(commandExecutorClass, jdbcEngineConfig);
+    public CommandExecutor getCommandExecutor(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig) {
+        CommandExecutorBuilder commandExecutorBuilder = this.getCommandExecutorBuilder(commandExecutorClass, param, jdbcEngineConfig);
+        CommandExecutor commandExecutor = commandExecutorBuilder.build(commandExecutorClass, param, jdbcEngineConfig);
         return commandExecutor;
     }
 
-    protected CommandExecutorBuilder getCommandExecutorBuilder(Class<? extends CommandExecutor> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig) {
+    protected CommandExecutorBuilder getCommandExecutorBuilder(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig) {
         if (this.commandExecutorBuilders != null) {
             for (CommandExecutorBuilder ceb : this.commandExecutorBuilders) {
-                if (ceb.support(commandExecutorClass, jdbcEngineConfig)) {
+                if (ceb.support(commandExecutorClass, param, jdbcEngineConfig)) {
                     return ceb;
                 }
             }
         }
         for (CommandExecutorBuilder ceb : this.defaultCommandExecutorBuilders) {
-            if (ceb.support(commandExecutorClass, jdbcEngineConfig)) {
+            if (ceb.support(commandExecutorClass, param, jdbcEngineConfig)) {
                 return ceb;
             }
         }

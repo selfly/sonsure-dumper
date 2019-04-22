@@ -66,6 +66,20 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         return resultList;
     }
 
+    protected <E> Page<E> handleResult(Page<?> page, ResultHandler<E> resultHandler) {
+        Page<E> newPage = new Page<>(page.getPagination());
+        if (page.getList() == null || page.getList().isEmpty()) {
+            return newPage;
+        }
+        List<E> resultList = new ArrayList<>();
+        for (Object obj : page.getList()) {
+            E e = this.handleResult(obj, resultHandler);
+            resultList.add(e);
+        }
+        newPage.setList(resultList);
+        return newPage;
+    }
+
     public CommandContextBuilder getCommandContextBuilder() {
         return commandContextBuilder;
     }

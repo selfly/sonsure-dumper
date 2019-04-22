@@ -25,6 +25,15 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
         selectContext = new SelectContext();
     }
 
+
+    public SelectImpl(JdbcEngineConfig jdbcEngineConfig, String[] fields) {
+        super(jdbcEngineConfig);
+        selectContext = new SelectContext();
+        if (fields != null) {
+            selectContext.addSelectFields(fields);
+        }
+    }
+
     @Override
     public Select from(Class<?> cls) {
         selectContext.addFromClass(cls);
@@ -58,7 +67,7 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 
     @Override
     public Select extraField(String... fields) {
-        throw new UnsupportedOperationException("暂不支持");
+        throw new UnsupportedOperationException("extraField方法暂不支持");
     }
 
 
@@ -151,6 +160,21 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
     }
 
     @Override
+    public <E> E oneColResult(Class<E> clazz) {
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        commandContext.setResultType(clazz);
+        return (E) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL);
+    }
+
+    @Override
+    public <E> List<E> oneColList(Class<E> clazz) {
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        commandContext.setResultType(clazz);
+        return (List<E>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
+    }
+
+
+    @Override
     public <T> List<T> list(Class<T> cls) {
         CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
         commandContext.setResultType(cls);
@@ -175,8 +199,14 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
     }
 
     @Override
-    public Page<Object> page() {
-        return null;
+    public Page<Object> pageResult() {
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        return (Page<Object>) this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler() {
+            @Override
+            public List<Object> queryList(CommandContext commandContext) {
+                return (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
+            }
+        });
     }
 
     @Override
@@ -184,39 +214,24 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
         return this.selectContext;
     }
 
-    //    public long count() {
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//        String countCommand = this.pageHandler.getCountCommand(commandContext.getCommand(), persistExecutor.getDialect());
-//        CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
-//        countCommandContext.setCommand(countCommand);
-//        countCommandContext.setResultType(Long.class);
-//        Object result = this.persistExecutor.execute(countCommandContext, CommandType.QUERY_ONE_COL);
-//        return (Long) result;
-//    }
-//
-//    public Object objResult() {
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//        Object result = this.persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP);
-//        if (isForceResultToModel) {
-//            return this.handleResult(result, DefaultResultHandler.newInstance(commandContext.getModelClass()));
-//        }
-//        return result;
-//    }
-//
+    public Object objResult() {
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        Object result = this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
+        return result;
+    }
+
+    //
 //    @Override
 //    public Object objFirstResult() {
 //        Page<?> page = this.objPageList(1, 1, false);
 //        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
 //    }
 //
-//    public List<?> objList() {
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//        List<?> result = (List<?>) this.persistExecutor.execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-//        if (isForceResultToModel) {
-//            return this.handleResult(result, DefaultResultHandler.newInstance(commandContext.getModelClass()));
-//        }
-//        return result;
-//    }
+    public List<Object> objList() {
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        List<Object> result = (List<Object>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
+        return result;
+    }
 //
 //    @Override
 //    public Page<?> objPageList(Pageable pageable) {
@@ -248,12 +263,6 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 //        return page;
 //    }
 //
-//    @Override
-//    public <E> E oneColResult(Class<E> clazz) {
-//        this.commandTable.setResultType(clazz);
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//        return (E) this.persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL);
-//    }
 //
 //    @Override
 //    public <E> E oneColFirstResult(Class<E> clazz) {
@@ -261,13 +270,7 @@ public class SelectImpl extends AbstractConditionBuilder<Select> implements Sele
 //        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
 //    }
 //
-//    @Override
-//    public <E> List<E> oneColList(Class<E> clazz) {
-//        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-//        commandContext.setResultType(clazz);
-//        return (List<E>) this.persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
-//    }
-//
+
 //    @Override
 //    public <E> Page<E> oneColPageList(Class<E> clazz, Pageable pageable, boolean isCount) {
 //        return this.oneColPageList(clazz, pageable.getPageNum(), pageable.getPageSize(), isCount);

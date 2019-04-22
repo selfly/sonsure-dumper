@@ -29,12 +29,16 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
             ((AbstractMappingHandler) mappingHandler).addClassMapping(modelClasses);
         }
 
-//        commandContext.setCommandCase(commandTable.getCommandCase());
         String resolvedCommand = commandContext.getCommand();
-        Map<String, Object> params = new HashMap<>();
-//        if (!commandTable.isForceNative()) {
-        resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
-//        }
+        if (!executorContext.isNativeSql()) {
+            Map<String, Object> params = new HashMap<>();
+            resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
+        }
+        if (StringUtils.equalsIgnoreCase(jdbcEngineConfig.getCommandCase(), "upper")) {
+            resolvedCommand = resolvedCommand.toUpperCase();
+        } else if (StringUtils.equalsIgnoreCase(jdbcEngineConfig.getCommandCase(), "lower")) {
+            resolvedCommand = resolvedCommand.toLowerCase();
+        }
         commandContext.setCommand(resolvedCommand);
         return commandContext;
     }

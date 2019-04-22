@@ -1,12 +1,11 @@
 package com.sonsure.dumper.core.command.entity;
 
-import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.management.ClassField;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InsertContext implements ExecutorContext {
+public class InsertContext extends EntityExecutorContext {
 
     /**
      * 对应实体类

@@ -42,9 +42,19 @@ public interface JdbcEngine {
     /**
      * 创建执行器
      *
+     * @param <T>                  the type parameter
      * @param commandExecutorClass 执行器class
-     * @param <T>
-     * @return
+     * @param param                the param
+     * @return t
+     */
+    <T extends CommandExecutor> T createExecutor(Class<T> commandExecutorClass, Object param);
+
+    /**
+     * 创建执行器
+     *
+     * @param <T>                  the type parameter
+     * @param commandExecutorClass 执行器class
+     * @return t
      */
     <T extends CommandExecutor> T createExecutor(Class<T> commandExecutorClass);
 
@@ -77,6 +87,14 @@ public interface JdbcEngine {
      * @return
      */
     Select select();
+
+    /**
+     * select对象
+     *
+     * @param fields the fields
+     * @return select
+     */
+    Select select(String... fields);
 
 
     /**
@@ -149,11 +167,26 @@ public interface JdbcEngine {
     Update update();
 
     /**
+     * update对象
+     *
+     * @return
+     */
+    Update update(Class<?> cls);
+
+    /**
      * delete对象
      *
      * @return
      */
     Delete delete();
+
+    /**
+     * delete对象
+     *
+     * @param cls the cls
+     * @return delete
+     */
+    Delete deleteFrom(Class<?> cls);
 
     /**
      * delete对象

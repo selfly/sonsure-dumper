@@ -1,13 +1,12 @@
 package com.sonsure.dumper.core.command.entity;
 
-import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.management.ClassField;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class WhereContext implements ExecutorContext {
+public abstract class WhereContext extends EntityExecutorContext {
 
     /**
      * where的属性/列
@@ -24,6 +23,10 @@ public abstract class WhereContext implements ExecutorContext {
         classField.setFieldOperator(fieldOperator);
         classField.setValue(value);
         this.whereFields.add(classField);
+    }
+
+    public void addWhereFields(List<ClassField> classFields) {
+        this.whereFields.addAll(classFields);
     }
 
     public List<ClassField> getWhereFields() {

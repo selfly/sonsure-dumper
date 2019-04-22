@@ -57,10 +57,12 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
         command.deleteCharAt(command.length() - 1);
 
         CommandContext whereCommandContext = this.buildWhereSql(updateContext);
-        command.append(whereCommandContext.getCommand());
+        if (whereCommandContext != null) {
+            command.append(whereCommandContext.getCommand());
+            commandContext.addParameters(whereCommandContext.getParameters());
+        }
 
         commandContext.setCommand(command.toString());
-        commandContext.addParameters(whereCommandContext.getParameters());
 
         return commandContext;
     }

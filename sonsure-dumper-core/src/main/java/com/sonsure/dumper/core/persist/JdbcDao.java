@@ -140,13 +140,36 @@ public interface JdbcDao {
      */
     <T> int update(T entity);
 
+    /**
+     * 创建update对象
+     *
+     * @param cls
+     * @return
+     */
+    Update update(Class<?> cls);
+
+    /**
+     * 创建select对象
+     *
+     * @param cls
+     * @return
+     */
+    Select selectFrom(Class<?> cls);
 
     /**
      * 创建select对象
      *
      * @return select select
      */
-    Select createSelect();
+    Select select();
+
+    /**
+     * 创建select对象
+     *
+     * @param fields the fields
+     * @return select select
+     */
+    Select select(String... fields);
 
 
     /**
@@ -161,7 +184,15 @@ public interface JdbcDao {
      *
      * @return delete
      */
-    Delete createDelete();
+    Delete delete();
+
+    /**
+     * 创建delete对象
+     *
+     * @param cls the cls
+     * @return delete delete
+     */
+    Delete deleteFrom(Class<?> cls);
 
     /**
      * 创建update对象

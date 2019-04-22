@@ -2,6 +2,7 @@ package com.sonsure.dumper.core.command.mybatis;
 
 
 import com.sonsure.dumper.core.command.simple.AbstractSimpleCommandExecutor;
+import com.sonsure.dumper.core.command.simple.SimpleExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 import java.util.Map;
@@ -11,17 +12,29 @@ import java.util.Map;
  */
 public class MybatisExecutorImpl extends AbstractSimpleCommandExecutor<MybatisExecutor> implements MybatisExecutor {
 
+    protected MybatisExecutorContext mybatisExecutorContext;
 
     public MybatisExecutorImpl(JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
+        mybatisExecutorContext = new MybatisExecutorContext();
     }
 
     @Override
     public MybatisExecutor parameters(Map<String, Object> parameters) {
         if (parameters != null) {
-//            this.parameters.putAll(parameters);
+            this.mybatisExecutorContext.addParameters(parameters);
         }
         return this;
     }
 
+    @Override
+    public MybatisExecutor parameter(String name, Object value) {
+        this.mybatisExecutorContext.addParameter(name, value);
+        return this;
+    }
+
+    @Override
+    protected SimpleExecutorContext getSimpleExecutorContext() {
+        return mybatisExecutorContext;
+    }
 }
