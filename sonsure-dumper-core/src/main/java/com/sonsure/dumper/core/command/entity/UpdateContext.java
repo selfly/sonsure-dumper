@@ -27,7 +27,7 @@ public class UpdateContext extends WhereContext {
     }
 
     public void addSetField(String field, Object value) {
-        ClassField classField = new ClassField(field);
+        ClassField classField = new ClassField(field, true);
         classField.setValue(value);
         this.setFields.add(classField);
     }

@@ -76,7 +76,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
             if (entry.getValue() == null) {
                 continue;
             }
-            ClassField classField = new ClassField(entry.getKey());
+            ClassField classField = new ClassField(entry.getKey(), false);
             classField.setLogicalOperator(count > 1 ? fieldLogicalOperator : null);
             classField.setFieldOperator("=");
             classField.setValue(entry.getValue());
@@ -140,6 +140,12 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
 
     public T end() {
         this.getWhereContext().addWhereField(")", null, null, null);
+        return (T) this;
+    }
+
+    @Override
+    public T append(String segment, Object... params) {
+        this.getWhereContext().addWhereField(null, segment, null, params, ClassField.Type.WHERE_APPEND);
         return (T) this;
     }
 

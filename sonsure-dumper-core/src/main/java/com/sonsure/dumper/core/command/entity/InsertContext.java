@@ -27,7 +27,7 @@ public class InsertContext extends EntityExecutorContext {
     }
 
     public void addInsertField(String field, Object value) {
-        ClassField classField = new ClassField(field);
+        ClassField classField = new ClassField(field, false);
         classField.setValue(value);
         this.insertFields.add(classField);
     }

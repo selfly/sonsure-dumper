@@ -182,4 +182,13 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
      */
     C end();
 
+    /**
+     * append sql片断
+     *
+     * @param segment the segment
+     * @param params  the params
+     * @return c
+     */
+    C append(String segment, Object... params);
+
 }

@@ -4,7 +4,6 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.management.ClassField;
-import com.sonsure.dumper.core.management.ClassFieldWrapper;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -33,21 +32,11 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
                 continue;
             }
 
-            ClassFieldWrapper fieldWrapper = new ClassFieldWrapper(classField);
-
-
-//                 * 0 是否原生属性
-//                    * 1 是否原生value
-//                    * 2 field名
-//                    * 3 带表别名的field名 如果没有表别名，field名一致
-//                    * 4 解析过的value 只对String有效
-//     */
-
-            command.append(fieldWrapper.getFieldName()).append(" = ");
+            command.append(classField.getName()).append(" = ");
             if (classField.getValue() == null) {
                 command.append("null");
-            } else if (fieldWrapper.isNative()) {
-                command.append(fieldWrapper.getValue());
+            } else if (classField.isNative()) {
+                command.append(classField.getValue());
             } else {
                 command.append("?");
                 commandContext.addParameter(classField.getValue());

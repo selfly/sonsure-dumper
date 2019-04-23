@@ -5,7 +5,6 @@ import com.sonsure.dumper.core.command.CommandContextBuilder;
 import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.management.ClassField;
-import com.sonsure.dumper.core.management.ClassFieldWrapper;
 import com.sonsure.dumper.core.management.ModelClassCache;
 import com.sonsure.dumper.core.management.ModelFieldMeta;
 import com.sonsure.dumper.core.mapping.AbstractMappingHandler;
@@ -197,28 +196,32 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
                 continue;
             }
 
-            ClassFieldWrapper fieldWrapper = new ClassFieldWrapper(classField);
-
-            if (fieldWrapper.getValue() == null) {
+            if (classField.getType() == ClassField.Type.WHERE_APPEND) {
+                whereCommand.append(classField.getName());
+                if (classField.getValue() != null) {
+                    Object[] values = (Object[]) classField.getValue();
+                    parameters.addAll(Arrays.asList(values));
+                }
+            } else if (classField.getValue() == null) {
                 String operator = StringUtils.isBlank(classField.getFieldOperator()) ? "is" : classField.getFieldOperator();
-                whereCommand.append(this.getTableAliasField(fieldWrapper.getTableAlias(), fieldWrapper.getFieldName()))
+                whereCommand.append(this.getTableAliasField(classField.getTableAlias(), classField.getName()))
                         .append(" ")
                         .append(operator)
                         .append(" null ");
-            } else if (fieldWrapper.getValue() instanceof Object[]) {
-                this.processArrayArgs(fieldWrapper, whereCommand, parameters);
+            } else if (classField.getValue() instanceof Object[]) {
+                this.processArrayArgs(classField, whereCommand, parameters);
             } else {
-                whereCommand.append(this.getTableAliasField(fieldWrapper.getTableAlias(), fieldWrapper.getFieldName()))
+                whereCommand.append(this.getTableAliasField(classField.getTableAlias(), classField.getName()))
                         .append(" ")
                         .append(classField.getFieldOperator())
                         .append(" ");
 
                 //native 不传参方式
-                if (fieldWrapper.isNative()) {
-                    whereCommand.append(fieldWrapper.isFieldOperatorNeedBracket() ? String.format(" ( %s ) ", fieldWrapper.getValue()) : String.format(" %s ", fieldWrapper.getValue()));
+                if (classField.isNative()) {
+                    whereCommand.append(classField.isFieldOperatorNeedBracket() ? String.format(" ( %s ) ", classField.getValue()) : String.format(" %s ", classField.getValue()));
                 } else {
-                    whereCommand.append(fieldWrapper.isFieldOperatorNeedBracket() ? " ( ? ) " : " ? ");
-                    parameters.add(fieldWrapper.getValue());
+                    whereCommand.append(classField.isFieldOperatorNeedBracket() ? " ( ? ) " : " ? ");
+                    parameters.add(classField.getValue());
                 }
             }
         }
@@ -278,13 +281,13 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
     /**
      * 处理数组参数
      */
-    protected void processArrayArgs(ClassFieldWrapper fieldWrapper, StringBuilder whereCommand, List<Object> parameters) {
-        String aliasField = this.getTableAliasField(fieldWrapper.getTableAlias(), fieldWrapper.getFieldName());
-        Object[] args = (Object[]) fieldWrapper.getValue();
-        if (fieldWrapper.isFieldOperatorNeedBracket()) {
-            whereCommand.append(aliasField).append(" ").append(fieldWrapper.getFieldOperator()).append(" (");
+    protected void processArrayArgs(ClassField classField, StringBuilder whereCommand, List<Object> parameters) {
+        String aliasField = this.getTableAliasField(classField.getTableAlias(), classField.getName());
+        Object[] args = (Object[]) classField.getValue();
+        if (classField.isFieldOperatorNeedBracket()) {
+            whereCommand.append(aliasField).append(" ").append(classField.getFieldOperator()).append(" (");
             for (int i = 0; i < args.length; i++) {
-                if (fieldWrapper.isNative()) {
+                if (classField.isNative()) {
                     whereCommand.append(args[i]);
                 } else {
                     whereCommand.append("?");
@@ -300,8 +303,8 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
                 whereCommand.append(" (");
             }
             for (int i = 0; i < args.length; i++) {
-                whereCommand.append(aliasField).append(" ").append(fieldWrapper.getFieldOperator());
-                if (fieldWrapper.isNative()) {
+                whereCommand.append(aliasField).append(" ").append(classField.getFieldOperator());
+                if (classField.isNative()) {
                     whereCommand.append(String.format(" %s ", args[i]));
                 } else {
                     whereCommand.append(" ? ");

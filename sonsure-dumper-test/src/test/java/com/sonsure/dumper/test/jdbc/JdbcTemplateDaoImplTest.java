@@ -4,6 +4,7 @@ import com.sonsure.commons.model.Page;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.KUserInfo;
+import com.sonsure.dumper.test.model.UidUser;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.junit.Assert;
 import org.junit.Before;
@@ -476,6 +477,28 @@ public class JdbcTemplateDaoImplTest {
         Assert.assertNotNull(users);
     }
 
+
+    @Test
+    public void singleResultObject() {
+
+        Object object = jdbcDao.select("loginName", "password")
+                .from(UserInfo.class)
+                .where("userInfoId", 5L)
+                .singleResult();
+
+        Assert.assertNotNull(object instanceof Map);
+    }
+
+    @Test
+    public void singleResultObject2() {
+
+        Object object = jdbcDao.select().from(UserInfo.class, "t1", UidUser.class, "t2")
+                .where("{{t1.userInfoId}}", "t2.uidUserId")
+                .list();
+
+        Assert.assertNotNull(object instanceof Map);
+    }
+
     @Test
     public void selectForAnnotation() {
         Page<KUserInfo> page = jdbcDao.selectFrom(KUserInfo.class)
@@ -506,30 +529,15 @@ public class JdbcTemplateDaoImplTest {
         Assert.assertTrue(objects.size() == 50);
     }
 
-    ////    @Test
-////    public void append() {
-//
-////        GenericTokenParser tokenParser = new GenericTokenParser(":", " ", new TokenHandler() {
-////            @Override
-////            public String handleToken(String s) {
-////                return " ? ";
-////            }
-////        });
-////
-////        String sql = "select t.* from UserInfo t where t.userInfoId = ::userInfoId and userAge = :userAge ";
-////
-////        String parse = tokenParser.parse(sql);
-////
-////        System.out.println(parse);
-//
-//
-////        Select<UserInfo> select = jdbcDao.createSelect(UserInfo.class);
-////        select.where("userAge", ">", 5)
-////                .append("and userInfoId = (select max(userInfoId) from UserInfo)");
-////        UserInfo userInfo = select.singleResult();
-////        Assert.assertNotNull(userInfo);
-////    }
-//
+    @Test
+    public void append() {
+        UserInfo userInfo = jdbcDao.selectFrom(UserInfo.class)
+                .where("userAge", ">", 5)
+                .append("and userInfoId = (select max(t2.userInfoId) from UserInfo t2 where t2.userInfoId < ?)", 40)
+                .singleResult(UserInfo.class);
+        Assert.assertNotNull(userInfo);
+    }
+
     @Test
     public void updateSet() {
 

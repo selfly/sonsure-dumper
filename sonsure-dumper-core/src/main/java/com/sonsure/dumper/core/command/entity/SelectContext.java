@@ -72,7 +72,7 @@ public class SelectContext extends WhereContext {
             return;
         }
         for (String field : fields) {
-            this.selectFields.add(this.getClassField(field));
+            this.selectFields.add(new ClassField(field, true));
         }
     }
 
@@ -91,7 +91,7 @@ public class SelectContext extends WhereContext {
      */
     public void addExcludeFields(String... fields) {
         for (String field : fields) {
-            this.excludeFields.add(this.getClassField(field));
+            this.excludeFields.add(new ClassField(field, true));
         }
     }
 
@@ -102,7 +102,7 @@ public class SelectContext extends WhereContext {
      */
     public void addGroupByField(String... fields) {
         for (String field : fields) {
-            this.groupByFields.add(this.getClassField(field));
+            this.groupByFields.add(new ClassField(field, true));
         }
     }
 
@@ -114,7 +114,7 @@ public class SelectContext extends WhereContext {
      */
     public void addOrderByField(String... fields) {
         for (String field : fields) {
-            this.orderByFields.add(this.getClassField(field));
+            this.orderByFields.add(new ClassField(field, true));
         }
     }
 
@@ -217,7 +217,7 @@ public class SelectContext extends WhereContext {
         if (this.excludeFields == null || this.excludeFields.isEmpty()) {
             return false;
         }
-        ClassField classField = this.getClassField(field);
+        ClassField classField = new ClassField(field, true);
         for (ClassField excludeField : excludeFields) {
             if (StringUtils.equals(classField.getTableAlias(), excludeField.getTableAlias()) && StringUtils.equals(classField.getName(), excludeField.getName())) {
                 return true;

@@ -1,9 +1,17 @@
 package com.sonsure.dumper.core.management;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by liyd on 17/4/11.
  */
 public class ClassField {
+
+    /**
+     * value需要native内容前后包围符号
+     */
+    public static final String NATIVE_FIELD_OPEN_TOKEN = "{{";
+    public static final String NATIVE_FIELD_CLOSE_TOKEN = "}}";
 
     /**
      * 名称
@@ -30,39 +38,52 @@ public class ClassField {
      */
     private Object value;
 
+    private boolean isNative = false;
+
     /**
-     * 来源
+     * 类型
      */
-    private Orig orig;
+    private Type type;
 
-    public ClassField(String name) {
-        this(name, null);
-    }
-
-    public ClassField(String name, String tableAlias) {
+    public ClassField(String name, boolean analyseTableAlias) {
         this.name = name;
-        this.tableAlias = tableAlias;
+        if (StringUtils.startsWith(name, ClassField.NATIVE_FIELD_OPEN_TOKEN) && StringUtils.endsWith(name, ClassField.NATIVE_FIELD_CLOSE_TOKEN)) {
+            isNative = true;
+            this.name = StringUtils.substring(name, ClassField.NATIVE_FIELD_OPEN_TOKEN.length(), name.length() - ClassField.NATIVE_FIELD_CLOSE_TOKEN.length());
+        }
+        if (analyseTableAlias && StringUtils.indexOf(this.name, ".") != -1) {
+            String[] fieldInfo = StringUtils.split(this.name, ".");
+            this.tableAlias = fieldInfo[0];
+            this.name = fieldInfo[1];
+        }
     }
+
+    /**
+     * fieldOperator是否需要括号
+     *
+     * @return
+     */
+    public boolean isFieldOperatorNeedBracket() {
+        return StringUtils.indexOf(StringUtils.upperCase(this.getFieldOperator()), "IN") != -1;
+    }
+
 
     /**
      * 字段来源
      */
-    public enum Orig {
+    public enum Type {
+        WHERE_APPEND;
 
         /**
-         * 自动创建 例如使用主键生成器
+         * field名字是否需要解析表别名
+         *
+         * @param type
+         * @return
          */
-        GENERATOR,
-
-        /**
-         * 手动添加
-         */
-        MANUAL,
-
-        /**
-         * 来自实体类
-         */
-        ENTITY
+        public static boolean isAnalyseTableAlias(Type type) {
+            //目前只有一个，其实有点多余，后期会扩展
+            return type != WHERE_APPEND;
+        }
     }
 
     public String getName() {
@@ -105,11 +126,19 @@ public class ClassField {
         this.value = value;
     }
 
-    public Orig getOrig() {
-        return orig;
+    public boolean isNative() {
+        return isNative;
     }
 
-    public void setOrig(Orig orig) {
-        this.orig = orig;
+    public void setNative(boolean aNative) {
+        isNative = aNative;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

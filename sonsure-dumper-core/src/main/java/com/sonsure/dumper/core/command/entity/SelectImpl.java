@@ -140,11 +140,8 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
 
     @Override
     public Object singleResult() {
-
-//        commandTable.setResultType(this.commandTable.getModelClass());
-////        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-////        return (T) this.persistExecutor.execute(commandContext, CommandType.QUERY_SINGLE_RESULT);
-        return null;
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        return this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
     }
 
     @Override
@@ -183,7 +180,8 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
 
     @Override
     public List<Object> list() {
-        return null;
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        return (List<Object>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
     }
 
     @Override

@@ -186,8 +186,9 @@ public class CommandMappingHandler {
         if (expression == null) {
             return;
         }
-
-        if (expression instanceof BinaryExpression) {
+        if (expression instanceof SubSelect) {
+            this.extractSubSelect(((SubSelect) expression), mappings);
+        } else if (expression instanceof BinaryExpression) {
 
             BinaryExpression binaryExpression = (BinaryExpression) expression;
             Expression leftExpression = binaryExpression.getLeftExpression();
@@ -261,8 +262,10 @@ public class CommandMappingHandler {
 
         Map<String, Object> subMappings = new HashMap<>();
         Alias alias = subSelect.getAlias();
-        mappings.put(alias.getName(), subMappings);
-
+        //where中的subSelect
+        if (alias != null) {
+            mappings.put(alias.getName(), subMappings);
+        }
         SelectBody selectBody = subSelect.getSelectBody();
         this.extractMappings(selectBody, subMappings);
 

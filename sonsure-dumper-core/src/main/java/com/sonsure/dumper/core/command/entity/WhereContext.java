@@ -1,7 +1,6 @@
 package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.management.ClassField;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +17,16 @@ public abstract class WhereContext extends EntityExecutorContext {
     }
 
     public void addWhereField(String logicalOperator, String name, String fieldOperator, Object value) {
-        ClassField classField = this.getClassField(name);
+        this.addWhereField(logicalOperator, name, fieldOperator, value, null);
+    }
+
+    public void addWhereField(String logicalOperator, String name, String fieldOperator, Object value, ClassField.Type type) {
+        boolean analyseTableAlias = ClassField.Type.isAnalyseTableAlias(type);
+        ClassField classField = new ClassField(name, analyseTableAlias);
         classField.setLogicalOperator(logicalOperator);
         classField.setFieldOperator(fieldOperator);
         classField.setValue(value);
+        classField.setType(type);
         this.whereFields.add(classField);
     }
 
@@ -33,12 +38,4 @@ public abstract class WhereContext extends EntityExecutorContext {
         return whereFields;
     }
 
-    protected ClassField getClassField(String field) {
-        if (StringUtils.indexOf(field, ".") != -1) {
-            String[] fieldInfo = StringUtils.split(field, ".");
-            return new ClassField(fieldInfo[1], fieldInfo[0]);
-        } else {
-            return new ClassField(field);
-        }
-    }
 }
