@@ -10,6 +10,7 @@ import com.sonsure.dumper.core.page.NegotiatingPageHandler;
 import com.sonsure.dumper.core.page.PageHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import javax.sql.DataSource;
@@ -199,6 +200,9 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
 
     @Override
     public String getName() {
+        if (StringUtils.isBlank(this.name)) {
+            return this.toString();
+        }
         return name;
     }
 
