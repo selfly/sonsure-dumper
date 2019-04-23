@@ -819,7 +819,7 @@ public class JdbcTemplateDaoImplTest {
     public void nativeOneColList() {
         List<Long> list = jdbcDao.nativeExecutor()
                 .command("select userInfoId from UserInfo")
-                .list(Long.class);
+                .oneColList(Long.class);
 
         Assert.assertTrue(list != null && !list.isEmpty());
     }

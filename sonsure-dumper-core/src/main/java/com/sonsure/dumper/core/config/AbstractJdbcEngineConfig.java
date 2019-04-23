@@ -3,7 +3,6 @@ package com.sonsure.dumper.core.config;
 
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.command.sql.JSqlParserCommandConversionHandler;
-import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.mapping.DefaultMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.NegotiatingPageHandler;
@@ -73,33 +72,6 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
      * command大小写
      */
     protected String commandCase;
-
-    /**
-     * 初始化
-     */
-    protected void init() {
-        if (dataSource == null) {
-            throw new SonsureJdbcException("dataSource不能为空");
-        }
-        if (commandExecutorFactory == null) {
-            commandExecutorFactory = new CommandExecutorFactoryImpl();
-        }
-        if (mappingHandler == null) {
-            mappingHandler = new DefaultMappingHandler();
-        }
-        if (pageHandler == null) {
-            pageHandler = new NegotiatingPageHandler();
-        }
-        if (commandConversionHandler == null) {
-            commandConversionHandler = new JSqlParserCommandConversionHandler(this.mappingHandler);
-        }
-
-        this.initPersistExecutor();
-
-        if (persistExecutor == null) {
-            throw new SonsureJdbcException("JdbcEngineConfig实现类未初始化PersistExecutor,class:" + this.getClass().getName());
-        }
-    }
 
     @Override
     public CommandExecutorFactory getCommandExecutorFactory() {
