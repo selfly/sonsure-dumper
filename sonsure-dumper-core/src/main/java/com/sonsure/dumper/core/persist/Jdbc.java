@@ -3,8 +3,11 @@ package com.sonsure.dumper.core.persist;
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.commons.utils.UUIDUtils;
+import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
+import com.sonsure.dumper.core.command.entity.Update;
+import com.sonsure.dumper.core.command.mybatis.MybatisExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
@@ -56,29 +59,36 @@ public class Jdbc {
         return getDefaultJdbcEngine().select();
     }
 
+    public static Select select(String... fields) {
+        return getDefaultJdbcEngine().select(fields);
+    }
+
     public static Select selectFrom(Class<?> cls) {
-        return select().from(cls);
+        return getDefaultJdbcEngine().selectFrom(cls);
     }
 
     public static <T> T get(Class<T> cls, Serializable id) {
         return getDefaultJdbcEngine().get(cls, id);
     }
 
-    public static Object insert(Object entity) {
-        return getDefaultJdbcEngine().insert().forEntity(entity).execute();
+    public static Object executeInsert(Object entity) {
+        return getDefaultJdbcEngine().executeInsert(entity);
     }
 
     public static Insert insertInto(Class<?> cls) {
         return getDefaultJdbcEngine().insertInto(cls);
     }
 
-    public static int update(Object entity) {
-        return getDefaultJdbcEngine().update().setForEntityWhereId(entity).execute();
+    public static int executeUpdate(Object entity) {
+        return getDefaultJdbcEngine().executeUpdate(entity);
     }
 
-    public static int delete(Class<?> cls, Serializable id) {
-        String pkField = getDefaultJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(cls);
-        return getDefaultJdbcEngine().delete().from(cls).where(pkField, id).execute();
+    public static int executeDelete(Class<?> cls, Serializable id) {
+        return getDefaultJdbcEngine().executeDelete(cls, id);
+    }
+
+    public static Delete delete() {
+        return getDefaultJdbcEngine().delete();
     }
 
     public static int executeDelete(Object entity) {
@@ -89,14 +99,28 @@ public class Jdbc {
         return getDefaultJdbcEngine().executeDelete(cls);
     }
 
+    public static Delete deleteFrom(Class<?> cls) {
+        return getDefaultJdbcEngine().deleteFrom(cls);
+    }
+
     public static <T> List<T> find(Class<T> cls) {
-        String pkField = getDefaultJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(cls);
-        return getDefaultJdbcEngine().selectFrom(cls).orderBy(pkField).desc().list(cls);
+        return getDefaultJdbcEngine().find(cls);
     }
 
     public static <T> List<T> find(T entity) {
-        String pkField = getDefaultJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(entity.getClass());
-        return (List<T>) getDefaultJdbcEngine().selectFrom(entity.getClass()).where().conditionEntity(entity).orderBy(pkField).desc().list(entity.getClass());
+        return getDefaultJdbcEngine().find(entity);
+    }
+
+    public static Insert insert() {
+        return getDefaultJdbcEngine().insert();
+    }
+
+    public static Update update(Class<?> cls) {
+        return getDefaultJdbcEngine().update(cls);
+    }
+
+    public static Update update() {
+        return getDefaultJdbcEngine().update();
     }
 
     public static <T extends Pageable> Page<T> pageResult(T entity) {
@@ -120,8 +144,10 @@ public class Jdbc {
     }
 
     public static NativeExecutor nativeExecutor() {
-        return null;
+        return getDefaultJdbcEngine().createExecutor(NativeExecutor.class);
     }
 
-
+    public MybatisExecutor myBatisExecutor() {
+        return getDefaultJdbcEngine().createExecutor(MybatisExecutor.class);
+    }
 }

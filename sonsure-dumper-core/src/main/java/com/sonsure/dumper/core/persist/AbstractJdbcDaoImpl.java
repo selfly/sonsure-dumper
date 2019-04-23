@@ -74,7 +74,8 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.getJdbcEngine().insertInto(cls);
     }
 
-    public int delete(Class<?> entityClass, Serializable id) {
+    @Override
+    public int executeDelete(Class<?> entityClass, Serializable id) {
         return this.getJdbcEngine().executeDelete(entityClass, id);
     }
 

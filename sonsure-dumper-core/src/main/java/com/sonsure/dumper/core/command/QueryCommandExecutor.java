@@ -25,7 +25,7 @@ public interface QueryCommandExecutor<C> extends CommandExecutor {
     C paginate(Pageable pageable);
 
     /**
-     * 分页信息
+     * 指定偏移量和页大小，返回所在页数据
      *
      * @param offset the offset
      * @param size   the size

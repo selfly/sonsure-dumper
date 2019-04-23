@@ -1,8 +1,11 @@
 package com.sonsure.dumper.test.jdbc;
 
 import com.sonsure.commons.model.Page;
+import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.entity.Select;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.persist.JdbcDao;
+import com.sonsure.dumper.test.model.AuthCode;
 import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UidUser;
 import com.sonsure.dumper.test.model.UserInfo;
@@ -15,6 +18,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -94,7 +98,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void jdbcDaoDelete() {
-        int count = jdbcDao.delete(UserInfo.class, 38L);
+        int count = jdbcDao.executeDelete(UserInfo.class, 38L);
         Assert.assertTrue(count == 1);
         UserInfo user = jdbcDao.get(UserInfo.class, 38L);
         Assert.assertNull(user);
@@ -135,6 +139,16 @@ public class JdbcTemplateDaoImplTest {
         Page<UserInfo> page = jdbcDao.pageResult(user);
         Assert.assertNotNull(page);
         Assert.assertTrue(page.getList().size() == 1);
+    }
+
+    @Test
+    public void jdbcDaoPageResult3() {
+        Page<UserInfo> page = jdbcDao.selectFrom(UserInfo.class)
+                .orderBy("userInfoId").asc()
+                .limit(15, 10)
+                .pageResult(UserInfo.class);
+        Assert.assertTrue(page.getList().get(0).getUserInfoId().equals(11L));
+        Assert.assertTrue(page.getList().get(9).getUserInfoId().equals(20L));
     }
 
 
@@ -479,6 +493,50 @@ public class JdbcTemplateDaoImplTest {
 
 
     @Test
+    public void select18() {
+        try {
+            Object result = jdbcDao.select()
+                    .from(UserInfo.class)
+                    .asc()
+                    .firstResult();
+        } catch (SonsureJdbcException e) {
+            Assert.assertTrue("请先指定需要排序的属性".equals(e.getMessage()));
+        }
+    }
+
+    @Test
+    public void select19() {
+        Object result = jdbcDao.select()
+                .from(UserInfo.class)
+                .orderBy("userInfoId").asc()
+                .firstResult();
+        Assert.assertTrue(result instanceof Map);
+        Map<String, Object> map = (Map<String, Object>) result;
+        Assert.assertTrue(map.get("USER_INFO_ID").equals(1L));
+    }
+
+    @Test
+    public void select20() {
+        Long result = jdbcDao.select("userInfoId")
+                .from(UserInfo.class)
+                .orderBy("userInfoId").asc()
+                .oneColFirstResult(Long.class);
+        Assert.assertTrue(result.equals(1L));
+    }
+
+    @Test
+    public void select21() {
+        Page<Long> page = jdbcDao.select("userInfoId")
+                .from(UserInfo.class)
+                .orderBy("userInfoId").asc()
+                .paginate(1, 10)
+                .oneColPageResult(Long.class);
+        Assert.assertTrue(page.getList().size() == 10);
+        Assert.assertTrue(page.getList().get(0).equals(1L));
+    }
+
+
+    @Test
     public void singleResultObject() {
 
         Object object = jdbcDao.select("loginName", "password")
@@ -683,7 +741,7 @@ public class JdbcTemplateDaoImplTest {
     }
 
     @Test
-    public void nativeExecutor71() {
+    public void nativeExecutor8() {
 
         jdbcDao.nativeExecutor()
                 .command("update UserInfo set userAge = 18 where userAge < 18")
@@ -701,6 +759,122 @@ public class JdbcTemplateDaoImplTest {
                 .command("select sum(userAge) from UserInfo")
                 .oneColResult(Integer.class);
         Assert.assertTrue(integer > 0);
+    }
+
+    @Test
+    public void nativeFirstResult() {
+        UserInfo userInfo = jdbcDao.nativeExecutor()
+                .command("select * from UserInfo order by userInfoId asc")
+                .firstResult(UserInfo.class);
+
+        Assert.assertTrue(userInfo.getUserInfoId().equals(1L));
+    }
+
+    @Test
+    public void nativeOneColFirstResult() {
+        Long id = jdbcDao.nativeExecutor()
+                .command("select userInfoId from UserInfo order by userInfoId asc")
+                .oneColFirstResult(Long.class);
+
+        Assert.assertTrue(id.equals(1L));
+    }
+
+    @Test
+    public void nativeInsert() {
+        jdbcDao.nativeExecutor()
+                .command("insert into UserInfo(userInfoId,loginName,password,userAge) values(?,?,?,?)")
+                .parameters(100L, "100user", "123321", 18)
+                .insert();
+
+        UserInfo userInfo = jdbcDao.get(UserInfo.class, 100L);
+        Assert.assertTrue(userInfo.getUserInfoId().equals(100L));
+        Assert.assertTrue(userInfo.getLoginName().equals("100user"));
+        Assert.assertTrue(userInfo.getPassword().equals("123321"));
+        Assert.assertTrue(userInfo.getUserAge().equals(18));
+    }
+
+    @Test
+    public void nativeInsert2() {
+        Serializable id = jdbcDao.nativeExecutor()
+                .command("insert into UserInfo(loginName,password,userAge) values(?,?,?)")
+                .parameters("100user", "123321", 18)
+                .insert(UserInfo.class);
+
+        UserInfo userInfo = jdbcDao.get(UserInfo.class, id);
+        Assert.assertTrue(userInfo.getLoginName().equals("100user"));
+        Assert.assertTrue(userInfo.getPassword().equals("123321"));
+        Assert.assertTrue(userInfo.getUserAge().equals(18));
+    }
+
+    @Test
+    public void nativeList() {
+        List<UserInfo> list = jdbcDao.nativeExecutor()
+                .command("select * from UserInfo")
+                .list(UserInfo.class);
+
+        Assert.assertTrue(list != null && !list.isEmpty());
+    }
+
+    @Test
+    public void nativeOneColList() {
+        List<Long> list = jdbcDao.nativeExecutor()
+                .command("select userInfoId from UserInfo")
+                .list(Long.class);
+
+        Assert.assertTrue(list != null && !list.isEmpty());
+    }
+
+    @Test
+    public void nativeFirstList() {
+        Object result = jdbcDao.nativeExecutor()
+                .command("select userInfoId from UserInfo")
+                .firstResult();
+        Assert.assertTrue(result instanceof Map);
+        Assert.assertTrue(((Map) result).size() == 1);
+    }
+
+    @Test
+    public void nativePage() {
+        Pageable pageable = new UserInfo();
+        pageable.setPageNum(2);
+        pageable.setPageSize(10);
+        Page<Object> page = jdbcDao.nativeExecutor()
+                .command("select userInfoId from UserInfo order by userInfoId asc")
+                .paginate(pageable)
+                .pageResult();
+        Assert.assertTrue(page.getList().size() == 10);
+        Assert.assertTrue(page.getList().get(0) instanceof Map);
+        Map<String, Object> map = (Map<String, Object>) page.getList().get(0);
+        Assert.assertTrue(map.get("USER_INFO_ID").equals(11L));
+        Map<String, Object> map2 = (Map<String, Object>) page.getList().get(9);
+        Assert.assertTrue(map2.get("USER_INFO_ID").equals(20L));
+    }
+
+    @Test
+    public void nativeResultHandler() {
+        //这里只演示把结果转为AuthCode类
+        Page<AuthCode> page = jdbcDao.nativeExecutor()
+                .command("select * from UserInfo order by userInfoId asc")
+                .paginate(2, 5)
+                .resultHandler(new CustomResultHandler())
+                .pageResult(AuthCode.class);
+        Assert.assertTrue(page.getList().size() == 5);
+        Assert.assertTrue(page.getList().get(0).getCode().equals("name-6"));
+        Assert.assertTrue(page.getList().get(4).getCode().equals("name-10"));
+    }
+
+    @Test
+    public void nativeLimitPage() {
+        Page<Object> page = jdbcDao.nativeExecutor()
+                .command("select userInfoId from UserInfo order by userInfoId asc")
+                .limit(15, 10)
+                .pageResult();
+        Assert.assertTrue(page.getList().size() == 10);
+        Assert.assertTrue(page.getList().get(0) instanceof Map);
+        Map<String, Object> map = (Map<String, Object>) page.getList().get(0);
+        Assert.assertTrue(map.get("USER_INFO_ID").equals(11L));
+        Map<String, Object> map2 = (Map<String, Object>) page.getList().get(9);
+        Assert.assertTrue(map2.get("USER_INFO_ID").equals(20L));
     }
 
     @Test

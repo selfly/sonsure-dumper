@@ -66,12 +66,6 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     }
 
     @Override
-    public Select extraField(String... fields) {
-        throw new UnsupportedOperationException("extraField方法暂不支持");
-    }
-
-
-    @Override
     public Select groupBy(String... fields) {
         selectContext.addGroupByField(fields);
         return this;

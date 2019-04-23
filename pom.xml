@@ -15,6 +15,8 @@
     </modules>
 
     <properties>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
         <sonsure-common.version>2.0.0</sonsure-common.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <commons-lang3.version>3.7</commons-lang3.version>
@@ -135,18 +137,4 @@
 
         </dependencies>
     </dependencyManagement>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

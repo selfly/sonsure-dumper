@@ -113,7 +113,7 @@ public interface JdbcDao {
      * @param id          the id
      * @return int
      */
-    int delete(Class<?> entityClass, Serializable id);
+    int executeDelete(Class<?> entityClass, Serializable id);
 
     /**
      * 根据实体条件删除

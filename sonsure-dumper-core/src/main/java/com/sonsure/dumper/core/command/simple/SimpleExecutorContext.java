@@ -21,8 +21,8 @@ public class SimpleExecutorContext implements ExecutorContext {
 
     public void paginate(int pageNum, int pageSize) {
         this.pagination = new Pagination();
-        this.pagination.setPageNum(pageNum);
         this.pagination.setPageSize(pageSize);
+        this.pagination.setPageNum(pageNum);
     }
 
     public void paginate(Pageable pageable) {
@@ -31,8 +31,8 @@ public class SimpleExecutorContext implements ExecutorContext {
 
     public void limit(int offset, int size) {
         this.pagination = new Pagination();
-        this.pagination.setOffset(offset);
         this.pagination.setPageSize(size);
+        this.pagination.setOffset(offset);
     }
 
     @Override

@@ -60,7 +60,8 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             return number == null ? null : number.longValue();
         } else {
             jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
-            return generateKey.getValue();
+            //显示指定了主键，可能为null
+            return generateKey != null ? generateKey.getValue() : null;
         }
     }
 

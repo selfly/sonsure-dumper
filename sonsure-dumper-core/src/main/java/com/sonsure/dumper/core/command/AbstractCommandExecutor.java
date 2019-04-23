@@ -6,6 +6,7 @@ import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pagination;
 import com.sonsure.dumper.core.command.simple.ResultHandler;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,9 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
     }
 
     protected Page<?> doPageResult(CommandContext commandContext, Pagination pagination, boolean isCount, PageQueryHandler pageQueryHandler) {
+        if (pagination == null) {
+            throw new SonsureJdbcException("查询分页列表请设置分页信息");
+        }
         String dialect = getJdbcEngineConfig().getPersistExecutor().getDialect();
         long count = Long.MAX_VALUE;
         if (isCount) {

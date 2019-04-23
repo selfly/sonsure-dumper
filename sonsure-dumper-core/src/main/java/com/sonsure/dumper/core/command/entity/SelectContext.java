@@ -144,8 +144,8 @@ public class SelectContext extends WhereContext {
 
     public void paginate(int pageNum, int pageSize) {
         this.pagination = new Pagination();
-        this.pagination.setPageNum(pageNum);
         this.pagination.setPageSize(pageSize);
+        this.pagination.setPageNum(pageNum);
     }
 
     public void paginate(Pageable pageable) {
@@ -154,8 +154,8 @@ public class SelectContext extends WhereContext {
 
     public void limit(int offset, int size) {
         this.pagination = new Pagination();
-        this.pagination.setOffset(offset);
         this.pagination.setPageSize(size);
+        this.pagination.setOffset(offset);
     }
 
     public List<CommandClass> getFromClasses() {

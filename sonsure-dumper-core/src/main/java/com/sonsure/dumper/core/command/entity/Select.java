@@ -35,14 +35,6 @@ public interface Select extends QueryCommandExecutor<Select>, ConditionCommandEx
     Select exclude(String... fields);
 
     /**
-     * 添加查询字段
-     *
-     * @param fields
-     * @return
-     */
-    Select extraField(String... fields);
-
-    /**
      * 添加 group by属性
      *
      * @param fields
