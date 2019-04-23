@@ -65,8 +65,8 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return (T) this.getJdbcEngine().firstResult(entity);
     }
 
-    public Object insert(Object entity) {
-        return this.getJdbcEngine().insert(entity);
+    public Object executeInsert(Object entity) {
+        return this.getJdbcEngine().executeInsert(entity);
     }
 
     @Override
@@ -75,21 +75,22 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
     }
 
     public int delete(Class<?> entityClass, Serializable id) {
-        String pkField = getJdbcEngine().getJdbcEngineConfig().getMappingHandler().getPkField(entityClass);
-        return this.deleteFrom(entityClass).where(pkField, id).execute();
-    }
-
-    public int delete(Object entity) {
-        return this.getJdbcEngine().delete(entity);
+        return this.getJdbcEngine().executeDelete(entityClass, id);
     }
 
     @Override
-    public int delete(Class<?> cls) {
-        return this.getJdbcEngine().delete(cls);
+    public int executeDelete(Object entity) {
+        return this.getJdbcEngine().executeDelete(entity);
     }
 
-    public <T> int update(T entity) {
-        return this.createUpdate().setForEntityWhereId(entity).execute();
+    @Override
+    public int executeDelete(Class<?> cls) {
+        return this.getJdbcEngine().executeDelete(cls);
+    }
+
+    @Override
+    public int executeUpdate(Object entity) {
+        return this.getJdbcEngine().executeUpdate(entity);
     }
 
     @Override
@@ -111,7 +112,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.getJdbcEngine().select(fields);
     }
 
-    public Insert createInsert() {
+    public Insert insert() {
         return this.getJdbcEngine().insert();
     }
 
@@ -124,16 +125,16 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.getJdbcEngine().deleteFrom(cls);
     }
 
-    public Update createUpdate() {
+    public Update update() {
         return this.getJdbcEngine().update();
     }
 
-    public NativeExecutor createNativeExecutor() {
+    public NativeExecutor nativeExecutor() {
         return this.getJdbcEngine().createExecutor(NativeExecutor.class);
     }
 
     @Override
-    public MybatisExecutor createMyBatisExecutor() {
+    public MybatisExecutor myBatisExecutor() {
         return this.getJdbcEngine().createExecutor(MybatisExecutor.class);
     }
 

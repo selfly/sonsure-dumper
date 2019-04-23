@@ -41,7 +41,7 @@ public class JdbcTemplateDaoImplTest {
             user.setUserAge(i);
             user.setGmtCreate(new Date());
 
-            jdbcDao.insert(user);
+            jdbcDao.executeInsert(user);
         }
     }
 
@@ -65,7 +65,7 @@ public class JdbcTemplateDaoImplTest {
         user.setUserAge(18);
         user.setGmtCreate(new Date());
 
-        Long id = (Long) jdbcDao.insert(user);
+        Long id = (Long) jdbcDao.executeInsert(user);
         Assert.assertTrue(id > 0);
 
         UserInfo userInfo = jdbcDao.get(UserInfo.class, id);
@@ -81,7 +81,7 @@ public class JdbcTemplateDaoImplTest {
         user.setPassword("666666");
         user.setLoginName("666777");
         user.setGmtModify(new Date());
-        int count = jdbcDao.update(user);
+        int count = jdbcDao.executeUpdate(user);
         Assert.assertTrue(count == 1);
 
         UserInfo user1 = jdbcDao.get(UserInfo.class, 20L);
@@ -181,7 +181,7 @@ public class JdbcTemplateDaoImplTest {
     public void jdbcDaoDelete2() {
         UserInfo user = new UserInfo();
         user.setLoginName("name-17");
-        int count = jdbcDao.delete(user);
+        int count = jdbcDao.executeDelete(user);
         Assert.assertTrue(count == 1);
 
         UserInfo tmp = new UserInfo();
@@ -192,7 +192,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void jdbcDaoDelete3() {
-        int count = jdbcDao.delete(UserInfo.class);
+        int count = jdbcDao.executeDelete(UserInfo.class);
         Assert.assertTrue(count > 0);
         long result = jdbcDao.findCount(UserInfo.class);
         Assert.assertTrue(result == 0);
@@ -207,7 +207,7 @@ public class JdbcTemplateDaoImplTest {
         user.setUserAge(60);
         user.setGmtCreate(new Date());
 
-        Long id = (Long) jdbcDao.insert(user);
+        Long id = (Long) jdbcDao.executeInsert(user);
 
         UserInfo user1 = jdbcDao.get(UserInfo.class, id);
         Assert.assertNotNull(user1);
@@ -241,7 +241,7 @@ public class JdbcTemplateDaoImplTest {
         ku.setGmtCreate(new Date());
         ku.setGmtModify(new Date());
 
-        Long id = (Long) jdbcDao.insert(ku);
+        Long id = (Long) jdbcDao.executeInsert(ku);
 
         KUserInfo kUserInfo = jdbcDao.get(KUserInfo.class, id);
         Assert.assertEquals("selfly", kUserInfo.getLoginName());
@@ -251,7 +251,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select() {
 
-        jdbcDao.delete(UserInfo.class);
+        jdbcDao.executeDelete(UserInfo.class);
         for (int i = 60; i < 70; i++) {
             UserInfo user = new UserInfo();
             user.setUserInfoId(Long.valueOf(i));
@@ -259,7 +259,7 @@ public class JdbcTemplateDaoImplTest {
             user.setPassword("123456-" + i);
             user.setUserAge(19);
             user.setGmtCreate(new Date());
-            jdbcDao.insert(user);
+            jdbcDao.executeInsert(user);
         }
 
         Select select1 = jdbcDao.selectFrom(UserInfo.class)
@@ -289,7 +289,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select2() {
 
-        jdbcDao.delete(UserInfo.class);
+        jdbcDao.executeDelete(UserInfo.class);
         for (int i = 1; i < 3; i++) {
             UserInfo user = new UserInfo();
             user.setUserInfoId(Long.valueOf(i));
@@ -297,7 +297,7 @@ public class JdbcTemplateDaoImplTest {
             user.setPassword("123456-" + i);
             user.setUserAge(21);
             user.setGmtCreate(new Date());
-            jdbcDao.insert(user);
+            jdbcDao.executeInsert(user);
         }
         try {
             UserInfo user = jdbcDao.selectFrom(UserInfo.class)
@@ -516,7 +516,7 @@ public class JdbcTemplateDaoImplTest {
         user.setPassword("123456-");
         user.setUserAge(19);
         user.setGmtCreate(new Date());
-        jdbcDao.insert(user);
+        jdbcDao.executeInsert(user);
 
         Select select = jdbcDao.select("count(*) Num").from(UserInfo.class)
                 .groupBy("userAge")
@@ -609,7 +609,7 @@ public class JdbcTemplateDaoImplTest {
         ku.setLoginName("777777");
         ku.setPassword("787878");
         ku.setGmtModify(new Date());
-        int count = jdbcDao.update(ku);
+        int count = jdbcDao.executeUpdate(ku);
         Assert.assertTrue(count == 1);
     }
 
@@ -629,7 +629,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeExecutor() {
-        int count = jdbcDao.createNativeExecutor()
+        int count = jdbcDao.nativeExecutor()
                 .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters(new Object[]{"newName", 39L})
                 .update();
@@ -641,7 +641,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeExecutor4() {
-        int count = jdbcDao.createNativeExecutor()
+        int count = jdbcDao.nativeExecutor()
                 .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters("newName", 39L)
                 .update();
@@ -654,7 +654,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeExecutor5() {
 
-        Long result = jdbcDao.createNativeExecutor()
+        Long result = jdbcDao.nativeExecutor()
                 .command("select count(*) from UserInfo")
                 .count();
         Assert.assertTrue(result == 50);
@@ -663,7 +663,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeExecutor7() {
 
-        jdbcDao.createNativeExecutor()
+        jdbcDao.nativeExecutor()
                 .command("update user_info set user_age = 18 where user_age < 18")
                 .nativeSql(true)
                 .execute();
@@ -677,7 +677,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeExecutor71() {
 
-        jdbcDao.createNativeExecutor()
+        jdbcDao.nativeExecutor()
                 .command("update UserInfo set userAge = 18 where userAge < 18")
                 .execute();
 
@@ -689,7 +689,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeOneColResult() {
-        Integer integer = jdbcDao.createNativeExecutor()
+        Integer integer = jdbcDao.nativeExecutor()
                 .command("select sum(userAge) from UserInfo")
                 .oneColResult(Integer.class);
         Assert.assertTrue(integer > 0);
@@ -701,7 +701,7 @@ public class JdbcTemplateDaoImplTest {
         params.put("id", 9L);
         params.put("loginName", "name-9");
 
-        Object user = jdbcDao.createMyBatisExecutor()
+        Object user = jdbcDao.myBatisExecutor()
                 .command("getUser")
                 .parameters(params)
                 .nativeSql(true)
@@ -714,7 +714,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void mybatisExecutor2() {
 
-        Object user = jdbcDao.createMyBatisExecutor()
+        Object user = jdbcDao.myBatisExecutor()
                 .command("getUser")
                 .parameter("id", 9L)
                 .parameter("loginName", "name-9")
@@ -731,7 +731,7 @@ public class JdbcTemplateDaoImplTest {
         userInfo.setUserInfoId(10L);
         userInfo.setLoginName("name-10");
 
-        Object user = jdbcDao.createMyBatisExecutor()
+        Object user = jdbcDao.myBatisExecutor()
                 .command("getUser2")
                 .parameter("user", userInfo)
                 .nativeSql(true)
@@ -748,7 +748,7 @@ public class JdbcTemplateDaoImplTest {
         names.add("name-9");
         names.add("name-10");
 
-        List<?> list = jdbcDao.createMyBatisExecutor()
+        List<?> list = jdbcDao.myBatisExecutor()
                 .command("queryUserList")
                 .parameter("names", names)
                 .nativeSql(true)
@@ -760,7 +760,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void mybatisExecutor5() {
 
-        int update = jdbcDao.createMyBatisExecutor()
+        int update = jdbcDao.myBatisExecutor()
                 .command("updateUser")
                 .parameter("loginName", "newName")
                 .parameter("userInfoId", 9L)
@@ -775,7 +775,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void mybatisExecutor6() {
-        Object user = jdbcDao.createMyBatisExecutor()
+        Object user = jdbcDao.myBatisExecutor()
                 .command("getUser3")
                 .parameter("userInfoId", 9L)
                 .parameter("loginName", "name-9")
@@ -787,7 +787,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void mybatisExecutor7() {
-        UserInfo userInfo = (UserInfo) jdbcDao.createMyBatisExecutor()
+        UserInfo userInfo = (UserInfo) jdbcDao.myBatisExecutor()
                 .command("getUser3")
                 .parameter("userInfoId", 9L)
                 .parameter("loginName", "name-9")
@@ -798,7 +798,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void mybatisExecutor8() {
-        Page<UserInfo> page = jdbcDao.createMyBatisExecutor()
+        Page<UserInfo> page = jdbcDao.myBatisExecutor()
                 .command("queryUserList2")
                 .paginate(1, 10)
                 .pageResult(UserInfo.class);

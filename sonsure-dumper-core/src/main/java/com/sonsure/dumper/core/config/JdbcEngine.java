@@ -71,7 +71,7 @@ public interface JdbcEngine {
      * @param entity
      * @return
      */
-    Object insert(Object entity);
+    Object executeInsert(Object entity);
 
     /**
      * 创建insert对象后指定into对象
@@ -174,6 +174,14 @@ public interface JdbcEngine {
     Update update(Class<?> cls);
 
     /**
+     * 更新
+     *
+     * @param entity
+     * @return
+     */
+    int executeUpdate(Object entity);
+
+    /**
      * delete对象
      *
      * @return
@@ -189,12 +197,21 @@ public interface JdbcEngine {
     Delete deleteFrom(Class<?> cls);
 
     /**
-     * delete对象
+     * delete对象，以entity中不为null属性做为条件
      *
      * @param entity
      * @return
      */
-    int delete(Object entity);
+    int executeDelete(Object entity);
+
+    /**
+     * delete对象，以entity中不为null属性做为条件
+     *
+     * @param cls the cls
+     * @param id  the id
+     * @return int
+     */
+    int executeDelete(Class<?> cls, Serializable id);
 
     /**
      * 删除对象
@@ -202,7 +219,7 @@ public interface JdbcEngine {
      * @param cls
      * @return
      */
-    int delete(Class<?> cls);
+    int executeDelete(Class<?> cls);
 
     /**
      * 创建select后指定from

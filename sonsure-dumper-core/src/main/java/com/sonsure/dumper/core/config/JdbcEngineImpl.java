@@ -114,7 +114,7 @@ public class JdbcEngineImpl implements JdbcEngine {
     }
 
     @Override
-    public Object insert(Object entity) {
+    public Object executeInsert(Object entity) {
         return this.insertInto(entity.getClass()).forEntity(entity).execute();
     }
 
@@ -134,6 +134,11 @@ public class JdbcEngineImpl implements JdbcEngine {
     }
 
     @Override
+    public int executeUpdate(Object entity) {
+        return this.update(entity.getClass()).setForEntityWhereId(entity).execute();
+    }
+
+    @Override
     public Delete delete() {
         return this.createExecutor(Delete.class);
     }
@@ -144,12 +149,18 @@ public class JdbcEngineImpl implements JdbcEngine {
     }
 
     @Override
-    public int delete(Object entity) {
+    public int executeDelete(Object entity) {
         return this.delete().from(entity.getClass()).where().conditionEntity(entity).execute();
     }
 
     @Override
-    public int delete(Class<?> cls) {
+    public int executeDelete(Class<?> cls, Serializable id) {
+        String pkField = this.getJdbcEngineConfig().getMappingHandler().getPkField(cls);
+        return this.deleteFrom(cls).where(pkField, id).execute();
+    }
+
+    @Override
+    public int executeDelete(Class<?> cls) {
         return this.delete().from(cls).execute();
     }
 }

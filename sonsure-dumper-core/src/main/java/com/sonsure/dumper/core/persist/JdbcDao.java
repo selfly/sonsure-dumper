@@ -96,7 +96,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> Object insert(T entity);
+    <T> Object executeInsert(T entity);
 
     /**
      * 创建insert对象
@@ -121,7 +121,7 @@ public interface JdbcDao {
      * @param entity the entity
      * @return int int
      */
-    int delete(Object entity);
+    int executeDelete(Object entity);
 
     /**
      * 删除所有对象
@@ -129,16 +129,15 @@ public interface JdbcDao {
      * @param cls the cls
      * @return int int
      */
-    int delete(Class<?> cls);
+    int executeDelete(Class<?> cls);
 
     /**
      * 更新
      *
-     * @param entity
-     * @param <T>
-     * @return
+     * @param entity the entity
+     * @return int
      */
-    <T> int update(T entity);
+    int executeUpdate(Object entity);
 
     /**
      * 创建update对象
@@ -177,7 +176,7 @@ public interface JdbcDao {
      *
      * @return insert insert
      */
-    Insert createInsert();
+    Insert insert();
 
     /**
      * 创建delete对象
@@ -199,19 +198,19 @@ public interface JdbcDao {
      *
      * @return update update
      */
-    Update createUpdate();
+    Update update();
 
     /**
      * 创建native executor对象
      *
      * @return
      */
-    NativeExecutor createNativeExecutor();
+    NativeExecutor nativeExecutor();
 
     /**
      * 创建mybatis executor对象
      *
      * @return
      */
-    MybatisExecutor createMyBatisExecutor();
+    MybatisExecutor myBatisExecutor();
 }

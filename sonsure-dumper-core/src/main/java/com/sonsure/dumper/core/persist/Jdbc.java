@@ -81,12 +81,12 @@ public class Jdbc {
         return getDefaultJdbcEngine().delete().from(cls).where(pkField, id).execute();
     }
 
-    public static int delete(Object entity) {
-        return getDefaultJdbcEngine().delete(entity);
+    public static int executeDelete(Object entity) {
+        return getDefaultJdbcEngine().executeDelete(entity);
     }
 
-    public static int delete(Class<?> cls) {
-        return getDefaultJdbcEngine().delete(cls);
+    public static int executeDelete(Class<?> cls) {
+        return getDefaultJdbcEngine().executeDelete(cls);
     }
 
     public static <T> List<T> find(Class<T> cls) {

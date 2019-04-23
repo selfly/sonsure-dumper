@@ -173,7 +173,7 @@ public class JdbcTest {
     public void jdbcDelete2() {
         UserInfo user = new UserInfo();
         user.setLoginName("name-18");
-        int count = Jdbc.delete(user);
+        int count = Jdbc.executeDelete(user);
         Assert.assertTrue(count == 1);
 
         UserInfo tmp = new UserInfo();
@@ -184,7 +184,7 @@ public class JdbcTest {
 
     @Test
     public void jdbcDelete3() {
-        int count = Jdbc.delete(UserInfo.class);
+        int count = Jdbc.executeDelete(UserInfo.class);
         Assert.assertTrue(count > 0);
         long result = Jdbc.findCount(UserInfo.class);
         Assert.assertTrue(result == 0);
@@ -243,7 +243,7 @@ public class JdbcTest {
     @Test
     public void select() {
 
-        Jdbc.delete(UserInfo.class);
+        Jdbc.executeDelete(UserInfo.class);
         for (int i = 60; i < 70; i++) {
             UserInfo user = new UserInfo();
             user.setUserInfoId(Long.valueOf(i));
@@ -281,7 +281,7 @@ public class JdbcTest {
     @Test
     public void select2() {
 
-        Jdbc.delete(UserInfo.class);
+        Jdbc.executeDelete(UserInfo.class);
         for (int i = 1; i < 3; i++) {
             UserInfo user = new UserInfo();
             user.setUserInfoId(Long.valueOf(i));
