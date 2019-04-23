@@ -497,6 +497,14 @@ public class JdbcTemplateDaoImplTest {
                 .list();
 
         Assert.assertNotNull(object instanceof Map);
+
+
+        object = jdbcDao.select("t1.loginName as name1", "t2.loginName as name2").from(UserInfo.class, "t1", UidUser.class, "t2")
+                .where()
+                .append("t1.userInfoId = t2.uidUserId")
+                .list();
+
+        Assert.assertNotNull(object instanceof Map);
     }
 
     @Test
