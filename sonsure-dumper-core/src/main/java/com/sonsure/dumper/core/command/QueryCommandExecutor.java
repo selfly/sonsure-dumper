@@ -94,6 +94,12 @@ public interface QueryCommandExecutor<C> extends CommandExecutor {
      */
     <T> List<T> oneColList(Class<T> clazz);
 
+    /**
+     * 简单查询，返回单一的结果，只取第一条
+     *
+     * @return
+     */
+    <T> T oneColFirstResult(Class<T> clazz);
 
     /**
      * 列表查询
@@ -128,41 +134,11 @@ public interface QueryCommandExecutor<C> extends CommandExecutor {
     Page<Object> pageResult();
 
     /**
-     * 查询结果，返回结果会有多个值，多数情况下为Map<column,value>
+     * singleColumnList分页查询
      *
-     * @return
+     * @param <T>   the type parameter
+     * @param clazz the clazz
+     * @return page list
      */
-    Object objResult();
-
-//    /**
-//     * 返回第一条记录的结果
-//     *
-//     * @return
-//     */
-//    Object objFirstResult();
-
-    /**
-     * 查询结果，objectResult方法的列表查询，返回结果多数情况下为List<Map<column,value>>
-     *
-     * @return
-     */
-    List<Object> objList();
-
-//    /**
-//     * 简单查询，返回单一的结果，只取第一条
-//     *
-//     * @return
-//     */
-//    <T> T oneColFirstResult(Class<T> clazz);
-
-
-//    /**
-//     * singleColumnList分页查询
-//     *
-//     * @param <T>      the type parameter
-//     * @param clazz    the clazz
-//     * @param pageable the pageable
-//     * @return page list
-//     */
-//    <T> Page<T> oneColPageList(Class<T> clazz, Pageable pageable);
+    <T> Page<T> oneColPageResult(Class<T> clazz);
 }

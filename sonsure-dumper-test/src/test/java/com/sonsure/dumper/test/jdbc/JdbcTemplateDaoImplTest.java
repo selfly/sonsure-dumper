@@ -379,14 +379,14 @@ public class JdbcTemplateDaoImplTest {
     public void select8() {
         Object result = jdbcDao.selectFrom(UserInfo.class)
                 .where("userInfoId", 15L)
-                .objResult();
+                .singleResult();
         Assert.assertTrue(result instanceof Map);
     }
 
     @Test
     public void select10() {
         Object result = jdbcDao.selectFrom(UserInfo.class)
-                .objList();
+                .list();
         Assert.assertTrue(result instanceof List);
         Assert.assertTrue(((List) result).get(0) instanceof Map);
     }
@@ -525,7 +525,7 @@ public class JdbcTemplateDaoImplTest {
 
         Assert.assertTrue(page.getList().size() == 5);
 
-        List<?> objects = select.objList();
+        List<Object> objects = select.list();
         Assert.assertTrue(objects.size() == 50);
     }
 

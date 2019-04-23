@@ -43,10 +43,10 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
     /**
      * 插入 返回主键
      *
-     * @param pkColumn
-     * @return
+     * @param clazz the clazz
+     * @return serializable
      */
-    Serializable insert(String pkColumn);
+    Serializable insert(Class<?> clazz);
 
     /**
      * 更新

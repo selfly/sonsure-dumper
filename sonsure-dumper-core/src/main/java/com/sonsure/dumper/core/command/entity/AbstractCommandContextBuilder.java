@@ -65,20 +65,6 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
         return field;
     }
 
-//    /**
-//     * 获取带表别名的原生属性列
-//     *
-//     * @param commandTable
-//     * @param nativeField
-//     * @return
-//     */
-//    protected String getTableAliasNativeField(CommandTable commandTable, String nativeField) {
-//        if (StringUtils.isNotBlank(commandTable.getTableAlias())) {
-//            return new StringBuilder(commandTable.getTableAlias()).append(".").append(nativeField).toString();
-//        }
-//        return nativeField;
-//    }
-
     /**
      * 获取带别名的model名
      *
@@ -101,10 +87,6 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
     protected String getPkField(Class<?> modelClass, MappingHandler mappingHandler) {
         return mappingHandler.getPkField(modelClass);
     }
-
-//    protected String getTableName(ExecutorContext commandTable, Map<String, Object> params) {
-//        return this.getCommandExecutor().getMappingHandler().getTable(commandTable.getModelClass(), params);
-//    }
 
     /**
      * 获取class的属性
@@ -136,35 +118,6 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
 //        }
         return commandContext;
     }
-
-//    /**
-//     * 判断是否原生属性
-//     *
-//     * @param classField the class field
-//     * @return object[] 元素见下说明
-//     * 0 是否原生属性
-//     * 1 是否原生value
-//     * 2 field名
-//     * 3 带表别名的field名 如果没有表别名，field名一致
-//     * 4 解析过的value 只对String有效
-//     */
-//    protected ClassFieldNativeWrapper decideNativeField(ClassField classField) {
-//
-//        String field = classField.getName();
-//        Object val = classField.getValue();
-//        boolean isNativeField = false;
-//        boolean isNativeValue = false;
-//        if (StringUtils.startsWith(field, NATIVE_FIELD_OPEN_TOKEN) && StringUtils.endsWith(field, NATIVE_FIELD_CLOSE_TOKEN)) {
-//            isNativeField = true;
-//            isNativeValue = true;
-//            field = StringUtils.substring(field, NATIVE_FIELD_OPEN_TOKEN.length(), field.length() - NATIVE_FIELD_CLOSE_TOKEN.length());
-//        } else if (StringUtils.startsWith(field, NATIVE_CONTENT_OPEN_TOKEN) && StringUtils.endsWith(field, NATIVE_CONTENT_CLOSE_TOKEN)) {
-//            isNativeField = true;
-//            field = StringUtils.substring(field, NATIVE_CONTENT_OPEN_TOKEN.length(), field.length() - NATIVE_CONTENT_CLOSE_TOKEN.length());
-//        }
-//        String aliasField = this.getTableAliasField(classField.getTableAlias(), field);
-//        return new ClassFieldNativeWrapper(field, aliasField, val, isNativeField, isNativeValue);
-//    }
 
     /**
      * 构建where部分sql

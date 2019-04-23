@@ -190,23 +190,6 @@ public class SelectContext extends WhereContext {
         return pagination;
     }
 
-
-    //    /**
-//     * 添加操作的属性
-//     *
-//     * @param commandField
-//     */
-//    public void addOperationField(ClassField commandField) {
-//        this.operationFields.add(commandField);
-//    }
-
-//    /**
-//     * 添加操作属性
-//     */
-//    public void addWhereField(ClassField commandField) {
-//        this.whereFields.add(commandField);
-//    }
-
     /**
      * 是否黑名单
      *

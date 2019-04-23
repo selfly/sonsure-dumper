@@ -148,12 +148,14 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     public <T> T firstResult(Class<T> cls) {
         this.paginate(1, 1).isCount(false);
         Page<T> page = this.pageResult(cls);
-        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
+        return page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
     }
 
     @Override
     public Object firstResult() {
-        return null;
+        this.paginate(1, 1).isCount(false);
+        Page<Object> page = this.pageResult();
+        return page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
     }
 
     @Override
@@ -170,6 +172,12 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
         return (List<E>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
     }
 
+    @Override
+    public <T> T oneColFirstResult(Class<T> clazz) {
+        this.paginate(1, 1).isCount(false);
+        Page<T> page = this.oneColPageResult(clazz);
+        return page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
+    }
 
     @Override
     public <T> List<T> list(Class<T> cls) {
@@ -208,44 +216,20 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     }
 
     @Override
+    public <T> Page<T> oneColPageResult(Class<T> clazz) {
+        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        commandContext.setResultType(clazz);
+        return (Page<T>) this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler() {
+            @Override
+            public List<T> queryList(CommandContext commandContext) {
+                return (List<T>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
+            }
+        });
+    }
+
+    @Override
     protected WhereContext getWhereContext() {
         return this.selectContext;
     }
 
-    public Object objResult() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
-        Object result = this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
-        return result;
-    }
-
-    public List<Object> objList() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
-        List<Object> result = (List<Object>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-        return result;
-    }
-
-//    @Override
-//    public <E> E oneColFirstResult(Class<E> clazz) {
-//        Page<E> page = this.oneColPageList(clazz, 1, 1, false);
-//        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
-//    }
-//
-
-//    @Override
-//    public <E> Page<E> oneColPageList(Class<E> clazz, int pageNum, int pageSize, boolean isCount) {
-//        this.commandTable.setResultType(clazz);
-//        return (Page<E>) this.doPageList(pageNum, pageSize, isCount, new PageQueryHandler() {
-//            @Override
-//            public List<?> queryList(CommandContext commandContext) {
-//                return (List<E>) persistExecutor.execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
-//            }
-//        });
-//    }
-
-//    @Override
-//    public T firstResult() {
-//        Page<T> page = this.pageList(1, 1, false);
-//        return page != null && page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
-//    }
-//
 }
