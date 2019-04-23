@@ -2,11 +2,13 @@ package com.sonsure.dumper.core.persist;
 
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
+import com.sonsure.commons.utils.UUIDUtils;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -28,7 +30,12 @@ public class Jdbc {
     }
 
     public static void addJdbcEngine(JdbcEngine jdbcEngine) {
-        jdbcEngineMap.put(jdbcEngine.getName(), jdbcEngine);
+        String name = jdbcEngine.getName();
+        if (StringUtils.isBlank(name)) {
+            //没有指定随机生成一个
+            name = UUIDUtils.getUUID8();
+        }
+        jdbcEngineMap.put(name, jdbcEngine);
         if (jdbcEngine.isDefault()) {
             if (defaultJdbcEngine != null && defaultJdbcEngine != jdbcEngine) {
                 throw new SonsureJdbcException("只能设置一个默认的JDBC配置");
