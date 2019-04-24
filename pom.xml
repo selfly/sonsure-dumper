@@ -7,7 +7,7 @@
     <groupId>com.sonsure</groupId>
     <artifactId>sonsure-dumper</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
     <modules>
         <module>sonsure-dumper-core</module>
         <module>sonsure-dumper-springjdbc</module>
