@@ -1,7 +1,7 @@
 # sonsure-dumper
 
 #### 项目介绍
-sonsure jdbc工具包
+简单易用的JDBC持久化层
 
 #### 软件架构
 软件架构说明
