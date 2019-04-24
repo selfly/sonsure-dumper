@@ -5,11 +5,8 @@ import com.sonsure.commons.bean.BeanKit;
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pagination;
 import com.sonsure.dumper.core.command.simple.ResultHandler;
-import com.sonsure.dumper.core.management.CommandTable;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,73 +16,34 @@ import java.util.List;
  */
 public abstract class AbstractCommandExecutor implements CommandExecutor {
 
-    protected CommandTable commandTable;
-
     protected CommandContextBuilder commandContextBuilder;
 
-    /**
-     * 以下属性若不设置，默认使用jdbcEngineConfig中配置
-     **/
+    protected JdbcEngineConfig jdbcEngineConfig;
 
-    protected MappingHandler mappingHandler;
-
-    protected PageHandler pageHandler;
-
-    protected KeyGenerator keyGenerator;
-
-    protected PersistExecutor persistExecutor;
-
-    public AbstractCommandExecutor(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        commandTable = new CommandTable();
-        commandTable.setCommandCase(commandCase);
-        this.setMappingHandler(mappingHandler);
-        this.setPageHandler(pageHandler);
-        this.setKeyGenerator(keyGenerator);
-        this.setPersistExecutor(persistExecutor);
-    }
-
-    public void setModelClass(Class<?> modelClass) {
-        this.commandTable.setModelClass(modelClass);
-    }
-
-    public void setMappingHandler(MappingHandler mappingHandler) {
-        this.mappingHandler = mappingHandler;
+    public AbstractCommandExecutor(JdbcEngineConfig jdbcEngineConfig) {
+        this.jdbcEngineConfig = jdbcEngineConfig;
     }
 
     public void setCommandContextBuilder(CommandContextBuilder commandContextBuilder) {
         this.commandContextBuilder = commandContextBuilder;
     }
 
-    public void setPersistExecutor(PersistExecutor persistExecutor) {
-        this.persistExecutor = persistExecutor;
-    }
-
-    public void setPageHandler(PageHandler pageHandler) {
-        this.pageHandler = pageHandler;
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Page<?> doPageList(int pageNum, int pageSize, boolean isCount, PageQueryHandler pageQueryHandler) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-
-        String dialect = persistExecutor.getDialect();
+    protected Page<?> doPageResult(CommandContext commandContext, Pagination pagination, boolean isCount, PageQueryHandler pageQueryHandler) {
+        if (pagination == null) {
+            throw new SonsureJdbcException("查询分页列表请设置分页信息");
+        }
+        String dialect = getJdbcEngineConfig().getPersistExecutor().getDialect();
         long count = Long.MAX_VALUE;
         if (isCount) {
-            String countCommand = this.pageHandler.getCountCommand(commandContext.getCommand(), dialect);
+            String countCommand = getJdbcEngineConfig().getPageHandler().getCountCommand(commandContext.getCommand(), dialect);
             CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
             countCommandContext.setCommand(countCommand);
             countCommandContext.setResultType(Long.class);
-            Object result = this.persistExecutor.execute(countCommandContext, CommandType.QUERY_ONE_COL);
+            Object result = getJdbcEngineConfig().getPersistExecutor().execute(countCommandContext, CommandType.QUERY_ONE_COL);
             count = (Long) result;
         }
-
-
-        Pagination pagination = new Pagination();
-        pagination.setPageSize(pageSize);
-        pagination.setPageNum(pageNum);
         pagination.setTotalItems((int) count);
-
-        String pageCommand = this.pageHandler.getPageCommand(commandContext.getCommand(), pagination, dialect);
+        String pageCommand = getJdbcEngineConfig().getPageHandler().getPageCommand(commandContext.getCommand(), pagination, dialect);
         CommandContext pageCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
         pageCommandContext.setCommand(pageCommand);
         List<?> list = pageQueryHandler.queryList(pageCommandContext);
@@ -112,37 +70,26 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         return resultList;
     }
 
-
-    public CommandTable getCommandTable() {
-        return commandTable;
-    }
-
-    public void setCommandTable(CommandTable commandTable) {
-        this.commandTable = commandTable;
+    protected <E> Page<E> handleResult(Page<?> page, ResultHandler<E> resultHandler) {
+        Page<E> newPage = new Page<>(page.getPagination());
+        if (page.getList() == null || page.getList().isEmpty()) {
+            return newPage;
+        }
+        List<E> resultList = new ArrayList<>();
+        for (Object obj : page.getList()) {
+            E e = this.handleResult(obj, resultHandler);
+            resultList.add(e);
+        }
+        newPage.setList(resultList);
+        return newPage;
     }
 
     public CommandContextBuilder getCommandContextBuilder() {
         return commandContextBuilder;
     }
 
-    public PersistExecutor getPersistExecutor() {
-        return persistExecutor;
-    }
-
-    public MappingHandler getMappingHandler() {
-        return mappingHandler;
-    }
-
-    public PageHandler getPageHandler() {
-        return pageHandler;
-    }
-
-    public KeyGenerator getKeyGenerator() {
-        return keyGenerator;
-    }
-
-    public void setKeyGenerator(KeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
+    public JdbcEngineConfig getJdbcEngineConfig() {
+        return jdbcEngineConfig;
     }
 
     protected interface PageQueryHandler {

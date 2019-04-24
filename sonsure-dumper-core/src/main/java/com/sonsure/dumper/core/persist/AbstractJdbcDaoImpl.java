@@ -11,6 +11,7 @@ import com.sonsure.dumper.core.command.mybatis.MybatisExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -24,85 +25,123 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
 
     protected DataSource dataSource;
 
-    protected JdbcEngineConfig jdbcEngineConfig;
-
     protected JdbcEngine jdbcEngine;
 
+    @Override
     public <T> T get(Class<T> entityClass, Serializable id) {
-        return this.createSelect(entityClass).where().conditionId(id).singleResult();
+        return this.getJdbcEngine().get(entityClass, id);
     }
 
-    public <T> List<T> queryAll(Class<T> entityClass) {
-        return this.createSelect(entityClass).orderById().desc().list();
+    @Override
+    public <T> List<T> find(Class<T> entityClass) {
+        return this.getJdbcEngine().find(entityClass);
     }
 
-    public <T> List<T> queryList(T entity) {
-        return (List<T>) this.createSelect(entity.getClass()).where().conditionEntity(entity).orderById().desc().list();
+    @Override
+    public <T> List<T> find(T entity) {
+        return this.getJdbcEngine().find(entity);
     }
 
-    public <T extends Pageable> Page<T> queryPageList(T entity) {
-        return (Page<T>) this.createSelect(entity.getClass()).where().conditionEntity(entity).orderById().desc().pageList(entity);
+    @Override
+    public <T extends Pageable> Page<T> pageResult(T entity) {
+        return (Page<T>) this.getJdbcEngine().pageResult(entity);
     }
 
-    public <T> long queryCount(T entity) {
-        return this.createSelect(entity.getClass()).where().conditionEntity(entity).count();
+    @Override
+    public long findCount(Object entity) {
+        return this.getJdbcEngine().findCount(entity);
     }
 
-    public <T> T querySingleResult(T entity) {
-        return (T) this.createSelect(entity.getClass()).where().conditionEntity(entity).singleResult();
+    @Override
+    public long findCount(Class<?> cls) {
+        return this.getJdbcEngine().findCount(cls);
     }
 
-    public <T> T queryFirstResult(T entity) {
-        return (T) this.createSelect(entity.getClass()).where().conditionEntity(entity).firstResult();
+    public <T> T singleResult(T entity) {
+        return (T) this.getJdbcEngine().singleResult(entity);
     }
 
-    public <T> Object insert(T entity) {
-        return this.createInsert(entity.getClass()).setForEntity(entity).execute();
+    public <T> T firstResult(T entity) {
+        return (T) this.getJdbcEngine().firstResult(entity);
     }
 
-    public <T> int delete(Class<T> entityClass, Serializable id) {
-        return this.createDelete(entityClass).where().conditionId(id).execute();
+    public Object executeInsert(Object entity) {
+        return this.getJdbcEngine().executeInsert(entity);
     }
 
-    public <T> int delete(T entity) {
-        return this.createDelete(entity.getClass()).where().conditionEntity(entity).execute();
+    @Override
+    public Insert insertInto(Class<?> cls) {
+        return this.getJdbcEngine().insertInto(cls);
     }
 
-    public <T> int update(T entity) {
-        return this.createUpdate(entity.getClass()).setForEntityWhereId(entity).execute();
+    @Override
+    public int executeDelete(Class<?> entityClass, Serializable id) {
+        return this.getJdbcEngine().executeDelete(entityClass, id);
     }
 
-    public <T> Select<T> createSelect(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Select.class);
+    @Override
+    public int executeDelete(Object entity) {
+        return this.getJdbcEngine().executeDelete(entity);
     }
 
-    public <T> Insert<T> createInsert(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Insert.class);
+    @Override
+    public int executeDelete(Class<?> cls) {
+        return this.getJdbcEngine().executeDelete(cls);
     }
 
-    public <T> Delete<T> createDelete(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Delete.class);
+    @Override
+    public int executeUpdate(Object entity) {
+        return this.getJdbcEngine().executeUpdate(entity);
     }
 
-    public <T> Update<T> createUpdate(Class<T> entityClass) {
-        return this.getJdbcEngine().createExecutor(entityClass, Update.class);
+    @Override
+    public Update update(Class<?> cls) {
+        return this.getJdbcEngine().update(cls);
     }
 
-    public NativeExecutor createNativeExecutor() {
+    @Override
+    public Select selectFrom(Class<?> cls) {
+        return this.getJdbcEngine().selectFrom(cls);
+    }
+
+    public Select select() {
+        return this.getJdbcEngine().select();
+    }
+
+    @Override
+    public Select select(String... fields) {
+        return this.getJdbcEngine().select(fields);
+    }
+
+    public Insert insert() {
+        return this.getJdbcEngine().insert();
+    }
+
+    public Delete delete() {
+        return this.getJdbcEngine().delete();
+    }
+
+    @Override
+    public Delete deleteFrom(Class<?> cls) {
+        return this.getJdbcEngine().deleteFrom(cls);
+    }
+
+    public Update update() {
+        return this.getJdbcEngine().update();
+    }
+
+    public NativeExecutor nativeExecutor() {
         return this.getJdbcEngine().createExecutor(NativeExecutor.class);
     }
 
     @Override
-    public MybatisExecutor createMyBatisExecutor() {
+    public MybatisExecutor myBatisExecutor() {
         return this.getJdbcEngine().createExecutor(MybatisExecutor.class);
     }
 
     public JdbcEngine getJdbcEngine() {
         if (this.jdbcEngine == null) {
-            if (jdbcEngineConfig == null) {
-                jdbcEngineConfig = this.getDefaultJdbcEngineConfig();
-            }
-            this.jdbcEngine = jdbcEngineConfig.buildJdbcEngine(getDataSource());
+            throw new SonsureJdbcException("jdbcEngine不能为空");
         }
         return this.jdbcEngine;
     }
@@ -118,15 +157,11 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return dataSource;
     }
 
-    public JdbcEngineConfig getJdbcEngineConfig() {
-        return jdbcEngineConfig;
-    }
-
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public void setJdbcEngineConfig(JdbcEngineConfig jdbcEngineConfig) {
-        this.jdbcEngineConfig = jdbcEngineConfig;
+    public void setJdbcEngine(JdbcEngine jdbcEngine) {
+        this.jdbcEngine = jdbcEngine;
     }
 }

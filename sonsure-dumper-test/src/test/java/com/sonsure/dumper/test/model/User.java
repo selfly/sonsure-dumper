@@ -1,8 +1,10 @@
 package com.sonsure.dumper.test.model;
 
+import com.sonsure.commons.model.Pageable;
+
 import java.util.Date;
 
-public class User {
+public class User extends Pageable{
 
 
     /**

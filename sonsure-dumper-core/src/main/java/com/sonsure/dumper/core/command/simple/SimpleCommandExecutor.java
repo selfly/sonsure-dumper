@@ -1,16 +1,14 @@
 package com.sonsure.dumper.core.command.simple;
 
 
-import com.sonsure.commons.model.Page;
-import com.sonsure.commons.model.Pageable;
-import com.sonsure.dumper.core.command.CommandExecutor;
+import com.sonsure.dumper.core.command.QueryCommandExecutor;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * Created by liyd on 17/4/25.
  */
-public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> extends CommandExecutor {
+public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> extends QueryCommandExecutor<T> {
 
     /**
      * 命令
@@ -21,30 +19,12 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
     T command(String command);
 
     /**
-     * 参数
-     *
-     * @param name  the name
-     * @param value the value
-     * @return mybatis executor
-     */
-    T parameter(String name, Object value);
-
-    /**
      * 是否强制native，command不做任何加工
      *
-     * @param isForceNative
-     * @return
+     * @param nativeSql the is force native
+     * @return t
      */
-    T forceNative(boolean isForceNative);
-
-    /**
-     * 返回结果类对象
-     *
-     * @param clazz
-     * @param <E>
-     * @return
-     */
-    <E> T resultClass(Class<E> clazz);
+    T nativeSql(boolean nativeSql);
 
     /**
      * 结果处理器
@@ -55,83 +35,18 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
      */
     <E> T resultHandler(ResultHandler<E> resultHandler);
 
-
-    /**
-     * count查询
-     *
-     * @return
-     */
-    long count();
-
-    /**
-     * 单个结果
-     *
-     * @return
-     */
-    Object singleResult();
-
-    /**
-     * 简单查询，返回单一的结果，例如Long、Integer、String等
-     *
-     * @return
-     */
-    <E> E oneColResult(Class<E> clazz);
-
-    /**
-     * 列表查询
-     *
-     * @return
-     */
-    List<?> list();
-
-    /**
-     * 分页列表查询
-     *
-     * @param pageable the pageable
-     * @param isCount  the is count
-     * @return page list
-     */
-    Page<?> pageList(Pageable pageable, boolean isCount);
-
-    /**
-     * 分页列表查询
-     *
-     * @param pageable
-     * @return
-     */
-    Page<?> pageList(Pageable pageable);
-
-    /**
-     * 分页列表查询
-     *
-     * @param pageNum  the page num
-     * @param pageSize the page size
-     * @return page list
-     */
-    Page<?> pageList(int pageNum, int pageSize);
-
-    /**
-     * 分页列表查询
-     *
-     * @param pageNum  the page num
-     * @param pageSize the page size
-     * @param isCount  the is count
-     * @return page list
-     */
-    Page<?> pageList(int pageNum, int pageSize, boolean isCount);
-
     /**
      * 插入
      */
     void insert();
 
     /**
-     * 插入 返回自增主键
+     * 插入 返回主键
      *
-     * @param pkColumn
-     * @return
+     * @param clazz the clazz
+     * @return serializable
      */
-    Long insert(String pkColumn);
+    Serializable insert(Class<?> clazz);
 
     /**
      * 更新

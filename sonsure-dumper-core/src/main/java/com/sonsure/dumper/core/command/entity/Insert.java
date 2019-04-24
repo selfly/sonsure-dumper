@@ -3,7 +3,15 @@ package com.sonsure.dumper.core.command.entity;
 /**
  * Created by liyd on 17/4/14.
  */
-public interface Insert<T extends Object> extends EntityCommandExecutor {
+public interface Insert extends EntityCommandExecutor {
+
+    /**
+     * into对应class
+     *
+     * @param cls
+     * @return
+     */
+    Insert into(Class<?> cls);
 
     /**
      * 设置属性值
@@ -11,7 +19,7 @@ public interface Insert<T extends Object> extends EntityCommandExecutor {
      * @param field
      * @param value
      */
-    Insert<T> set(String field, Object value);
+    Insert set(String field, Object value);
 
     /**
      * 根据实体类设置属性
@@ -19,7 +27,7 @@ public interface Insert<T extends Object> extends EntityCommandExecutor {
      * @param entity
      * @return
      */
-    Insert<T> setForEntity(Object entity);
+    Insert forEntity(Object entity);
 
     /**
      * 执行

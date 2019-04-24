@@ -53,13 +53,14 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="jdbcTemplateEngineConfig" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineConfigImpl">
+    <bean id="jdbcTemplateEngine" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineFactoryBean">
         <property name="mybatisSqlSessionFactory" ref="sqlSessionFactory"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">
+        <property name="jdbcEngine" ref="jdbcTemplateEngine"/>
         <property name="dataSource" ref="dataSource"/>
-        <property name="jdbcEngineConfig" ref="jdbcTemplateEngineConfig"/>
     </bean>
 
 </beans>

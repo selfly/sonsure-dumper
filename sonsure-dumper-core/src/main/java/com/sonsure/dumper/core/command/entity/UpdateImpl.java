@@ -5,93 +5,74 @@ import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.management.CommandField;
-import com.sonsure.dumper.core.mapping.MappingHandler;
-import com.sonsure.dumper.core.page.PageHandler;
-import com.sonsure.dumper.core.persist.KeyGenerator;
-import com.sonsure.dumper.core.persist.PersistExecutor;
 
 import java.util.Map;
 
 /**
  * Created by liyd on 17/4/14.
  */
-public class UpdateImpl<T> extends AbstractConditionBuilder<Update<T>> implements Update<T> {
+public class UpdateImpl extends AbstractConditionCommandExecutor<Update> implements Update {
 
-    public UpdateImpl(MappingHandler mappingHandler, PageHandler pageHandler, KeyGenerator keyGenerator, PersistExecutor persistExecutor, String commandCase) {
-        super(mappingHandler, pageHandler, keyGenerator, persistExecutor, commandCase);
+    protected UpdateContext updateContext;
+
+    public UpdateImpl(JdbcEngineConfig jdbcEngineConfig) {
+        super(jdbcEngineConfig);
+        updateContext = new UpdateContext();
     }
 
-    public Update<T> set(String field, Object value) {
-        CommandField commandField = CommandField.builder()
-                .name(field)
-                .value(value)
-                .type(CommandField.Type.UPDATE)
-                .orig(CommandField.Orig.MANUAL)
-                .build();
-        this.commandTable.addOperationField(commandField);
+    public Update table(Class<?> cls) {
+        updateContext.setModelClass(cls);
         return this;
     }
 
-    public Update<T> setForEntityWhereId(Object entity) {
-        commandTable.setModelClass(entity.getClass());
-        String pkField = mappingHandler.getPkField(this.commandTable.getModelClass());
+    public Update set(String field, Object value) {
+        updateContext.addSetField(field, value);
+        return this;
+    }
 
+    public Update setForEntityWhereId(Object entity) {
+        updateContext.setModelClass(entity.getClass());
+        String pkField = getJdbcEngineConfig().getMappingHandler().getPkField(entity.getClass());
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
         //处理主键成where条件
         Object pkValue = beanPropMap.get(pkField);
         if (pkValue == null) {
             throw new SonsureJdbcException("主键属性值不能为空:" + pkField);
         }
-
-        CommandField pkCommandField = CommandField.builder()
-                .logicalOperator("where")
-                .name(pkField)
-                .fieldOperator("=")
-                .value(pkValue)
-                .type(CommandField.Type.WHERE_FIELD)
-                .orig(CommandField.Orig.ENTITY)
-                .build();
-        this.commandTable.addWhereField(pkCommandField);
+        this.where(pkField, pkValue);
         //移除
         beanPropMap.remove(pkField);
 
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
             //不忽略null，最后构建时根据updateNull设置处理null值
-            CommandField commandField = CommandField.builder()
-                    .name(entry.getKey())
-                    .value(entry.getValue())
-                    .type(CommandField.Type.UPDATE)
-                    .orig(CommandField.Orig.ENTITY)
-                    .build();
-            this.commandTable.addOperationField(commandField);
+            updateContext.addSetField(entry.getKey(), entry.getValue());
         }
         return this;
     }
 
-    public Update<T> setForEntity(Object entity) {
+    public Update setForEntity(Object entity) {
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
             //不忽略null，最后构建时根据updateNull设置处理null值
-            CommandField commandField = CommandField.builder()
-                    .name(entry.getKey())
-                    .value(entry.getValue())
-                    .type(CommandField.Type.UPDATE)
-                    .orig(CommandField.Orig.ENTITY)
-                    .build();
-            this.commandTable.addOperationField(commandField);
+            updateContext.addSetField(entry.getKey(), entry.getValue());
         }
         return this;
     }
 
-    public Update<T> updateNull() {
-        this.commandTable.setIgnoreNull(false);
+    public Update updateNull() {
+        updateContext.setIgnoreNull(false);
         return this;
     }
 
     public int execute() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.commandTable);
-        return (Integer) this.persistExecutor.execute(commandContext, CommandType.EXECUTE);
+        CommandContext commandContext = this.commandContextBuilder.build(this.updateContext, getJdbcEngineConfig());
+        return (Integer) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.EXECUTE);
+    }
+
+    @Override
+    protected WhereContext getWhereContext() {
+        return this.updateContext;
     }
 }

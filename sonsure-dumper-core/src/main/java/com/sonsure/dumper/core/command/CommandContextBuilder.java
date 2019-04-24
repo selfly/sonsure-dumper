@@ -1,6 +1,6 @@
 package com.sonsure.dumper.core.command;
 
-import com.sonsure.dumper.core.management.CommandTable;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 /**
  * CommandContext构建
@@ -12,9 +12,10 @@ public interface CommandContextBuilder {
     /**
      * 构建执行内容
      *
-     * @param commandTable the command table
+     * @param executorContext  the executor context
+     * @param jdbcEngineConfig the jdbc engine config
      * @return command context
      */
-    CommandContext build(CommandTable commandTable);
+    CommandContext build(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig);
 
 }

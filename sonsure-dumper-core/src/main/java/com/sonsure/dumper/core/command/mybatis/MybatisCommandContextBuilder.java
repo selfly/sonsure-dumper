@@ -1,10 +1,9 @@
 package com.sonsure.dumper.core.command.mybatis;
 
-import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
-import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
-import com.sonsure.dumper.core.management.CommandTable;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -15,29 +14,20 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.util.List;
-import java.util.Map;
 
 public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder {
 
-    private SqlSessionFactory sqlSessionFactory;
-
-    public MybatisCommandContextBuilder(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler, SqlSessionFactory sqlSessionFactory) {
-        super(commandExecutor, commandConversionHandler);
-        this.sqlSessionFactory = sqlSessionFactory;
-    }
-
     @Override
-    public CommandContext doBuild(CommandTable commandTable) {
+    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
+        MybatisExecutorContext mybatisExecutorContext = (MybatisExecutorContext) executorContext;
         CommandContext commandContext = new CommandContext();
 
-        String command = (String) commandTable.getExtendData(CommandTable.ExtendDataKey.COMMAND.name());
-        Map<String, Object> parameters = (Map<String, Object>) commandTable.getExtendData(CommandTable.ExtendDataKey.PARAMETERS.name());
-
-        MappedStatement statement = sqlSessionFactory.getConfiguration().getMappedStatement(command);
+        SqlSessionFactory sqlSessionFactory = jdbcEngineConfig.getMybatisSqlSessionFactory();
+        MappedStatement statement = sqlSessionFactory.getConfiguration().getMappedStatement(mybatisExecutorContext.getCommand());
         Configuration configuration = sqlSessionFactory.getConfiguration();
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-        BoundSql boundSql = statement.getBoundSql(parameters);
+        BoundSql boundSql = statement.getBoundSql(mybatisExecutorContext.getParameters());
         Object parameterObject = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
@@ -56,11 +46,10 @@ public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder 
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
                     }
-                    commandContext.addParameter(propertyName, value);
+                    commandContext.addParameter(value);
                 }
             }
         }
-
         commandContext.setCommand(boundSql.getSql());
         return commandContext;
     }

@@ -1,11 +1,9 @@
 package com.sonsure.dumper.core.command.entity;
 
-import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
-import com.sonsure.dumper.core.management.CommandField;
-import com.sonsure.dumper.core.management.CommandTable;
-import org.apache.commons.lang3.BooleanUtils;
+import com.sonsure.dumper.core.command.ExecutorContext;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
+import com.sonsure.dumper.core.management.ClassField;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -15,49 +13,45 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "update ";
 
-    public UpdateCommandContextBuilderImpl(AbstractCommandExecutor commandExecutor, CommandConversionHandler commandConversionHandler) {
-        super(commandExecutor, commandConversionHandler);
-    }
+    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
-
-    public CommandContext doBuild(CommandTable commandTable) {
-
-        CommandContext commandContext = getGenericCommandContext(commandTable);
+        UpdateContext updateContext = (UpdateContext) executorContext;
+        CommandContext commandContext = getCommonCommandContext(updateContext);
 
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
-        command.append(this.getModelAliasName(commandTable.getModelClass(), commandTable.getTableAlias())).append(" set ");
+        command.append(this.getModelAliasName(updateContext.getModelClass(), null)).append(" set ");
 
-        String pkField = this.getPkField(commandTable);
-        for (CommandField commandField : commandTable.getOperationFields()) {
+        String pkField = this.getPkField(updateContext.getModelClass(), jdbcEngineConfig.getMappingHandler());
+        for (ClassField classField : updateContext.getSetFields()) {
             //主键 不管怎么更新都不更新主键
-            if (StringUtils.equals(pkField, commandField.getName())) {
+            if (StringUtils.equals(pkField, classField.getName())) {
                 continue;
             }
             //null值
-            if (commandField.getValue() == null && commandTable.isIgnoreNull()) {
+            if (classField.getValue() == null && updateContext.isIgnoreNull()) {
                 continue;
             }
 
-            Object[] objects = this.decideNativeField(commandTable, commandField);
-
-            command.append(objects[3]).append(" = ");
-            if (commandField.getValue() == null) {
+            command.append(classField.getName()).append(" = ");
+            if (classField.getValue() == null) {
                 command.append("null");
-            } else if (BooleanUtils.toBoolean(objects[1].toString())) {
-                command.append(objects[4]);
+            } else if (classField.isNative()) {
+                command.append(classField.getValue());
             } else {
                 command.append("?");
-                commandContext.addParameter(((String) objects[2]), commandField.getValue());
+                commandContext.addParameter(classField.getValue());
             }
             command.append(",");
         }
         command.deleteCharAt(command.length() - 1);
 
-        CommandContext whereCommandContext = this.buildWhereSql(commandTable);
-        command.append(whereCommandContext.getCommand());
+        CommandContext whereCommandContext = this.buildWhereSql(updateContext);
+        if (whereCommandContext != null) {
+            command.append(whereCommandContext.getCommand());
+            commandContext.addParameters(whereCommandContext.getParameters());
+        }
 
         commandContext.setCommand(command.toString());
-        commandContext.addParameters(whereCommandContext.getParameterMap());
 
         return commandContext;
     }

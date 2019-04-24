@@ -1,10 +1,8 @@
 package com.sonsure.dumper.core.config;
 
 
-import com.sonsure.dumper.core.command.CommandExecutor;
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.command.sql.JSqlParserCommandConversionHandler;
-import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.mapping.DefaultMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.NegotiatingPageHandler;
@@ -20,12 +18,25 @@ import javax.sql.DataSource;
  */
 public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
 
-    protected CommandExecutorFactory commandExecutorFactory;
-
     /**
      * 数据源
      */
     protected DataSource dataSource;
+
+    /**
+     * 名称
+     */
+    protected String name;
+
+    /**
+     * 是否默认
+     */
+    private boolean isDefault = true;
+
+    /**
+     * 执行器构建factory
+     */
+    protected CommandExecutorFactory commandExecutorFactory;
 
     /**
      * 默认映射处理
@@ -62,91 +73,37 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
      */
     protected String commandCase;
 
-    /**
-     * 初始化
-     */
-    protected void init() {
-        if (dataSource == null) {
-            throw new SonsureJdbcException("dataSource不能为空");
-        }
+    @Override
+    public CommandExecutorFactory getCommandExecutorFactory() {
         if (commandExecutorFactory == null) {
             commandExecutorFactory = new CommandExecutorFactoryImpl();
         }
-        if (mappingHandler == null) {
-            mappingHandler = new DefaultMappingHandler();
-        }
-        if (pageHandler == null) {
-            pageHandler = new NegotiatingPageHandler();
-        }
-        if (commandConversionHandler == null) {
-            commandConversionHandler = new JSqlParserCommandConversionHandler(this.mappingHandler);
-        }
-
-        this.doInit();
-
-        if (persistExecutor == null) {
-            throw new SonsureJdbcException("JdbcEngineConfig实现类未初始化PersistExecutor,class:" + this.getClass().getName());
-        }
-    }
-
-    /**
-     * 子类初始化
-     */
-    protected abstract void doInit();
-
-    public CommandExecutor getCommandExecutor(Class<?> modelClass, Class<?> commandExecutorClass) {
-
-        CommandExecutor commandExecutor = this.commandExecutorFactory.getCommandExecutor(modelClass, commandExecutorClass, this);
-
-        if (commandExecutor == null) {
-            throw new SonsureJdbcException(String.format("未找到相应的CommandExecutor,modelClass:%s,commandExecutorClass:%s", modelClass.getName(), commandExecutorClass.getName()));
-        }
-        return commandExecutor;
-    }
-
-    public JdbcEngine buildJdbcEngine(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.init();
-        return new JdbcEngineImpl(this);
-    }
-
-    public CommandExecutorFactory getCommandExecutorFactory() {
         return commandExecutorFactory;
     }
 
-    public void setCommandExecutorFactory(CommandExecutorFactory commandExecutorFactory) {
-        this.commandExecutorFactory = commandExecutorFactory;
+    @Override
+    public MappingHandler getMappingHandler() {
+        if (mappingHandler == null) {
+            mappingHandler = new DefaultMappingHandler();
+        }
+        return mappingHandler;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @Override
+    public PageHandler getPageHandler() {
+        if (pageHandler == null) {
+            pageHandler = new NegotiatingPageHandler();
+        }
+        return pageHandler;
     }
 
 
     @Override
     public CommandConversionHandler getCommandConversionHandler() {
+        if (commandConversionHandler == null) {
+            commandConversionHandler = new JSqlParserCommandConversionHandler(this.getMappingHandler());
+        }
         return commandConversionHandler;
-    }
-
-    public void setCommandConversionHandler(CommandConversionHandler commandConversionHandler) {
-        this.commandConversionHandler = commandConversionHandler;
-    }
-
-    @Override
-    public MappingHandler getMappingHandler() {
-        return mappingHandler;
-    }
-
-    public void setMappingHandler(MappingHandler mappingHandler) {
-        this.mappingHandler = mappingHandler;
-    }
-
-    public PageHandler getPageHandler() {
-        return pageHandler;
-    }
-
-    public void setPageHandler(PageHandler pageHandler) {
-        this.pageHandler = pageHandler;
     }
 
     @Override
@@ -158,7 +115,11 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
         this.keyGenerator = keyGenerator;
     }
 
+    @Override
     public PersistExecutor getPersistExecutor() {
+        if (persistExecutor == null) {
+            this.initPersistExecutor();
+        }
         return persistExecutor;
     }
 
@@ -175,16 +136,60 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
         this.commandCase = commandCase;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
     @Override
     public SqlSessionFactory getMybatisSqlSessionFactory() {
         return mybatisSqlSessionFactory;
     }
 
+    public void setMappingHandler(MappingHandler mappingHandler) {
+        this.mappingHandler = mappingHandler;
+    }
+
+    public void setPageHandler(PageHandler pageHandler) {
+        this.pageHandler = pageHandler;
+    }
+
+    public void setCommandConversionHandler(CommandConversionHandler commandConversionHandler) {
+        this.commandConversionHandler = commandConversionHandler;
+    }
+
     public void setMybatisSqlSessionFactory(SqlSessionFactory mybatisSqlSessionFactory) {
         this.mybatisSqlSessionFactory = mybatisSqlSessionFactory;
     }
+
+    public void setCommandExecutorFactory(CommandExecutorFactory commandExecutorFactory) {
+        this.commandExecutorFactory = commandExecutorFactory;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    /**
+     * 初始化persistExecutor，具体由选型的子类执行
+     */
+    protected abstract void initPersistExecutor();
+
 }

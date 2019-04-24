@@ -1,22 +1,12 @@
 package com.sonsure.dumper.core.command.entity;
 
-import java.io.Serializable;
-
 /**
  * 条件构建
  * 实现标识接口
  * <p>
  * Created by liyd on 17/4/11.
  */
-public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityCommandExecutor {
-
-    /**
-     * 表别名
-     *
-     * @param tableAlias
-     * @return
-     */
-    C tableAlias(String tableAlias);
+public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>> extends EntityCommandExecutor {
 
     /**
      * where 关键字
@@ -109,14 +99,6 @@ public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityC
     C conditionEntity(Object entity, String wholeLogicalOperator, String fieldLogicalOperator);
 
     /**
-     * id条件
-     *
-     * @param value
-     * @return
-     */
-    C conditionId(Serializable value);
-
-    /**
      * and
      *
      * @return
@@ -199,5 +181,14 @@ public interface ConditionBuilder<C extends ConditionBuilder<C>> extends EntityC
      * @return
      */
     C end();
+
+    /**
+     * append sql片断
+     *
+     * @param segment the segment
+     * @param params  the params
+     * @return c
+     */
+    C append(String segment, Object... params);
 
 }

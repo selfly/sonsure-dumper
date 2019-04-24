@@ -35,7 +35,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> List<T> queryAll(Class<T> entityClass);
+    <T> List<T> find(Class<T> entityClass);
 
     /**
      * 根据实体条件查询列表,根据默认主键desc排序
@@ -44,7 +44,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> List<T> queryList(T entity);
+    <T> List<T> find(T entity);
 
     /**
      * 查询分页列表
@@ -53,16 +53,23 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T extends Pageable> Page<T> queryPageList(T entity);
+    <T extends Pageable> Page<T> pageResult(T entity);
 
     /**
      * 根据实体条件查询记录数
      *
      * @param entity
-     * @param <T>
      * @return
      */
-    <T> long queryCount(T entity);
+    long findCount(Object entity);
+
+    /**
+     * 根据实体条件查询记录数
+     *
+     * @param cls the cls
+     * @return long
+     */
+    long findCount(Class<?> cls);
 
     /**
      * 根据实体条件查询单个结果
@@ -71,7 +78,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> T querySingleResult(T entity);
+    <T> T singleResult(T entity);
 
     /**
      * 根据实体条件查询首个结果
@@ -80,7 +87,7 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> T queryFirstResult(T entity);
+    <T> T firstResult(T entity);
 
     /**
      * 插入
@@ -89,85 +96,121 @@ public interface JdbcDao {
      * @param <T>
      * @return
      */
-    <T> Object insert(T entity);
+    <T> Object executeInsert(T entity);
+
+    /**
+     * 创建insert对象
+     *
+     * @param cls
+     * @return
+     */
+    Insert insertInto(Class<?> cls);
 
     /**
      * 删除
      *
-     * @param entityClass
-     * @param id
-     * @param <T>
-     * @return
+     * @param entityClass the entity class
+     * @param id          the id
+     * @return int
      */
-    <T> int delete(Class<T> entityClass, Serializable id);
+    int executeDelete(Class<?> entityClass, Serializable id);
 
     /**
      * 根据实体条件删除
      *
-     * @param <T>    the type parameter
      * @param entity the entity
-     * @return int
+     * @return int int
      */
-    <T> int delete(T entity);
+    int executeDelete(Object entity);
+
+    /**
+     * 删除所有对象
+     *
+     * @param cls the cls
+     * @return int int
+     */
+    int executeDelete(Class<?> cls);
 
     /**
      * 更新
      *
-     * @param entity
-     * @param <T>
+     * @param entity the entity
+     * @return int
+     */
+    int executeUpdate(Object entity);
+
+    /**
+     * 创建update对象
+     *
+     * @param cls
      * @return
      */
-    <T> int update(T entity);
-
+    Update update(Class<?> cls);
 
     /**
      * 创建select对象
      *
-     * @param entityClass
-     * @param <T>
+     * @param cls
      * @return
      */
-    <T> Select<T> createSelect(Class<T> entityClass);
+    Select selectFrom(Class<?> cls);
+
+    /**
+     * 创建select对象
+     *
+     * @return select select
+     */
+    Select select();
+
+    /**
+     * 创建select对象
+     *
+     * @param fields the fields
+     * @return select select
+     */
+    Select select(String... fields);
 
 
     /**
      * 创建insert对象
      *
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @return insert insert
      */
-    <T> Insert<T> createInsert(Class<T> entityClass);
+    Insert insert();
 
     /**
      * 创建delete对象
      *
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @return delete
      */
-    <T> Delete<T> createDelete(Class<T> entityClass);
+    Delete delete();
+
+    /**
+     * 创建delete对象
+     *
+     * @param cls the cls
+     * @return delete delete
+     */
+    Delete deleteFrom(Class<?> cls);
 
     /**
      * 创建update对象
      *
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @return update update
      */
-    <T> Update<T> createUpdate(Class<T> entityClass);
+    Update update();
 
     /**
      * 创建native executor对象
      *
      * @return
      */
-    NativeExecutor createNativeExecutor();
+    NativeExecutor nativeExecutor();
 
     /**
      * 创建mybatis executor对象
      *
      * @return
      */
-    MybatisExecutor createMyBatisExecutor();
+    MybatisExecutor myBatisExecutor();
 }

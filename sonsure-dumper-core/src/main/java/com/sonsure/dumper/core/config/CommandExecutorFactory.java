@@ -8,11 +8,11 @@ public interface CommandExecutorFactory {
     /**
      * 获取commandExecutor
      *
-     * @param modelClass           the model class
      * @param commandExecutorClass the command executor class
+     * @param param                the param
      * @param jdbcEngineConfig     the jdbc engine config
      * @return command executor
      */
-    CommandExecutor getCommandExecutor(Class<?> modelClass, Class<?> commandExecutorClass, JdbcEngineConfig jdbcEngineConfig);
+    CommandExecutor getCommandExecutor(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig);
 
 }

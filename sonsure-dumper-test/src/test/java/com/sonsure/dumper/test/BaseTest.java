@@ -24,7 +24,7 @@ public class BaseTest {
      * 必须有个运行方法,不然maven install会通不过
      */
     @Test
-    public void out() {
+    public void init() {
         System.out.printf("==============================");
     }
 
