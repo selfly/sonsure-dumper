@@ -2,7 +2,7 @@
 
 简单、快速、易用的jdbc持久化操作层。
 
-#### 示例
+## 示例
 
     //根据主键获取
     User user = Jdbc.get(User.class, 177);
@@ -47,7 +47,7 @@
             .isCount(false)
             .pageResult();
  
-#### 特点
+## 特点
 
 - 省去各类dao或baseDao，甚至不需要声明或注入dao
 - 学习成本低，api跟sql高度一致，会sql即会使用
@@ -88,11 +88,12 @@
 
     User user = Jdbc.get(User.class, 177);
 
-#### 相关文档
+## 相关文档
+
+待完善
 
 
-
-#### 参与贡献
+## 参与贡献
 
 github：[https://github.com/selfly/sonsure-dumper](https://github.com/selfly/sonsure-dumper)
 
