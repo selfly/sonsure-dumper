@@ -95,7 +95,7 @@
 
 ## 参与贡献
 
-github：[https://github.com/selfly/sonsure-dumper](https://github.com/selfly/sonsure-dumper)
+github：[https://github.com/selfly/sonsure-dumper](https://github.com/selfly/sonsure-dumper)  
 gitee: [https://gitee.com/selfly/sonsure-dumper](https://gitee.com/selfly/sonsure-dumper)
 
 1. Fork 本项目
