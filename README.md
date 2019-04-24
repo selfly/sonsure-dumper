@@ -1,4 +1,4 @@
-# sonsure-dumper
+# Sonsure-Dumper
 
 简单、快速、易用的jdbc持久化操作层。
 
