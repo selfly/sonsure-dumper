@@ -147,7 +147,7 @@ public class Jdbc {
         return getDefaultJdbcEngine().createExecutor(NativeExecutor.class);
     }
 
-    public MybatisExecutor myBatisExecutor() {
+    public static MybatisExecutor myBatisExecutor() {
         return getDefaultJdbcEngine().createExecutor(MybatisExecutor.class);
     }
 }

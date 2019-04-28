@@ -60,7 +60,7 @@
 
     <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">
         <property name="jdbcEngine" ref="jdbcTemplateEngine"/>
-        <property name="dataSource" ref="dataSource"/>
+        <!--<property name="dataSource" ref="dataSource"/>-->
     </bean>
 
 </beans>
