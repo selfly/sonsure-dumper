@@ -96,8 +96,9 @@
 2. [初始化](doc/init-config.md)  
 3. [基本增删改查](doc/basic-crud.md)  
 4. [Insert|Update|Delete|Select用法](doc/executor-crud.md)
+5. [不传参{{}}符号的使用](doc/not-param.md)
 
-待完善
+更多待完善...
 
 
 ## 参与贡献
