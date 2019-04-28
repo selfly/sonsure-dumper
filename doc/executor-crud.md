@@ -135,6 +135,7 @@ select中不仅仅可以放属性，也可以放置一些在sql中支持查询�
 - Page<Object> pageResult() 同上，返回结果类型不定没有对应的实体类情况下使用。
 - <T> Page<T> oneColPageResult(Class<T> clazz) 分页同上，返回结果类型为单个值的基本类型。
 
+
 ## where条件设置说明
 
 where条件的设置常用的and、or等都与sql相对应一看就能理解。
