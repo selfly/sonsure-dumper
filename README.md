@@ -92,9 +92,10 @@
 
 说明文档中可能会有xml方式配置或JavaConfig方式配置，两种方式效果是一样的，可根据情况自行转换。
 
-[初始化](doc/init-config.md)  
-[基本增删改查](doc/basic-crud.md)  
-[Insert|Update|Delete|Select用法](doc/executor-crud.md)
+1. [约定](doc/usage.md)
+2. [初始化](doc/init-config.md)  
+3. [基本增删改查](doc/basic-crud.md)  
+4. [Insert|Update|Delete|Select用法](doc/executor-crud.md)
 
 待完善
 

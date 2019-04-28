@@ -81,14 +81,3 @@
     UserInfo tmp = new UserInfo();
     tmp.setUserAge(10);
     UserInfo user = Jdbc.firstResult(tmp);
-
-
-    @Test
-    public void jdbcDaoPageResult3() {
-        Page<UserInfo> page = Jdbc.selectFrom(UserInfo.class)
-                .orderBy("userInfoId").asc()
-                .limit(15, 10)
-                .pageResult(UserInfo.class);
-        Assert.assertTrue(page.getList().get(0).getUserInfoId().equals(11L));
-        Assert.assertTrue(page.getList().get(9).getUserInfoId().equals(20L));
-    }
