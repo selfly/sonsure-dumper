@@ -98,16 +98,17 @@
 4. [Insert|Update|Delete|Select用法](doc/executor-crud.md)
 5. [不传参{{}}符号的使用](doc/not-param.md)
 6. 注解的使用
-7. 扩展映射转换处理 mappingHandler
-8. 扩展分页处理 pageHandler
-9. 扩展主键生成 keyGenerator
-10. 扩展持久化实现 persistExecutor
-11. 扩展sql的解析转换 commandConversionHandler
-12. 整合Mybatis mybatisSqlSessionFactory
-13. 扩展Executor commandExecutorFactory
-14. 多数据源的使用
-15. 水平分表使用
-16. 动态数据源使用
+7. 执行自定义sql
+8. 整合Mybatis执行sql mybatisSqlSessionFactory
+9. 扩展映射转换处理 mappingHandler
+10. 扩展分页处理 pageHandler
+11. 扩展主键生成 keyGenerator
+12. 扩展持久化实现 persistExecutor
+13. 扩展sql的解析转换 commandConversionHandler
+14. 扩展Executor commandExecutorFactory
+15. 多数据源的使用
+16. 水平分表使用
+17. 动态数据源使用
 
 更多待完善...
 
