@@ -21,6 +21,11 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingHandler.class);
 
     /**
+     * value需要native内容前后包围符号
+     */
+    public static final String REFERENCE_CLASS_TOKEN = "`";
+
+    /**
      * 主键属性后缀
      */
     protected static final String PRI_FIELD_SUFFIX = "Id";
@@ -183,6 +188,9 @@ public abstract class AbstractMappingHandler implements MappingHandler {
 
         if (StringUtils.isBlank(className)) {
             throw new SonsureJdbcException("className不能为空");
+        }
+        if (StringUtils.startsWith(className, REFERENCE_CLASS_TOKEN) && StringUtils.endsWith(className, REFERENCE_CLASS_TOKEN)) {
+            className = StringUtils.substring(className, REFERENCE_CLASS_TOKEN.length(), className.length() - REFERENCE_CLASS_TOKEN.length());
         }
         Class<?> clazz = null;
         if (StringUtils.indexOf(className, ".") != -1) {
