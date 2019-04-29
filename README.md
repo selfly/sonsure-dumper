@@ -93,10 +93,21 @@
 说明文档中可能会有xml方式配置或JavaConfig方式配置，两种方式效果是一样的，可根据情况自行转换。
 
 1. [约定](doc/usage.md)
-2. [初始化](doc/init-config.md)  
+2. [初始化配置](doc/init-config.md)  
 3. [基本增删改查](doc/basic-crud.md)  
 4. [Insert|Update|Delete|Select用法](doc/executor-crud.md)
 5. [不传参{{}}符号的使用](doc/not-param.md)
+6. 注解的使用
+7. 扩展映射转换处理 mappingHandler
+8. 扩展分页处理 pageHandler
+9. 扩展主键生成 keyGenerator
+10. 扩展持久化实现 persistExecutor
+11. 扩展sql的解析转换 commandConversionHandler
+12. 整合Mybatis mybatisSqlSessionFactory
+13. 扩展Executor commandExecutorFactory
+14. 多数据源的使用
+15. 水平分表使用
+16. 动态数据源使用
 
 更多待完善...
 
