@@ -4,6 +4,7 @@ import com.sonsure.commons.model.Model;
 import com.sonsure.dumper.core.annotation.Column;
 import com.sonsure.dumper.core.annotation.Id;
 import com.sonsure.dumper.core.annotation.Table;
+import com.sonsure.dumper.core.annotation.Transient;
 
 import java.util.Date;
 
@@ -23,7 +24,7 @@ public class KUserInfo extends Model {
      */
     @Id
     @Column("USER_INFO_ID_")
-    private Long userInfoId;
+    private Long rowId;
 
     /**
      * 登录名
@@ -55,12 +56,16 @@ public class KUserInfo extends Model {
     @Column("GMT_MODIFY_")
     private Date gmtModify;
 
-    public Long getUserInfoId() {
-        return userInfoId;
+    @Transient
+    private String testName;
+
+
+    public Long getRowId() {
+        return rowId;
     }
 
-    public void setUserInfoId(Long userInfoId) {
-        this.userInfoId = userInfoId;
+    public void setRowId(Long rowId) {
+        this.rowId = rowId;
     }
 
     public String getLoginName() {
@@ -103,4 +108,11 @@ public class KUserInfo extends Model {
         this.gmtModify = gmtModify;
     }
 
+    public String getTestName() {
+        return testName;
+    }
+
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 }

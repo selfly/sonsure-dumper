@@ -1,0 +1,50 @@
+# 执行自定义sql
+
+组件提供了`NativeExecutor`来执行自定义sql。
+
+    int count = Jdbc.nativeExecutor()
+            .command("update `com.sonsure.dumper.test.model.UserInfo` set loginName = ? where userInfoId = ?")
+            .parameters(new Object[]{"newName", 39L})
+            .update();
+            
+sql中的表名以及列名都是对应实体类的类名和属性名，会自动进行转换。
+
+可以发现，这里实体类我们使用了全名称`com.sonsure.dumper.test.model.UserInfo`,这是因为`native`方式组件并不知道有哪些对应的实体类，所以用全名称指定。
+
+当然，用类全名称来写sql毕竟比较麻烦，所以在初始化时可以配置`MappingHandler`来指定扫描的包，更多配置说明见MappingHandler一节：
+
+    <bean id="mappingHandler" class="com.sonsure.dumper.core.mapping.DefaultMappingHandler">
+        <constructor-arg name="modelPackages" value="com.sonsure.dumper.test.model.**"/>
+    </bean>
+
+    <bean id="jdbcTemplateEngine" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingHandler" ref="mappingHandler"/>
+    </bean>
+
+    <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">
+        <property name="jdbcEngine" ref="jdbcTemplateEngine"/>
+    </bean>
+    
+这样，我们就可以使用短名称来执行sql了：
+
+    int count = Jdbc.nativeExecutor()
+            .command("update UserInfo set loginName = ? where userInfoId = ?")
+            .parameters(new Object[]{"newName", 39L})
+            .update();
+            
+*小提示：如果没有指定扫描的包，但是sql中的实体类之前有用其它class的方式执行过，那么短名称也能成功。*
+
+如果不想经过sql的解析转换处理，需要执行100%原生的sql，可以指定`nativeSql`：
+
+    int count = Jdbc.nativeExecutor()
+            .command("update user_info set login_name = ? where user_info_id = ?")
+            .parameters(new Object[]{"newName", 39L})
+            .nativeSql(true) //不经过转换处理
+            .update();
+            
+*注意：指定了`nativeSql(true)`后，由于不经过转换处理，在水平分表时会无法动态处理表名。*
+
+
+
+

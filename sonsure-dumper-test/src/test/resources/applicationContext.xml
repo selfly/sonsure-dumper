@@ -53,9 +53,14 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="mappingHandler" class="com.sonsure.dumper.core.mapping.DefaultMappingHandler">
+        <constructor-arg name="modelPackages" value="com.sonsure.dumper.test.model.**"/>
+    </bean>
+
     <bean id="jdbcTemplateEngine" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineFactoryBean">
         <property name="mybatisSqlSessionFactory" ref="sqlSessionFactory"/>
         <property name="dataSource" ref="dataSource"/>
+        <property name="mappingHandler" ref="mappingHandler"/>
     </bean>
 
     <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">

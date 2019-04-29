@@ -4,13 +4,13 @@ import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
+import com.sonsure.dumper.core.persist.Jdbc;
 import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.AuthCode;
 import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UidUser;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class JdbcTemplateDaoImplTest {
     @Autowired
     protected JdbcDao jdbcDao;
 
-    @Before
+//    @Before
     public void before() {
         //初始化测试数据
         jdbcDao.deleteFrom(UserInfo.class)
@@ -668,14 +668,36 @@ public class JdbcTemplateDaoImplTest {
     }
 
     @Test
+    public void insertAnnotation() {
+
+        KUserInfo ku = new KUserInfo();
+        ku.setLoginName("insertName");
+        ku.setPassword("123456");
+        ku.setUserAge(18);
+        ku.setGmtCreate(new Date());
+        Long id = (Long) Jdbc.executeInsert(ku);
+
+        KUserInfo kUserInfo = Jdbc.get(KUserInfo.class, id);
+        Assert.assertTrue(ku.getLoginName().equals(kUserInfo.getLoginName()));
+        Assert.assertTrue(ku.getPassword().equals(kUserInfo.getPassword()));
+    }
+
+    @Test
     public void updateAnnotation() {
 
         KUserInfo ku = new KUserInfo();
-        ku.setUserInfoId(7L);
+        ku.setRowId(36L);
         ku.setLoginName("777777");
         ku.setPassword("787878");
         ku.setGmtModify(new Date());
-        int count = jdbcDao.executeUpdate(ku);
+        int count = Jdbc.executeUpdate(ku);
+        Assert.assertTrue(count == 1);
+    }
+
+    @Test
+    public void deleteAnnotation() {
+
+        int count = Jdbc.executeDelete(KUserInfo.class, 85L);
         Assert.assertTrue(count == 1);
     }
 
@@ -695,7 +717,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeExecutor() {
-        int count = jdbcDao.nativeExecutor()
+        int count = Jdbc.nativeExecutor()
                 .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters(new Object[]{"newName", 39L})
                 .update();
