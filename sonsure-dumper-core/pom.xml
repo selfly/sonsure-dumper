@@ -25,10 +25,6 @@
             <artifactId>mybatis</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>ognl</groupId>
-            <artifactId>ognl</artifactId>
-        </dependency>
     </dependencies>
 
 </project>
