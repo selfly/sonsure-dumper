@@ -1,7 +1,6 @@
 package com.sonsure.dumper.core.mapping;
 
 import com.sonsure.commons.spring.scan.ClassPathBeanScanner;
-import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.commons.utils.NameUtils;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ModelClassCache;
@@ -168,7 +167,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         }
         String[] pks = StringUtils.split(modelPackages, ",");
         for (String pk : pks) {
-            List<String> classes = ClassPathBeanScanner.scanClasses(pk);
+            List<String> classes = ClassPathBeanScanner.scanClasses(pk, this.getClassLoader());
             for (String clazz : classes) {
 
                 int index = StringUtils.lastIndexOf(clazz, ".");
@@ -177,7 +176,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
                 if (classMapping.containsKey(simpleName)) {
                     LOG.warn("短类名相同，使用时请自定义短类名或使用完整类名:class1:{},class2:{}", classMapping.get(simpleName), clazz);
                 } else {
-                    Class<?> aClass = ClassUtils.loadClass(clazz);
+                    Class<?> aClass = this.loadClass(clazz);
                     classMapping.put(simpleName, aClass);
                 }
             }
@@ -196,7 +195,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         if (StringUtils.indexOf(className, ".") != -1) {
             clazz = loadedClass.get(className);
             if (clazz == null) {
-                clazz = ClassUtils.loadClass(className);
+                clazz = this.loadClass(className);
                 loadedClass.put(className, clazz);
             }
         }
@@ -211,6 +210,18 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         }
 
         return clazz;
+    }
+
+    protected Class<?> loadClass(String className) {
+        try {
+            return getClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new SonsureJdbcException("加载class失败:" + className);
+        }
+    }
+
+    protected ClassLoader getClassLoader() {
+        return getClass().getClassLoader();
     }
 
     public String getModelPackages() {
