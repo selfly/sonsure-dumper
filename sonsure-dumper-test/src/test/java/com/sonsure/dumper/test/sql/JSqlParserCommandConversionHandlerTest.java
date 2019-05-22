@@ -121,4 +121,10 @@ public class JSqlParserCommandConversionHandlerTest {
         String sql = commandConversionHandler.convert(command, null);
         System.out.println(sql);
     }
+    @Test
+    public void commandToSql11() {
+        String command = "insert into UserInfo(loginTime,ip,name,sysLoginLogId) values (?,?,?,etwqdfdasfa)";
+        String sql = commandConversionHandler.convert(command, null);
+        System.out.println(sql);
+    }
 }

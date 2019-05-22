@@ -44,7 +44,11 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
     public Object insert(final CommandContext commandContext) {
         final GenerateKey generateKey = commandContext.getGenerateKey();
         //数据库生成 或没有设置主键值 处理
-        if (commandContext.isPkValueByDb()) {
+        if (generateKey.isParameter()) {
+            jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
+            //显示指定了主键，可能为null
+            return generateKey != null ? generateKey.getValue() : null;
+        } else {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcOperations.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -58,10 +62,6 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             Number number = keyHolder.getKey();
             //可能显示设置了主键值，没有生成
             return number == null ? null : number.longValue();
-        } else {
-            jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
-            //显示指定了主键，可能为null
-            return generateKey != null ? generateKey.getValue() : null;
         }
     }
 

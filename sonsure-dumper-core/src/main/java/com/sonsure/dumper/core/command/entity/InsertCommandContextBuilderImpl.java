@@ -49,14 +49,17 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
             KeyGenerator keyGenerator = jdbcEngineConfig.getKeyGenerator();
             if (keyGenerator != null) {
                 Object generateKeyValue = keyGenerator.generateKeyValue(insertContext.getModelClass());
+                generateKey.setValue(generateKeyValue);
+                generateKey.setParameter(keyGenerator.isParameter());
                 //设置主键值，insert之后返回用
                 commandContext.setGenerateKey(generateKey);
-                //由数据库生成
-                if (keyGenerator.isPkValueByDb()) {
+                //传参
+                if (keyGenerator.isParameter()) {
                     command.append(pkField).append(",");
                     argsCommand.append("?").append(",");
+                    commandContext.addParameter(generateKeyValue);
                 } else {
-                    //非数据库生成，则不能传参方式，例如是oracle的序列名
+                    //不传参方式，例如是oracle的序列名
                     command.append(pkField).append(",");
                     argsCommand.append(generateKeyValue).append(",");
                 }
