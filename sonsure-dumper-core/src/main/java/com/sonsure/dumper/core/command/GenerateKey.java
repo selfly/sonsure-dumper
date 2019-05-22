@@ -8,6 +8,11 @@ public class GenerateKey {
 
     private Object value;
 
+    /**
+     * 主键值是否有数据库生成
+     */
+    private boolean isParameter;
+
     public Class<?> getClazz() {
         return clazz;
     }
@@ -30,5 +35,13 @@ public class GenerateKey {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public boolean isParameter() {
+        return isParameter;
+    }
+
+    public void setParameter(boolean parameter) {
+        isParameter = parameter;
     }
 }

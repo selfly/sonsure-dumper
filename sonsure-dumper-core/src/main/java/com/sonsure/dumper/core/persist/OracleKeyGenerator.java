@@ -8,8 +8,8 @@ import com.sonsure.commons.utils.NameUtils;
  */
 public class OracleKeyGenerator implements KeyGenerator {
 
-    public boolean isPkValueByDb() {
-        return true;
+    public boolean isParameter() {
+        return false;
     }
 
     public Object generateKeyValue(Class<?> clazz) {

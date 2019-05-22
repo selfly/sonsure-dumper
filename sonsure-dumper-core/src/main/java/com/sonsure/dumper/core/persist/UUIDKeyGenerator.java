@@ -9,8 +9,8 @@ import com.sonsure.commons.utils.UUIDUtils;
 public class UUIDKeyGenerator implements KeyGenerator {
 
 
-    public boolean isPkValueByDb() {
-        return false;
+    public boolean isParameter() {
+        return true;
     }
 
     public Object generateKeyValue(Class<?> clazz) {

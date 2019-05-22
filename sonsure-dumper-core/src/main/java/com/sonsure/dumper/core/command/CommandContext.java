@@ -29,11 +29,6 @@ public class CommandContext {
     private Class<?> resultType;
 
     /**
-     * 主键值是否有数据库生成
-     */
-    private boolean pkValueByDb = true;
-
-    /**
      * 主键值，pkValueByDb=false才有
      */
     private GenerateKey generateKey;
@@ -87,11 +82,4 @@ public class CommandContext {
         this.parameters = parameters;
     }
 
-    public boolean isPkValueByDb() {
-        return pkValueByDb;
-    }
-
-    public void setPkValueByDb(boolean pkValueByDb) {
-        this.pkValueByDb = pkValueByDb;
-    }
 }
