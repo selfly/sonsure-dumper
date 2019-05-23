@@ -15,6 +15,6 @@ public class OracleKeyGenerator implements KeyGenerator {
     public Object generateKeyValue(Class<?> clazz) {
         //根据实体名获取主键序列名
         String tableName = NameUtils.getUnderlineName(clazz.getSimpleName());
-        return String.format("SEQ_%s.NEXTVAL", tableName);
+        return String.format("`{{SEQ_%s.NEXTVAL}}`", tableName);
     }
 }

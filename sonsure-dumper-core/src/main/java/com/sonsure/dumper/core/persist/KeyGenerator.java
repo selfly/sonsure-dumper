@@ -6,6 +6,13 @@ package com.sonsure.dumper.core.persist;
 public interface KeyGenerator {
 
     /**
+     * 包围主键值表示一整列不解析，如oracle序列名 seq_user.nextval,sql语法下会解析成table.column
+     */
+    String NATIVE_OPEN_TOKEN = "`{{";
+
+    String NATIVE_CLOSE_TOKEN = "}}`";
+
+    /**
      * 主键值是否传参
      * false:类似于oracle的序列,下面的generateKeyValue方法只是返回了序列名,真正的主键值是sql执行时获取的序列值
      * true:如UUID主键,下面的generateKeyValue方法返回一个UUID,这个UUID就已经是实际的主键值

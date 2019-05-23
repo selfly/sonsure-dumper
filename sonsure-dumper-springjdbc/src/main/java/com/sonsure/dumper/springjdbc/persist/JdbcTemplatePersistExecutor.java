@@ -59,9 +59,9 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
                     return ps;
                 }
             }, keyHolder);
-            Number number = keyHolder.getKey();
-            //可能显示设置了主键值，没有生成
-            return number == null ? null : number.longValue();
+            Map<String, Object> keys = keyHolder.getKeys();
+            //只有一个主键列，多个不支持
+            return keys.values().iterator().next();
         }
     }
 
