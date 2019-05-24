@@ -22,7 +22,9 @@ public class JdbcEngineImpl implements JdbcEngine {
 
     public JdbcEngineImpl(JdbcEngineConfig jdbcEngineConfig) {
         this.jdbcEngineConfig = jdbcEngineConfig;
-        Jdbc.addJdbcEngine(this);
+        if (jdbcEngineConfig.isEnableGlobalJdbc()) {
+            Jdbc.addJdbcEngine(this);
+        }
     }
 
     @Override

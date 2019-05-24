@@ -4,7 +4,6 @@ import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.persist.Jdbc;
 import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.AuthCode;
 import com.sonsure.dumper.test.model.KUserInfo;
@@ -676,9 +675,9 @@ public class JdbcTemplateDaoImplTest {
         ku.setPassword("123456");
         ku.setUserAge(18);
         ku.setGmtCreate(new Date());
-        Long id = (Long) Jdbc.executeInsert(ku);
+        Long id = (Long) jdbcDao.executeInsert(ku);
 
-        KUserInfo kUserInfo = Jdbc.get(KUserInfo.class, id);
+        KUserInfo kUserInfo = jdbcDao.get(KUserInfo.class, id);
         Assert.assertTrue(ku.getLoginName().equals(kUserInfo.getLoginName()));
         Assert.assertTrue(ku.getPassword().equals(kUserInfo.getPassword()));
     }
@@ -691,7 +690,7 @@ public class JdbcTemplateDaoImplTest {
         ku.setLoginName("777777");
         ku.setPassword("787878");
         ku.setGmtModify(new Date());
-        int count = Jdbc.executeUpdate(ku);
+        int count = jdbcDao.executeUpdate(ku);
         Assert.assertTrue(count == 1);
     }
 
@@ -700,9 +699,9 @@ public class JdbcTemplateDaoImplTest {
 
         KUserInfo ku = new KUserInfo();
         ku.setLoginName("liyd");
-        Serializable id = (Serializable) Jdbc.executeInsert(ku);
+        Serializable id = (Serializable) jdbcDao.executeInsert(ku);
 
-        int count = Jdbc.executeDelete(KUserInfo.class, id);
+        int count = jdbcDao.executeDelete(KUserInfo.class, id);
         Assert.assertTrue(count == 1);
     }
 
@@ -722,7 +721,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeExecutor() {
-        int count = Jdbc.nativeExecutor()
+        int count = jdbcDao.nativeExecutor()
                 .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters(new Object[]{"newName", 39L})
                 .update();

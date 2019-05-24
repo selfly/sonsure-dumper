@@ -88,4 +88,11 @@ public interface JdbcEngineConfig {
      */
     String getCommandCase();
 
+    /**
+     * 是否启用全局jdbc
+     *
+     * @return
+     */
+    boolean isEnableGlobalJdbc();
+
 }
