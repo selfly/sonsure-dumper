@@ -5,7 +5,7 @@
     <parent>
         <artifactId>sonsure-dumper</artifactId>
         <groupId>com.sonsure</groupId>
-        <version>3.0.2</version>
+        <version>3.0.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -77,6 +77,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!--oracle的jdbc驱动，maven中央库无，自行替换-->
         <dependency>
             <groupId>com.ktanx</groupId>
             <artifactId>ojdbc8</artifactId>

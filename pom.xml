@@ -7,7 +7,7 @@
     <groupId>com.sonsure</groupId>
     <artifactId>sonsure-dumper</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
     <modules>
         <module>sonsure-dumper-core</module>
         <module>sonsure-dumper-springjdbc</module>
@@ -17,7 +17,7 @@
     <properties>
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
-        <sonsure-common.version>2.0.0</sonsure-common.version>
+        <sonsure-common.version>2.0.1</sonsure-common.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <commons-lang3.version>3.7</commons-lang3.version>
         <aspectjweaver.version>1.8.13</aspectjweaver.version>
