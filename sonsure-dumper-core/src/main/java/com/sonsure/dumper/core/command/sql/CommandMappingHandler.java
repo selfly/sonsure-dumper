@@ -5,6 +5,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
+import net.sf.jsqlparser.expression.operators.relational.ItemsList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
@@ -219,8 +220,10 @@ public class CommandMappingHandler {
             Expression leftExpression = inExpression.getLeftExpression();
             this.extractExpression(leftExpression, mappings);
 
-            //暂未实现
-//            ItemsList rightItemsList = inExpression.getRightItemsList();
+            ItemsList rightItemsList = inExpression.getRightItemsList();
+            if (rightItemsList instanceof SubSelect) {
+                this.extractSubSelect(((SubSelect) rightItemsList), mappings);
+            }
         } else if (expression instanceof IsNullExpression) {
             IsNullExpression isNullExpression = (IsNullExpression) expression;
             Expression leftExpression = isNullExpression.getLeftExpression();

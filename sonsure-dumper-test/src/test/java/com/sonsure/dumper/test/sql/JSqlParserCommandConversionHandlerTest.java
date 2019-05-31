@@ -130,7 +130,7 @@ public class JSqlParserCommandConversionHandlerTest {
 
     @Test
     public void commandToSql12() {
-        String command = "select orderNumber,resourceUrl,resourceIcon,sysResourceId,resourceName,routingUrl,parentId,resourceType from UserInfo where user_info_id in ( select 1 from dual t ) ";
+        String command = "select orderNumber,resourceUrl,resourceIcon,sysResourceId,resourceName,routingUrl,parentId,resourceType from UserInfo where user_info_id in ( select 1 from RelTag) ";
         String sql = commandConversionHandler.convert(command, null);
         System.out.println(sql);
     }
