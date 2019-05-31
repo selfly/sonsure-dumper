@@ -13,12 +13,16 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CommandMappingHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CommandMappingHandler.class);
 
     /**
      * 没有表别名时的默认别名 如单表查询时
@@ -79,11 +83,23 @@ public class CommandMappingHandler {
 
     public String getTableName(Table table) {
         TableMapping tableMapping = mappingTables.get(table);
+        if (tableMapping == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No TableMapping found, unconverted table name. table=[{}]", table.getName());
+            }
+            return table.getName();
+        }
         return tableMapping.getMappingName();
     }
 
     public String getColumnName(Column column) {
         ColumnMapping columnMapping = mappingColumns.get(column);
+        if (columnMapping == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No ColumnMapping found, unconverted table name. column=[{}]", column.getColumnName());
+            }
+            return column.getColumnName();
+        }
         return columnMapping.getSmartMappingName();
     }
 
