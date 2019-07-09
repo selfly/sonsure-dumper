@@ -50,11 +50,15 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
             if (keyGenerator != null) {
                 Object generateKeyValue = keyGenerator.generateKeyValue(insertContext.getModelClass());
                 generateKey.setValue(generateKeyValue);
-                generateKey.setParameter(keyGenerator.isParameter());
+                boolean isParam = true;
+                if (generateKeyValue instanceof String) {
+                    isParam = !(StringUtils.startsWith((String) generateKeyValue, KeyGenerator.NATIVE_OPEN_TOKEN) && StringUtils.endsWith(((String) generateKeyValue), KeyGenerator.NATIVE_CLOSE_TOKEN));
+                }
+                generateKey.setParameter(isParam);
                 //设置主键值，insert之后返回用
                 commandContext.setGenerateKey(generateKey);
                 //传参
-                if (keyGenerator.isParameter()) {
+                if (isParam) {
                     command.append(pkField).append(",");
                     argsCommand.append("?").append(",");
                     commandContext.addParameter(generateKeyValue);

@@ -8,11 +8,7 @@ import com.sonsure.commons.utils.UUIDUtils;
  */
 public class UUIDKeyGenerator implements KeyGenerator {
 
-
-    public boolean isParameter() {
-        return true;
-    }
-
+    @Override
     public Object generateKeyValue(Class<?> clazz) {
         return UUIDUtils.getUUID32();
     }

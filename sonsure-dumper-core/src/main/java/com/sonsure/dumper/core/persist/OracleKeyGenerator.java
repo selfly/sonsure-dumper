@@ -8,10 +8,7 @@ import com.sonsure.commons.utils.NameUtils;
  */
 public class OracleKeyGenerator implements KeyGenerator {
 
-    public boolean isParameter() {
-        return false;
-    }
-
+    @Override
     public Object generateKeyValue(Class<?> clazz) {
         //根据实体名获取主键序列名
         String tableName = NameUtils.getUnderlineName(clazz.getSimpleName());

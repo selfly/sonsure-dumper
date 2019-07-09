@@ -106,7 +106,7 @@
 12. 扩展持久化实现 persistExecutor
 13. 扩展sql的解析转换 commandConversionHandler
 14. 扩展Executor commandExecutorFactory
-15. 多数据源的使用
+15. [多数据源的使用](doc/multi-ds.md)
 16. 水平分表动态表名使用
 17. 动态数据源读写分离使用
 
