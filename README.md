@@ -99,7 +99,7 @@
 5. [不传参{{}}符号的使用](doc/not-param.md)
 6. [注解的使用](doc/use-annotation.md)
 7. [执行自定义sql](doc/native-sql.md)
-8. 整合Mybatis执行sql mybatisSqlSessionFactory
+8. [整合Mybatis执行sql mybatisSqlSessionFactory](doc/mybatis-sql.md)
 9. 扩展映射转换处理 mappingHandler
 10. 扩展分页处理 pageHandler
 11. [扩展主键生成 keyGenerator](doc/key-generator.md)

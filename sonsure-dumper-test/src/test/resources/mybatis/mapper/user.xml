@@ -4,6 +4,10 @@
 <mapper namespace="com.sonsure.mybatis.mapper.UserMapper">
 
     <select id="getUser" parameterType="java.util.Map" resultType="java.util.HashMap">
+        SELECT * FROM UserInfo WHERE userInfoId = #{id} and loginName = #{loginName}
+    </select>
+
+    <select id="getUserSql" parameterType="java.util.Map" resultType="java.util.HashMap">
         SELECT * FROM user_info WHERE user_info_id = #{id} and login_name = #{loginName}
     </select>
 

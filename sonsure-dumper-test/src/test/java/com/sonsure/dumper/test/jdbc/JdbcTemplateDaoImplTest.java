@@ -905,29 +905,26 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void mybatisExecutor1() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", 9L);
-        params.put("loginName", "name-9");
-
-        Object user = jdbcDao.myBatisExecutor()
+        UserInfo user = jdbcDao.myBatisExecutor()
                 .command("getUser")
-                .parameters(params)
-                .nativeSql(true)
-                .singleResult();
+                .parameter("id", 9L)
+                .parameter("loginName", "name-9")
+                .singleResult(UserInfo.class);
 
         Assert.assertNotNull(user);
     }
 
-
     @Test
     public void mybatisExecutor2() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", 9L);
+        params.put("loginName", "name-9");
 
-        Object user = jdbcDao.myBatisExecutor()
-                .command("getUser")
-                .parameter("id", 9L)
-                .parameter("loginName", "name-9")
+        UserInfo user = jdbcDao.myBatisExecutor()
+                .command("getUserSql")
+                .parameters(params)
                 .nativeSql(true)
-                .singleResult();
+                .singleResult(UserInfo.class);
 
         Assert.assertNotNull(user);
     }
