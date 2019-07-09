@@ -16,6 +16,7 @@ import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by liyd on 17/4/13.
@@ -25,125 +26,149 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
 
     protected DataSource dataSource;
 
-    protected JdbcEngine jdbcEngine;
+    protected JdbcEngine defaultJdbcEngine;
+
+    protected Map<String, JdbcEngine> jdbcEngineMap;
+
+    protected boolean globalJdbc = false;
+
+    @Override
+    public JdbcDao use(String name) {
+        if (jdbcEngineMap == null) {
+            throw new SonsureJdbcException("使用多数据源模式请先初始化jdbcEngineMap属性");
+        }
+        JdbcEngine jdbcEngine = jdbcEngineMap.get(name);
+        if (jdbcEngine == null) {
+            throw new SonsureJdbcException("指定的数据源操作对象不存在");
+        }
+        return new FlexibleJdbcDao(jdbcEngine);
+    }
 
     @Override
     public <T> T get(Class<T> entityClass, Serializable id) {
-        return this.getJdbcEngine().get(entityClass, id);
+        return this.getDefaultJdbcEngine().get(entityClass, id);
     }
 
     @Override
     public <T> List<T> find(Class<T> entityClass) {
-        return this.getJdbcEngine().find(entityClass);
+        return this.getDefaultJdbcEngine().find(entityClass);
     }
 
     @Override
     public <T> List<T> find(T entity) {
-        return this.getJdbcEngine().find(entity);
+        return this.getDefaultJdbcEngine().find(entity);
     }
 
     @Override
     public <T extends Pageable> Page<T> pageResult(T entity) {
-        return (Page<T>) this.getJdbcEngine().pageResult(entity);
+        return (Page<T>) this.getDefaultJdbcEngine().pageResult(entity);
     }
 
     @Override
     public long findCount(Object entity) {
-        return this.getJdbcEngine().findCount(entity);
+        return this.getDefaultJdbcEngine().findCount(entity);
     }
 
     @Override
     public long findCount(Class<?> cls) {
-        return this.getJdbcEngine().findCount(cls);
+        return this.getDefaultJdbcEngine().findCount(cls);
     }
 
     public <T> T singleResult(T entity) {
-        return (T) this.getJdbcEngine().singleResult(entity);
+        return (T) this.getDefaultJdbcEngine().singleResult(entity);
     }
 
     public <T> T firstResult(T entity) {
-        return (T) this.getJdbcEngine().firstResult(entity);
+        return (T) this.getDefaultJdbcEngine().firstResult(entity);
     }
 
     public Object executeInsert(Object entity) {
-        return this.getJdbcEngine().executeInsert(entity);
+        return this.getDefaultJdbcEngine().executeInsert(entity);
     }
 
     @Override
     public Insert insertInto(Class<?> cls) {
-        return this.getJdbcEngine().insertInto(cls);
+        return this.getDefaultJdbcEngine().insertInto(cls);
     }
 
     @Override
     public int executeDelete(Class<?> entityClass, Serializable id) {
-        return this.getJdbcEngine().executeDelete(entityClass, id);
+        return this.getDefaultJdbcEngine().executeDelete(entityClass, id);
     }
 
     @Override
     public int executeDelete(Object entity) {
-        return this.getJdbcEngine().executeDelete(entity);
+        return this.getDefaultJdbcEngine().executeDelete(entity);
     }
 
     @Override
     public int executeDelete(Class<?> cls) {
-        return this.getJdbcEngine().executeDelete(cls);
+        return this.getDefaultJdbcEngine().executeDelete(cls);
     }
 
     @Override
     public int executeUpdate(Object entity) {
-        return this.getJdbcEngine().executeUpdate(entity);
+        return this.getDefaultJdbcEngine().executeUpdate(entity);
     }
 
     @Override
     public Update update(Class<?> cls) {
-        return this.getJdbcEngine().update(cls);
+        return this.getDefaultJdbcEngine().update(cls);
     }
 
     @Override
     public Select selectFrom(Class<?> cls) {
-        return this.getJdbcEngine().selectFrom(cls);
+        return this.getDefaultJdbcEngine().selectFrom(cls);
     }
 
     public Select select() {
-        return this.getJdbcEngine().select();
+        return this.getDefaultJdbcEngine().select();
     }
 
     @Override
     public Select select(String... fields) {
-        return this.getJdbcEngine().select(fields);
+        return this.getDefaultJdbcEngine().select(fields);
     }
 
     public Insert insert() {
-        return this.getJdbcEngine().insert();
+        return this.getDefaultJdbcEngine().insert();
     }
 
     public Delete delete() {
-        return this.getJdbcEngine().delete();
+        return this.getDefaultJdbcEngine().delete();
     }
 
     @Override
     public Delete deleteFrom(Class<?> cls) {
-        return this.getJdbcEngine().deleteFrom(cls);
+        return this.getDefaultJdbcEngine().deleteFrom(cls);
     }
 
     public Update update() {
-        return this.getJdbcEngine().update();
+        return this.getDefaultJdbcEngine().update();
     }
 
     public NativeExecutor nativeExecutor() {
-        return this.getJdbcEngine().createExecutor(NativeExecutor.class);
+        return this.getDefaultJdbcEngine().createExecutor(NativeExecutor.class);
     }
 
     @Override
     public MybatisExecutor myBatisExecutor() {
-        return this.getJdbcEngine().createExecutor(MybatisExecutor.class);
+        return this.getDefaultJdbcEngine().createExecutor(MybatisExecutor.class);
     }
 
-    public JdbcEngine getJdbcEngine() {
-        if (this.jdbcEngine == null) {
+    public JdbcEngine getDefaultJdbcEngine() {
+        if (this.defaultJdbcEngine == null) {
             throw new SonsureJdbcException("jdbcEngine不能为空");
         }
-        return this.jdbcEngine;
+        return this.defaultJdbcEngine;
+    }
+
+    public void enableGlobalJdbc() {
+        this.globalJdbc = true;
+        Jdbc.setDefaultJdbcEngine(this.defaultJdbcEngine);
+        if (this.jdbcEngineMap != null) {
+            Jdbc.addJdbcEngine(this.jdbcEngineMap);
+        }
     }
 
     /**
@@ -161,7 +186,23 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         this.dataSource = dataSource;
     }
 
-    public void setJdbcEngine(JdbcEngine jdbcEngine) {
-        this.jdbcEngine = jdbcEngine;
+    public void setDefaultJdbcEngine(JdbcEngine jdbcEngine) {
+        this.defaultJdbcEngine = jdbcEngine;
+    }
+
+    public Map<String, JdbcEngine> getJdbcEngineMap() {
+        return jdbcEngineMap;
+    }
+
+    public void setJdbcEngineMap(Map<String, JdbcEngine> jdbcEngineMap) {
+        this.jdbcEngineMap = jdbcEngineMap;
+    }
+
+    public boolean isGlobalJdbc() {
+        return globalJdbc;
+    }
+
+    public void setGlobalJdbc(boolean globalJdbc) {
+        this.globalJdbc = globalJdbc;
     }
 }

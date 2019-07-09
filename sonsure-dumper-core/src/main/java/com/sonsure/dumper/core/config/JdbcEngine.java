@@ -18,20 +18,6 @@ import java.util.List;
 public interface JdbcEngine {
 
     /**
-     * 名称
-     *
-     * @return
-     */
-    String getName();
-
-    /**
-     * 是否默认
-     *
-     * @return
-     */
-    boolean isDefault();
-
-    /**
      * jdbc 配置
      *
      * @return

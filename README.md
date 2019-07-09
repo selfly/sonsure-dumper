@@ -32,7 +32,7 @@
     //根据主键删除实体对象
     Jdbc.executeDelete(User.class, 1800081L);
     
-    //SQL: update User set user_age = user_age + 1 where user_age = 17
+    //SQL: update User set user_age = user_age + 1 where user_info_id = 17
     Jdbc.update(User.class)
             .set("{{userAge}}", "userAge+1")
             .where("userInfoId", 17L)

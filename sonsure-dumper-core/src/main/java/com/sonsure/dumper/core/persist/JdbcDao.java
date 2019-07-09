@@ -19,6 +19,14 @@ import java.util.List;
 public interface JdbcDao {
 
     /**
+     * 指定使用的持久化jdbc对象
+     *
+     * @param name
+     * @return
+     */
+    JdbcDao use(String name);
+
+    /**
      * 获取一个实体对象
      *
      * @param entityClass

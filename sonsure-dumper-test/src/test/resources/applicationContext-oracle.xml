@@ -64,11 +64,10 @@
         <property name="keyGenerator" ref="uuidKeyGenerator"/>
         <property name="dataSource" ref="dataSource"/>
         <property name="mappingHandler" ref="mappingHandler"/>
-        <property name="default" value="false"/>
     </bean>
 
     <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">
-        <property name="jdbcEngine" ref="jdbcTemplateEngine"/>
+        <property name="defaultJdbcEngine" ref="jdbcTemplateEngine"/>
         <!--<property name="dataSource" ref="dataSource"/>-->
     </bean>
 

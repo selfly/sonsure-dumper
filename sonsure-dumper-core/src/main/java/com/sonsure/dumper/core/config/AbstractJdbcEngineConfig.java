@@ -24,21 +24,6 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     protected DataSource dataSource;
 
     /**
-     * 名称
-     */
-    protected String name;
-
-    /**
-     * 是否默认
-     */
-    protected boolean isDefault = true;
-
-    /**
-     * 是否启用全局jdbc
-     */
-    protected boolean enableGlobalJdbc = false;
-
-    /**
      * 执行器构建factory
      */
     protected CommandExecutorFactory commandExecutorFactory;
@@ -137,11 +122,6 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
         return commandCase;
     }
 
-    @Override
-    public boolean isEnableGlobalJdbc() {
-        return enableGlobalJdbc;
-    }
-
     public void setCommandCase(String commandCase) {
         this.commandCase = commandCase;
     }
@@ -177,28 +157,6 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
-    }
-
-    public void setEnableGlobalJdbc(boolean enableGlobalJdbc) {
-        this.enableGlobalJdbc = enableGlobalJdbc;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
     }
 
     /**

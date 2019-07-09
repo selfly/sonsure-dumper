@@ -16,20 +16,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 public interface JdbcEngineConfig {
 
     /**
-     * 名称
-     *
-     * @return
-     */
-    String getName();
-
-    /**
-     * 是否默认
-     *
-     * @return
-     */
-    boolean isDefault();
-
-    /**
      * 获取CommandExecutorFactory
      *
      * @return
@@ -87,12 +73,5 @@ public interface JdbcEngineConfig {
      * @return
      */
     String getCommandCase();
-
-    /**
-     * 是否启用全局jdbc
-     *
-     * @return
-     */
-    boolean isEnableGlobalJdbc();
 
 }

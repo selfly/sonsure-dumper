@@ -2,7 +2,6 @@ package com.sonsure.dumper.core.persist;
 
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
-import com.sonsure.commons.utils.UUIDUtils;
 import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
@@ -11,7 +10,6 @@ import com.sonsure.dumper.core.command.mybatis.MybatisExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -24,27 +22,23 @@ public class Jdbc {
 
     protected static JdbcEngine defaultJdbcEngine;
 
-    public static JdbcEngine use(String name) {
+    public static JdbcDao use(String name) {
         JdbcEngine jdbcEngine = jdbcEngineMap.get(name);
         if (jdbcEngine == null) {
             throw new SonsureJdbcException("指定的JDBC配置名称不存在:" + name);
         }
-        return jdbcEngine;
+        return new FlexibleJdbcDao(jdbcEngine);
     }
 
-    public static void addJdbcEngine(JdbcEngine jdbcEngine) {
-        String name = jdbcEngine.getName();
-        if (StringUtils.isBlank(name)) {
-            //没有指定随机生成一个
-            name = UUIDUtils.getUUID8();
+    public static void setDefaultJdbcEngine(JdbcEngine jdbcEngine) {
+        defaultJdbcEngine = jdbcEngine;
+    }
+
+    public static void addJdbcEngine(Map<String, JdbcEngine> jdbcEngines) {
+        if (jdbcEngines == null) {
+            return;
         }
-        jdbcEngineMap.put(name, jdbcEngine);
-        if (jdbcEngine.isDefault()) {
-            if (defaultJdbcEngine != null && defaultJdbcEngine != jdbcEngine) {
-                throw new SonsureJdbcException("只能设置一个默认的JDBC配置");
-            }
-            defaultJdbcEngine = jdbcEngine;
-        }
+        jdbcEngineMap.putAll(jdbcEngines);
     }
 
     public static JdbcEngine getDefaultJdbcEngine() {

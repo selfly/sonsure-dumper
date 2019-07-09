@@ -21,11 +21,14 @@ public class JdbcTemplateDaoImpl extends AbstractJdbcDaoImpl implements Initiali
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (jdbcEngine == null) {
+        if (defaultJdbcEngine == null) {
             if (dataSource == null) {
                 throw new SonsureJdbcException("dataSource不能为空");
             }
-            jdbcEngine = new JdbcEngineImpl(this.getDefaultJdbcEngineConfig());
+            defaultJdbcEngine = new JdbcEngineImpl(this.getDefaultJdbcEngineConfig());
+        }
+        if (isGlobalJdbc()) {
+            this.enableGlobalJdbc();
         }
     }
 }

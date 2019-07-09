@@ -8,7 +8,6 @@ import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.entity.Update;
-import com.sonsure.dumper.core.persist.Jdbc;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,19 +21,6 @@ public class JdbcEngineImpl implements JdbcEngine {
 
     public JdbcEngineImpl(JdbcEngineConfig jdbcEngineConfig) {
         this.jdbcEngineConfig = jdbcEngineConfig;
-        if (jdbcEngineConfig.isEnableGlobalJdbc()) {
-            Jdbc.addJdbcEngine(this);
-        }
-    }
-
-    @Override
-    public String getName() {
-        return jdbcEngineConfig.getName();
-    }
-
-    @Override
-    public boolean isDefault() {
-        return jdbcEngineConfig.isDefault();
     }
 
     public <T extends CommandExecutor> T createExecutor(Class<T> commandExecutorClass, Object param) {
