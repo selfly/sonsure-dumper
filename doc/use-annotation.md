@@ -65,17 +65,17 @@
     ku.setPassword("123456");
     ku.setUserAge(18);
     ku.setGmtCreate(new Date());
-    Long id = (Long) Jdbc.executeInsert(ku);
+    Long id = (Long) jdbcDao.executeInsert(ku);
     
     //update
     KUserInfo ku = new KUserInfo();
     ku.setRowId(36L);
     ku.setPassword("787878");
     ku.setGmtModify(new Date());
-    int count = Jdbc.executeUpdate(ku);
+    int count = jdbcDao.executeUpdate(ku);
     
     //get
-    KUserInfo kUserInfo = Jdbc.get(KUserInfo.class, id);
+    KUserInfo kUserInfo = jdbcDao.get(KUserInfo.class, id);
     
     //delete
-    int count = Jdbc.executeDelete(KUserInfo.class, id);
+    int count = jdbcDao.executeDelete(KUserInfo.class, id);

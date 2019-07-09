@@ -2,7 +2,7 @@
 
 组件提供了`NativeExecutor`来执行自定义sql。
 
-    int count = Jdbc.nativeExecutor()
+    int count = jdbcDao.nativeExecutor()
             .command("update `com.sonsure.dumper.test.model.UserInfo` set loginName = ? where userInfoId = ?")
             .parameters(new Object[]{"newName", 39L})
             .update();
@@ -28,7 +28,7 @@ sql中的表名以及列名都是对应实体类的类名和属性名，会自�
     
 这样，我们就可以使用短名称来执行sql了：
 
-    int count = Jdbc.nativeExecutor()
+    int count = jdbcDao.nativeExecutor()
             .command("update UserInfo set loginName = ? where userInfoId = ?")
             .parameters(new Object[]{"newName", 39L})
             .update();
@@ -37,7 +37,7 @@ sql中的表名以及列名都是对应实体类的类名和属性名，会自�
 
 如果不想经过sql的解析转换处理，需要执行100%原生的sql，可以指定`nativeSql`：
 
-    int count = Jdbc.nativeExecutor()
+    int count = jdbcDao.nativeExecutor()
             .command("update user_info set login_name = ? where user_info_id = ?")
             .parameters(new Object[]{"newName", 39L})
             .nativeSql(true) //不经过转换处理

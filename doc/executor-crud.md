@@ -8,7 +8,7 @@ insert、update、delete、select都有对应的操作对象，当基本操作�
 
 insert操作比较简单，没有什么复杂的where条件等设置。
 
-    Jdbc.insert() //or insertInto(UserInfo.class)
+    jdbcDao.insert() //or insertInto(UserInfo.class)
         .into(UserInfo.class)
         .set("loginName", "selfly")
         .set("password", "2019")
@@ -26,7 +26,7 @@ insert操作比较简单，没有什么复杂的where条件等设置。
     user.setPassword("abc");
     
     //虽然设置了主键，但没有设置where条件，将更新所有
-    Jdbc.update(UserInfo.class)
+    jdbcDao.update(UserInfo.class)
             .setForEntity(user)
             .execute();
             
@@ -35,14 +35,14 @@ insert操作比较简单，没有什么复杂的where条件等设置。
     UserInfo user = new UserInfo();
     user.setUserInfoId(17L);
     user.setLoginName("newName22");
-    Jdbc.update(UserInfo.class)
+    jdbcDao.update(UserInfo.class)
             .setForEntityWhereId(user)
             .updateNull()
             .execute();
             
 也可以这样混合使用
 
-    Jdbc.update(UserInfo.class)
+    jdbcDao.update(UserInfo.class)
         .set("loginName", "newName")
         .setForEntity(user)
         .where("userInfoId", 15L)
@@ -53,7 +53,7 @@ insert操作比较简单，没有什么复杂的where条件等设置。
     UserInfo user = new UserInfo();
     user.setUserInfoId(17L);
     user.setLoginName("newName22");
-    Jdbc.update(UserInfo.class)
+    jdbcDao.update(UserInfo.class)
             .setForEntityWhereId(user)
             .updateNull() //更新null值属性
             .execute();
@@ -62,7 +62,7 @@ insert操作比较简单，没有什么复杂的where条件等设置。
 
 也比较简单，没什么特别的，主要是where条件的设置。
 
-    Jdbc.delete()
+    jdbcDao.delete()
         .from(UserInfo.class) //or deleteFrom(UserInfo.class)
         .where("userInfoId",17L)
         .execute();
@@ -73,20 +73,20 @@ select操作时如果不指定排序默认按主键desc排序。
 
 不指定select的属性，默认返回该实体类的所有属性。
 
-    List<UserInfo> list = Jdbc.selectFrom(UserInfo.class)
+    List<UserInfo> list = jdbcDao.selectFrom(UserInfo.class)
             .orderBy("userAge").asc()
             .list(UserInfo.class);
             
 当只是不需要实体类的一二个属性又不想一个个在select里面写时，可以使用exclude排除：
 
-    List<UserInfo> list = Jdbc.selectFrom(UserInfo.class)
+    List<UserInfo> list = jdbcDao.selectFrom(UserInfo.class)
             .exclude("userInfoId", "password") //不返回的属性
             .orderBy("userAge").asc()
             .list(UserInfo.class);
             
 select中不仅仅可以放属性，也可以放置一些在sql中支持查询的函数等：
 
-    Page<Long> result = Jdbc.select("count(*) as num").from(UserInfo.class)
+    Page<Long> result = jdbcDao.select("count(*) as num").from(UserInfo.class)
             .groupBy("userAge")
             .orderBy("num").desc()
             .paginate(1, 5)
@@ -95,7 +95,7 @@ select中不仅仅可以放属性，也可以放置一些在sql中支持查询�
             
 分页查询，指定页码和每页条数：
 
-    Page<UserInfo> page = Jdbc.select("userInfoId")
+    Page<UserInfo> page = jdbcDao.select("userInfoId")
                                 .from(UserInfo.class)
                                 .orderBy("userInfoId").asc()
                                 .paginate(1, 10)
@@ -107,7 +107,7 @@ select中不仅仅可以放属性，也可以放置一些在sql中支持查询�
 
 这里注意查询多少条也是页大小，返回的是所在页的数据而非精确的指定起始行开始的数据。例如下面示例指定了从15条开始查，指定了页大小为10，实际返回的是所在页第2页11条到20条的数据。
 
-    Page<UserInfo> page = Jdbc.select("userInfoId")
+    Page<UserInfo> page = jdbcDao.select("userInfoId")
                                 .from(UserInfo.class)
                                 .orderBy("userInfoId").asc()
                                 .limit(15,10)

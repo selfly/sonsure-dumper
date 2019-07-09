@@ -16,59 +16,67 @@
     <aop:aspectj-autoproxy/>
 
     <!-- 等同于下面注掉部分  多个配置文件可用,号分隔 -->
-    <context:property-placeholder location="classpath:oracle-init.properties"/>
+    <context:property-placeholder location="classpath:multi-ds.properties"/>
 
     <task:annotation-driven/>
 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+    <bean id="mysqlDataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName">
-            <value>${driverClassName}</value>
+            <value>${mysql.driverClassName}</value>
         </property>
         <property name="url">
-            <value>${jdbcUrl}</value>
+            <value>${mysql.jdbcUrl}</value>
         </property>
         <property name="username">
-            <value>${username}</value>
+            <value>${mysql.username}</value>
         </property>
         <property name="password">
-            <value>${password}</value>
-        </property>
-        <property name="initialSize">
-            <value>${initialSize}</value>
-        </property>
-        <property name="maxActive">
-            <value>${maxActive}</value>
-        </property>
-        <property name="maxIdle">
-            <value>${maxIdle}</value>
-        </property>
-        <property name="maxWait">
-            <value>${maxWait}</value>
+            <value>${mysql.password}</value>
         </property>
     </bean>
-
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="configLocation" value="mybatis/mybatis-config.xml"/>
-        <property name="dataSource" ref="dataSource"/>
+    <bean id="oracleDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName">
+            <value>${oracle.driverClassName}</value>
+        </property>
+        <property name="url">
+            <value>${oracle.jdbcUrl}</value>
+        </property>
+        <property name="username">
+            <value>${oracle.username}</value>
+        </property>
+        <property name="password">
+            <value>${oracle.password}</value>
+        </property>
     </bean>
 
     <bean id="mappingHandler" class="com.sonsure.dumper.core.mapping.DefaultMappingHandler">
         <constructor-arg name="modelPackages" value="com.sonsure.dumper.test.model.**"/>
     </bean>
 
-    <bean id="oracleKeyGenerator" class="com.sonsure.dumper.core.persist.OracleKeyGenerator"/>
-
-    <bean id="jdbcTemplateEngine" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineFactoryBean">
-        <property name="mybatisSqlSessionFactory" ref="sqlSessionFactory"/>
-        <property name="keyGenerator" ref="oracleKeyGenerator"/>
-        <property name="dataSource" ref="dataSource"/>
+    <bean id="mysqlJdbcTemplateEngine" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineFactoryBean">
+        <property name="dataSource" ref="mysqlDataSource"/>
         <property name="mappingHandler" ref="mappingHandler"/>
     </bean>
 
+    <bean id="oracleKeyGenerator" class="com.sonsure.dumper.core.persist.OracleKeyGenerator"/>
+
+    <bean id="oracleJdbcTemplateEngine" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineFactoryBean">
+        <property name="dataSource" ref="oracleDataSource"/>
+        <property name="mappingHandler" ref="mappingHandler"/>
+        <property name="keyGenerator" ref="oracleKeyGenerator"/>
+    </bean>
+
     <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">
-        <property name="defaultJdbcEngine" ref="jdbcTemplateEngine"/>
-        <!--<property name="dataSource" ref="dataSource"/>-->
+        <property name="defaultJdbcEngine" ref="mysqlJdbcTemplateEngine"/>
+        <property name="globalJdbc" value="true"/>
+        <property name="jdbcEngineMap">
+            <map>
+                <entry key="mysql" value-ref="mysqlJdbcTemplateEngine"/>
+                <entry key="oracle" value-ref="oracleJdbcTemplateEngine"/>
+            </map>
+        </property>
     </bean>
 
 </beans>
