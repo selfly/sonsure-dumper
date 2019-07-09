@@ -102,7 +102,7 @@
 8. 整合Mybatis执行sql mybatisSqlSessionFactory
 9. 扩展映射转换处理 mappingHandler
 10. 扩展分页处理 pageHandler
-11. 扩展主键生成 keyGenerator
+11. [扩展主键生成 keyGenerator](doc/key-generator.md)
 12. 扩展持久化实现 persistExecutor
 13. 扩展sql的解析转换 commandConversionHandler
 14. 扩展Executor commandExecutorFactory

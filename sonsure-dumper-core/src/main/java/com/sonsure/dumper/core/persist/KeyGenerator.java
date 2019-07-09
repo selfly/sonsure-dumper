@@ -16,7 +16,7 @@ public interface KeyGenerator {
      * 生成主键值
      *
      * @param clazz the clazz
-     * @return serializable serializable
+     * @return value
      */
     Object generateKeyValue(Class<?> clazz);
 }
