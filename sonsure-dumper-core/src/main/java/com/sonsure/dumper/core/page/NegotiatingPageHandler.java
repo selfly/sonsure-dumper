@@ -20,7 +20,19 @@ public class NegotiatingPageHandler implements PageHandler {
 
     @Override
     public boolean support(String dialect) {
-        return true;
+        for (PageHandler defaultPageHandler : defaultPageHandlers) {
+            if (defaultPageHandler.support(dialect)) {
+                return true;
+            }
+        }
+        if (pageHandlers != null) {
+            for (PageHandler pageHandler : pageHandlers) {
+                if (pageHandler.support(dialect)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
