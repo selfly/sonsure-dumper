@@ -33,10 +33,8 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
             Map<String, Object> params = new HashMap<>();
             resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
         }
-        if (StringUtils.equalsIgnoreCase(jdbcEngineConfig.getCommandCase(), "upper")) {
-            resolvedCommand = resolvedCommand.toUpperCase();
-        } else if (StringUtils.equalsIgnoreCase(jdbcEngineConfig.getCommandCase(), "lower")) {
-            resolvedCommand = resolvedCommand.toLowerCase();
+        if (StringUtils.isNotBlank(jdbcEngineConfig.getCommandCase())) {
+            resolvedCommand = this.convertCase(resolvedCommand, jdbcEngineConfig.getCommandCase());
         }
         commandContext.setCommand(resolvedCommand);
         return commandContext;
@@ -50,6 +48,22 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
      * @return command context
      */
     public abstract CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig);
+
+    /**
+     * 转换大小写
+     *
+     * @param content
+     * @param commandCase
+     * @return
+     */
+    protected String convertCase(String content, String commandCase) {
+        if (StringUtils.equalsIgnoreCase(commandCase, "upper")) {
+            content = content.toUpperCase();
+        } else if (StringUtils.equalsIgnoreCase(commandCase, "lower")) {
+            content = content.toLowerCase();
+        }
+        return content;
+    }
 
     /**
      * 获取带别名的field
