@@ -101,7 +101,7 @@
 7. [执行自定义sql](doc/native-sql.md)
 8. [整合Mybatis执行sql mybatisSqlSessionFactory](doc/mybatis-sql.md)
 9. [扩展映射转换处理 mappingHandler](doc/mapping-handler.md)
-10. 扩展分页处理 pageHandler
+10. [扩展分页处理 pageHandler](doc/page-handler.md)
 11. [扩展主键生成 keyGenerator](doc/key-generator.md)
 12. 扩展持久化实现 persistExecutor
 13. 扩展sql的解析转换 commandConversionHandler
