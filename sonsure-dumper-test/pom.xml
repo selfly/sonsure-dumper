@@ -77,6 +77,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.6</version>
+        </dependency>
+
         <!--oracle的jdbc驱动，maven中央库无，自行替换-->
         <dependency>
             <groupId>com.ktanx</groupId>

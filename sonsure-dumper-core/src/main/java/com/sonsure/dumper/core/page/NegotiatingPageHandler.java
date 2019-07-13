@@ -16,23 +16,12 @@ public class NegotiatingPageHandler implements PageHandler {
         defaultPageHandlers = new ArrayList<>();
         defaultPageHandlers.add(new MysqlPageHandler());
         defaultPageHandlers.add(new OraclePageHandler());
+        defaultPageHandlers.add(new PostgresqlPageHandler());
     }
 
     @Override
     public boolean support(String dialect) {
-        for (PageHandler defaultPageHandler : defaultPageHandlers) {
-            if (defaultPageHandler.support(dialect)) {
-                return true;
-            }
-        }
-        if (pageHandlers != null) {
-            for (PageHandler pageHandler : pageHandlers) {
-                if (pageHandler.support(dialect)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getPageHandler(dialect) != null;
     }
 
     @Override
@@ -54,11 +43,6 @@ public class NegotiatingPageHandler implements PageHandler {
      * @return
      */
     protected PageHandler getPageHandler(String dialect) {
-        for (PageHandler defaultPageHandler : defaultPageHandlers) {
-            if (defaultPageHandler.support(dialect)) {
-                return defaultPageHandler;
-            }
-        }
         if (pageHandlers != null) {
             for (PageHandler pageHandler : pageHandlers) {
                 if (pageHandler.support(dialect)) {
@@ -66,6 +50,19 @@ public class NegotiatingPageHandler implements PageHandler {
                 }
             }
         }
+        for (PageHandler defaultPageHandler : defaultPageHandlers) {
+            if (defaultPageHandler.support(dialect)) {
+                return defaultPageHandler;
+            }
+        }
         throw new SonsureJdbcException("当前数据库dialect:" + dialect + "没有适配的PageHandler");
+    }
+
+    public void setPageHandlers(List<PageHandler> pageHandlers) {
+        this.pageHandlers = pageHandlers;
+    }
+
+    public List<PageHandler> getPageHandlers() {
+        return pageHandlers;
     }
 }

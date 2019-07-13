@@ -9,7 +9,7 @@ import com.sonsure.commons.model.Pagination;
 public interface PageHandler {
 
     /**
-     * 是否支持
+     * 是否支持当前数据库的分页
      *
      * @param dialect
      * @return
@@ -17,9 +17,9 @@ public interface PageHandler {
     boolean support(String dialect);
 
     /**
-     * 根据查询语句获取查count语句
+     * 根据查询语句获取count语句
      *
-     * @param command the command
+     * @param command
      * @param dialect the dialect
      * @return count command
      */

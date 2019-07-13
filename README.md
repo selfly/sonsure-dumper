@@ -96,7 +96,7 @@
 2. [初始化配置](doc/init-config.md)  
 3. [基本增删改查](doc/basic-crud.md)  
 4. [Insert|Update|Delete|Select用法](doc/executor-crud.md)
-5. [不传参{{}}符号的使用](doc/not-param.md)
+5. [不传参{{ }}符号的使用](doc/not-param.md)
 6. [注解的使用](doc/use-annotation.md)
 7. [执行自定义sql](doc/native-sql.md)
 8. [整合Mybatis执行sql mybatisSqlSessionFactory](doc/mybatis-sql.md)

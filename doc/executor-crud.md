@@ -37,7 +37,6 @@ insert操作比较简单，没有什么复杂的where条件等设置。
     user.setLoginName("newName22");
     jdbcDao.update(UserInfo.class)
             .setForEntityWhereId(user)
-            .updateNull()
             .execute();
             
 也可以这样混合使用
