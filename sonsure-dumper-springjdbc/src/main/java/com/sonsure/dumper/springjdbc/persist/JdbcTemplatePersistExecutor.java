@@ -26,6 +26,10 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     private JdbcOperations jdbcOperations;
 
+    public JdbcTemplatePersistExecutor() {
+
+    }
+
     public JdbcTemplatePersistExecutor(JdbcOperations jdbcOperations, JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
         this.jdbcOperations = jdbcOperations;
@@ -112,5 +116,9 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
     @Override
     public Object doExecute(CommandContext commandContext) {
         return this.update(commandContext);
+    }
+
+    public void setJdbcOperations(JdbcOperations jdbcOperations) {
+        this.jdbcOperations = jdbcOperations;
     }
 }

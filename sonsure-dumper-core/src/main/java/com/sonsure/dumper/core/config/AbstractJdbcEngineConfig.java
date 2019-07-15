@@ -3,6 +3,7 @@ package com.sonsure.dumper.core.config;
 
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.command.sql.JSqlParserCommandConversionHandler;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.mapping.DefaultMappingHandler;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.page.NegotiatingPageHandler;
@@ -108,7 +109,10 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     @Override
     public PersistExecutor getPersistExecutor() {
         if (persistExecutor == null) {
-            this.initPersistExecutor();
+            persistExecutor = this.initPersistExecutor();
+            if (persistExecutor == null) {
+                throw new SonsureJdbcException("persistExecutor不能为空");
+            }
         }
         return persistExecutor;
     }
@@ -160,8 +164,10 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     }
 
     /**
-     * 初始化persistExecutor，具体由选型的子类执行
+     * 初始化persistExecutor，具体由选型的子类重写
      */
-    protected abstract void initPersistExecutor();
+    protected PersistExecutor initPersistExecutor() {
+        return null;
+    }
 
 }

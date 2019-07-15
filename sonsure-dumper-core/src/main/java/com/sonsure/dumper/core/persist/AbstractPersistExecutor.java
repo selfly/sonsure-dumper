@@ -21,6 +21,10 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
 
     protected JdbcEngineConfig jdbcEngineConfig;
 
+    public AbstractPersistExecutor() {
+
+    }
+
     public AbstractPersistExecutor(JdbcEngineConfig jdbcEngineConfig) {
         this.jdbcEngineConfig = jdbcEngineConfig;
     }

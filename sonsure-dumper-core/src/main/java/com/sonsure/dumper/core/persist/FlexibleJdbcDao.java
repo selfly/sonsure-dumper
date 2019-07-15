@@ -13,11 +13,6 @@ public class FlexibleJdbcDao extends AbstractJdbcDaoImpl {
     }
 
     @Override
-    public JdbcEngineConfig getDefaultJdbcEngineConfig() {
-        return getDefaultJdbcEngine().getJdbcEngineConfig();
-    }
-
-    @Override
     public JdbcDao use(String name) {
         throw new UnsupportedOperationException("不支持的方法");
     }

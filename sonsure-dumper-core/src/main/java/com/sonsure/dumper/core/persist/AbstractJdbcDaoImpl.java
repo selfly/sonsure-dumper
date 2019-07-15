@@ -10,7 +10,6 @@ import com.sonsure.dumper.core.command.entity.Update;
 import com.sonsure.dumper.core.command.mybatis.MybatisExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.config.JdbcEngine;
-import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import javax.sql.DataSource;
@@ -170,13 +169,6 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
             Jdbc.addJdbcEngine(this.jdbcEngineMap);
         }
     }
-
-    /**
-     * 获取默认的JdbcEngineConfig，由子类实现返回对应的实现配置
-     *
-     * @return
-     */
-    public abstract JdbcEngineConfig getDefaultJdbcEngineConfig();
 
     public DataSource getDataSource() {
         return dataSource;
