@@ -4,9 +4,9 @@
 
 *当使用了注解同时又扩展了`MappingHandler`，`MappingHandler`将不起作用。*
 
-组件默认提供了4个注解：
+组件默认提供了4个注解，跟Hibernate类似，也可以直接使用Hibernate支持的`javax.persistence`包下的注解：
 
-- `Table` 表注解，用来指定表名
+- `Entity` 表注解，用来指定表名
 - `Column` 列注解，用来指定列名
 - `Id` 主键属性注解
 - `Transient` 表示忽略，即实体类中有数据库中无的属性。
@@ -29,7 +29,7 @@
 
 另外`testName`属性在数据库中并不存在，使用`@Transient`注解忽略。
 
-    @Table("ktx_user_info")
+    @Entity("ktx_user_info")
     public class KUserInfo extends Model {
     
         @Id
