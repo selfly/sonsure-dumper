@@ -100,10 +100,10 @@
 6. [注解的使用](doc/use-annotation.md)
 7. [执行自定义sql](doc/native-sql.md)
 8. [整合Mybatis执行sql mybatisSqlSessionFactory](doc/mybatis-sql.md)
-9. [扩展映射转换处理 mappingHandler](doc/mapping-handler.md)
-10. [扩展分页处理 pageHandler](doc/page-handler.md)
-11. [扩展主键生成 keyGenerator](doc/key-generator.md)
-12. 扩展持久化实现 persistExecutor
+9. [映射转换处理 mappingHandler](doc/mapping-handler.md)
+10. [分页处理 pageHandler](doc/page-handler.md)
+11. [主键生成 keyGenerator](doc/key-generator.md)
+12. [持久化实现 persistExecutor，扩展Hibernate示例抛砖引玉](doc/persist-executor-hibernate.md)
 13. 扩展sql的解析转换 commandConversionHandler
 14. 扩展Executor commandExecutorFactory
 15. [多数据源的使用](doc/multi-ds.md)
