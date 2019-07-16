@@ -41,8 +41,8 @@ public class ModelClassMeta {
         }
         //数据库返回可能大小写不一定，统一处理成小写
         this.mappedFieldMetas.put(modelFieldMeta.getName().toLowerCase(), modelFieldMeta);
-        String columnAnnotationName = ModelClassCache.getColumnAnnotationName(modelFieldMeta.getColumnAnnotation());
-        if (StringUtils.isNotBlank(columnAnnotationName)) {
+        if (modelFieldMeta.getColumnAnnotation() != null) {
+            String columnAnnotationName = ModelClassCache.getColumnAnnotationName(modelFieldMeta.getColumnAnnotation());
             mappedFieldMetas.put(columnAnnotationName.toLowerCase(), modelFieldMeta);
         }
     }

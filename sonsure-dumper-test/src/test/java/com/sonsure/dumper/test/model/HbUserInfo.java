@@ -1,14 +1,11 @@
 package com.sonsure.dumper.test.model;
 
-import com.sonsure.dumper.core.annotation.Table;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Date;
 
 @Entity(name = "USER_INFO")
-@Table("USER_INFO")
 public class HbUserInfo {
 
     /**
@@ -16,7 +13,6 @@ public class HbUserInfo {
      */
     @Id
     @Column(name = "user_info_id")
-    @com.sonsure.dumper.core.annotation.Column("user_info_id")
     private Long userInfoId;
 
     /**

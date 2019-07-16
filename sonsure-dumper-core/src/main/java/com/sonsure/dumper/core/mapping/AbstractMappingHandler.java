@@ -2,7 +2,6 @@ package com.sonsure.dumper.core.mapping;
 
 import com.sonsure.commons.spring.scan.ClassPathBeanScanner;
 import com.sonsure.commons.utils.NameUtils;
-import com.sonsure.dumper.core.annotation.Table;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ModelClassCache;
 import com.sonsure.dumper.core.management.ModelClassMeta;
@@ -130,8 +129,8 @@ public abstract class AbstractMappingHandler implements MappingHandler {
             return pkFieldMeta.getName();
         }
         Object annotation = classMeta.getAnnotation();
-        if (annotation != null && annotation instanceof Table) {
-            String table = ((Table) annotation).value();
+        if (annotation != null) {
+            String table = ModelClassCache.getTableAnnotationName(annotation);
             String camelName = NameUtils.getCamelName(table);
             return camelName + PRI_FIELD_SUFFIX;
         }

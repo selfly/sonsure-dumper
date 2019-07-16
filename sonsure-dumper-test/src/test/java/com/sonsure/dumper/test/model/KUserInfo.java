@@ -2,8 +2,8 @@ package com.sonsure.dumper.test.model;
 
 import com.sonsure.commons.model.Model;
 import com.sonsure.dumper.core.annotation.Column;
+import com.sonsure.dumper.core.annotation.Entity;
 import com.sonsure.dumper.core.annotation.Id;
-import com.sonsure.dumper.core.annotation.Table;
 import com.sonsure.dumper.core.annotation.Transient;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ import java.util.Date;
  * UserInfo: liyd
  * Date: Wed Dec 24 16:46:48 CST 2014
  */
-@Table("ktx_user_info")
+@Entity("ktx_user_info")
 public class KUserInfo extends Model {
 
     private static final long serialVersionUID = 8166785520231287816L;
