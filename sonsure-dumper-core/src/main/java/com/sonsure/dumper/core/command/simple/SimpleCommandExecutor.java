@@ -19,12 +19,11 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
     T command(String command);
 
     /**
-     * 是否强制native，command不做任何加工
+     * 是否禁止转换，command不做任何加工
      *
-     * @param nativeSql the is force native
      * @return t
      */
-    T nativeSql(boolean nativeSql);
+    T nativeCommand();
 
     /**
      * 结果处理器

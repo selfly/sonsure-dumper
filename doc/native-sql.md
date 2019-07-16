@@ -35,15 +35,15 @@ sql中的表名以及列名都是对应实体类的类名和属性名，会自�
             
 *小提示：如果没有指定扫描的包，但是sql中的实体类之前有用其它class的方式执行过，那么短名称也能成功。*
 
-如果不想经过sql的解析转换处理，需要执行100%原生的sql，可以指定`nativeSql`：
+如果不想经过sql的解析转换处理，需要执行100%原生的sql，可以指定`nativeCommand`：
 
     int count = jdbcDao.nativeExecutor()
             .command("update user_info set login_name = ? where user_info_id = ?")
             .parameters(new Object[]{"newName", 39L})
-            .nativeSql(true) //不经过转换处理
+            .nativeCommand() //不经过转换处理
             .update();
             
-*注意：指定了`nativeSql(true)`后，由于不经过转换处理，在水平分表时会无法动态处理表名。*
+*注意：指定了`nativeCommand()`后，由于不经过转换处理，在水平分表时会无法动态处理表名。*
 
 
 

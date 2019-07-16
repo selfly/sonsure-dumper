@@ -104,7 +104,7 @@
 10. [分页处理 pageHandler](doc/page-handler.md)
 11. [主键生成 keyGenerator](doc/key-generator.md)
 12. [持久化实现 persistExecutor，扩展Hibernate示例抛砖引玉](doc/persist-executor-hibernate.md)
-13. 扩展sql的解析转换 commandConversionHandler
+13. [sql的解析转换 commandConversionHandler](doc/conversion-handler.md)
 14. 扩展Executor commandExecutorFactory
 15. [多数据源的使用](doc/multi-ds.md)
 16. 水平分表动态表名使用

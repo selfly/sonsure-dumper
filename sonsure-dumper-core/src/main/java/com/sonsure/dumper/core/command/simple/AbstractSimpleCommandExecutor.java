@@ -33,8 +33,8 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     @Override
-    public T nativeSql(boolean nativeSql) {
-        this.getSimpleExecutorContext().setNativeSql(nativeSql);
+    public T nativeCommand() {
+        this.getSimpleExecutorContext().setNativeCommand(true);
         return (T) this;
     }
 

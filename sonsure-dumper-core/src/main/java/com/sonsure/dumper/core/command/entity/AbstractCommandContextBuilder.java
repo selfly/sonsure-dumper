@@ -29,7 +29,7 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
         }
 
         String resolvedCommand = commandContext.getCommand();
-        if (!executorContext.isNativeSql()) {
+        if (!executorContext.isNativeCommand()) {
             Map<String, Object> params = new HashMap<>();
             resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
         }

@@ -46,7 +46,7 @@ public class JSqlParserCommandConversionHandler implements CommandConversionHand
                 statement.accept(new CommandStatementDeParser(expressionDeParser, selectDeParser, buffer, commandMappingHandler));
                 convertedCommand = buffer.toString();
             } catch (Exception e) {
-                throw new SonsureJdbcException("解析sql失败:" + command, e);
+                throw new SonsureJdbcException("Parsing sql failed:" + command, e);
             }
         }
         return convertedCommand;

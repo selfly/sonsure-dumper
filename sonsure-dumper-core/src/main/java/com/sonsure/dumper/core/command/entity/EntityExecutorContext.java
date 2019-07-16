@@ -5,7 +5,7 @@ import com.sonsure.dumper.core.command.ExecutorContext;
 public abstract class EntityExecutorContext implements ExecutorContext {
 
     @Override
-    public boolean isNativeSql() {
+    public boolean isNativeCommand() {
         return false;
     }
 }

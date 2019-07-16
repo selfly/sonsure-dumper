@@ -12,6 +12,6 @@ public interface ExecutorContext {
      */
     Class<?>[] getModelClasses();
 
-    boolean isNativeSql();
+    boolean isNativeCommand();
 
 }

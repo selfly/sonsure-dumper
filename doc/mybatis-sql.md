@@ -73,7 +73,7 @@ Mybatis是一个优秀的框架，但也有它的不足之处。
             .parameter("loginName", "name-9")
             .singleResult(UserInfo.class);
             
-    //这里指定了nativeSql=true，sql将不经过转换
+    //这里指定了nativeCommand，sql将不经过转换
     Map<String, Object> params = new HashMap<>();
     params.put("id", 9L);
     params.put("loginName", "name-9");
@@ -81,7 +81,7 @@ Mybatis是一个优秀的框架，但也有它的不足之处。
     UserInfo user = jdbcDao.myBatisExecutor()
             .command("getUserSql")
             .parameters(params)
-            .nativeSql(true)
+            .nativeCommand()
             .singleResult(UserInfo.class);
             
 此种方式调用，Mybatis中可以不必再写分页等相关代码，如果需要，直接指定分页参数将自动完成分页：

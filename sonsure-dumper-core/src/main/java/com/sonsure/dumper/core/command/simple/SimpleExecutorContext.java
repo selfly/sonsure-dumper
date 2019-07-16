@@ -9,7 +9,7 @@ public class SimpleExecutorContext implements ExecutorContext {
 
     protected String command;
 
-    protected boolean isNativeSql;
+    protected boolean nativeCommand = false;
 
     /**
      * 分页查询时是否用count查询总记录数,默认true
@@ -49,12 +49,12 @@ public class SimpleExecutorContext implements ExecutorContext {
     }
 
     @Override
-    public boolean isNativeSql() {
-        return isNativeSql;
+    public boolean isNativeCommand() {
+        return nativeCommand;
     }
 
-    public void setNativeSql(boolean nativeSql) {
-        isNativeSql = nativeSql;
+    public void setNativeCommand(boolean nativeCommand) {
+        this.nativeCommand = nativeCommand;
     }
 
     public boolean isCount() {

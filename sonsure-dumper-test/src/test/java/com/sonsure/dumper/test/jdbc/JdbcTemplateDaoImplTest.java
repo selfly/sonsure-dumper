@@ -757,7 +757,7 @@ public class JdbcTemplateDaoImplTest {
 
         jdbcDao.nativeExecutor()
                 .command("update user_info set user_age = 18 where user_age < 18")
-                .nativeSql(true)
+                .nativeCommand()
                 .execute();
 
         long count = jdbcDao.selectFrom(UserInfo.class)
@@ -923,7 +923,7 @@ public class JdbcTemplateDaoImplTest {
         UserInfo user = jdbcDao.myBatisExecutor()
                 .command("getUserSql")
                 .parameters(params)
-                .nativeSql(true)
+                .nativeCommand()
                 .singleResult(UserInfo.class);
 
         Assert.assertNotNull(user);
@@ -939,7 +939,7 @@ public class JdbcTemplateDaoImplTest {
         Object user = jdbcDao.myBatisExecutor()
                 .command("getUser2")
                 .parameter("user", userInfo)
-                .nativeSql(true)
+                .nativeCommand()
                 .singleResult();
 
         Assert.assertNotNull(user);
@@ -956,7 +956,7 @@ public class JdbcTemplateDaoImplTest {
         List<?> list = jdbcDao.myBatisExecutor()
                 .command("queryUserList")
                 .parameter("names", names)
-                .nativeSql(true)
+                .nativeCommand()
                 .list();
 
         Assert.assertTrue(list.size() == 3);
@@ -969,7 +969,7 @@ public class JdbcTemplateDaoImplTest {
                 .command("updateUser")
                 .parameter("loginName", "newName")
                 .parameter("userInfoId", 9L)
-                .nativeSql(true)
+                .nativeCommand()
                 .update();
 
         Assert.assertTrue(update == 1);
