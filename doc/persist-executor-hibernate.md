@@ -102,7 +102,7 @@
             NativeQuery<?> nativeQuery = session.createNativeQuery(commandContext.getCommand(), commandContext.getResultType());
             List<Object> parameters = commandContext.getParameters();
             for (int i = 0; i < parameters.size(); i++) {
-                nativeQuery.setParameter(i + 1, parameters.get(0));
+                nativeQuery.setParameter(i + 1, parameters.get(i));
             }
             List<?> resultList = nativeQuery.getResultList();
             session.close();
