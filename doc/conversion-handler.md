@@ -23,7 +23,7 @@ CommandConversionHandler的定义就一个方法：
 
 默认使用`JSqlParser`来实现转换，实现类`JSqlParserCommandConversionHandler`。
 
-如果`JSqlParserCommandConversionHandler`不能满足需求，可以实现自己的`CommandConversionHandler`，把它配置到`JdbcEngin`即可。
+如果`JSqlParserCommandConversionHandler`不能满足需求，可以实现自己的`CommandConversionHandler`，把它配置到`JdbcEngine`即可。
 
 以下配置和在省略`commandConversionHandler`时效果相同：
 
