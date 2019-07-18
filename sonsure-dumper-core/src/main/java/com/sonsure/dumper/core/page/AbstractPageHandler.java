@@ -32,14 +32,14 @@ public abstract class AbstractPageHandler implements PageHandler {
     }
 
     //缓存已经修改过的sql
-    private final Map<String, String> CACHE = new ConcurrentHashMap<>();
+    private final Map<String, String> sqlCache = new ConcurrentHashMap<>();
 
     @Override
     public String getCountCommand(String sql, String dialect) {
         //校验是否支持该sql
         this.isSupportedSql(sql);
-        if (CACHE.get(sql) != null) {
-            return CACHE.get(sql);
+        if (sqlCache.get(sql) != null) {
+            return sqlCache.get(sql);
         }
         //解析SQL
         Statement stmt;
@@ -49,7 +49,7 @@ public abstract class AbstractPageHandler implements PageHandler {
             LOG.warn("无法根据sql解析处理count语句，使用简单方式。sql:{}", sql);
             //无法解析的用一般方法返回count语句
             String countSql = new StringBuilder("select count(*) from (").append(sql).append(") tmp_count").toString();
-            CACHE.put(sql, countSql);
+            sqlCache.put(sql, countSql);
             return countSql;
         }
         Select select = (Select) stmt;
@@ -67,7 +67,7 @@ public abstract class AbstractPageHandler implements PageHandler {
 
         String result = select.toString();
 
-        CACHE.put(sql, result);
+        sqlCache.put(sql, result);
 
         return result;
     }

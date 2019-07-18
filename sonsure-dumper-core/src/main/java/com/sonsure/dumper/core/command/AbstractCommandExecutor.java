@@ -61,7 +61,7 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
 
     protected <E> List<E> handleResult(List<?> result, ResultHandler<E> resultHandler) {
         if (result == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         List<E> resultList = new ArrayList<>();
         for (Object obj : result) {

@@ -36,9 +36,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * 只是简单复制重写了spring的{@link BeanPropertyRowMapper}.
- * 本来只需要重写initialize方法,但是在BeanPropertyRowMapper中虽然该方法是protected允许重写,但是里面用到的属性却是private
- * 所以只能复制重写了整个类.
+ * 重写了spring的{@link BeanPropertyRowMapper}.
+ * 在原来的基础上添加了自定义映射以及注解的支持
  *
  * @author Thomas Risberg
  * @author Juergen Hoeller
@@ -220,7 +219,6 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
         Assert.state(this.mappedClass != null, "Mapped class was not specified");
         T mappedObject = BeanUtils.instantiate(this.mappedClass);
         BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(mappedObject);
-        //initBeanWrapper(bw);
 
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();
