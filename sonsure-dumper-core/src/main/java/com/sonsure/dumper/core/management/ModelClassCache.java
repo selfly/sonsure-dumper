@@ -19,9 +19,12 @@ public class ModelClassCache {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelClassCache.class);
 
-    private static final Map<Class<?>, ModelClassMeta> CACHE = new WeakHashMap<Class<?>, ModelClassMeta>();
+    private static final Map<Class<?>, ModelClassMeta> CACHE = new WeakHashMap<>();
 
     private static boolean enableJavaxPersistence = false;
+
+    private ModelClassCache() {
+    }
 
     static {
         try {
@@ -103,11 +106,7 @@ public class ModelClassCache {
         Field[] beanFields = ClassUtils.getSelfFields(clazz);
         for (Field field : beanFields) {
 
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-
-            if (getFieldTransientAnnotation(field) != null) {
+            if (Modifier.isStatic(field.getModifiers()) || getFieldTransientAnnotation(field) != null) {
                 continue;
             }
 

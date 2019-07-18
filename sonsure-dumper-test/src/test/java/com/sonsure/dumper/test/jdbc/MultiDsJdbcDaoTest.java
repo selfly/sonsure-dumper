@@ -1,5 +1,6 @@
 package com.sonsure.dumper.test.jdbc;
 
+import com.sonsure.dumper.core.persist.FlexibleJdbcDao;
 import com.sonsure.dumper.core.persist.Jdbc;
 import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.TestUser;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.sql.DataSource;
 import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -122,5 +124,22 @@ public class MultiDsJdbcDaoTest {
         }
         long count = Jdbc.use("oracle").findCount(TestUser.class);
         Assert.assertEquals(count, 5);
+    }
+
+    @Test
+    public void use() {
+
+        try {
+            jdbcDao.use("oracle").use("oracle").executeDelete(TestUser.class);
+        } catch (UnsupportedOperationException e) {
+            Assert.assertEquals("不支持的方法", e.getMessage());
+        }
+    }
+
+    @Test
+    public void getDataSource() {
+
+        DataSource dataSource = ((FlexibleJdbcDao) jdbcDao.use("oracle")).getDataSource();
+        Assert.assertNotNull(dataSource);
     }
 }

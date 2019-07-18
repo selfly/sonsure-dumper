@@ -77,7 +77,7 @@
 
 并不推荐使用`Hibernate`实现，在真正场景下如果`Hibernate`被这样使用，先不说对不对，“脱裤子放屁”的嫌疑肯定是免不了的。
 
-以下是`Hibernate`对于`PersistExecutor`接口实现的部分伪代码，仅实现了列表查询，供参考：
+以下是`Hibernate`对于`PersistExecutor`接口实现的部分伪代码，仅实现了列表查询，供参考。如果想要使用`hql`而不是`nativeQuery`可以重写`CommandContextBuilder`：
 
     public class HibernatePersistExecutor extends AbstractPersistExecutor {
     

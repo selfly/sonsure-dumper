@@ -1,5 +1,6 @@
 package com.sonsure.dumper.core.page;
 
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -23,7 +24,7 @@ public abstract class AbstractPageHandler implements PageHandler {
     private static final Alias TABLE_ALIAS;
 
     static {
-        COUNT_ITEM = new ArrayList<SelectItem>();
+        COUNT_ITEM = new ArrayList<>();
         COUNT_ITEM.add(new SelectExpressionItem(new Column("count(*)")));
 
         TABLE_ALIAS = new Alias("table_count");
@@ -31,7 +32,7 @@ public abstract class AbstractPageHandler implements PageHandler {
     }
 
     //缓存已经修改过的sql
-    private final Map<String, String> CACHE = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> CACHE = new ConcurrentHashMap<>();
 
     @Override
     public String getCountCommand(String sql, String dialect) {
@@ -44,7 +45,7 @@ public abstract class AbstractPageHandler implements PageHandler {
         Statement stmt;
         try {
             stmt = CCJSqlParserUtil.parse(sql);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("无法根据sql解析处理count语句，使用简单方式。sql:{}", sql);
             //无法解析的用一般方法返回count语句
             String countSql = new StringBuilder("select count(*) from (").append(sql).append(") tmp_count").toString();
@@ -114,10 +115,8 @@ public abstract class AbstractPageHandler implements PageHandler {
                 return false;
             }
             //如果查询列中包含函数，也不可以，函数可能会聚合列
-            if (item instanceof SelectExpressionItem) {
-                if (((SelectExpressionItem) item).getExpression() instanceof Function) {
-                    return false;
-                }
+            if (item instanceof SelectExpressionItem && ((SelectExpressionItem) item).getExpression() instanceof Function) {
+                return false;
             }
         }
         return true;
@@ -162,7 +161,7 @@ public abstract class AbstractPageHandler implements PageHandler {
         if (plainSelect.getFromItem() != null) {
             processFromItem(plainSelect.getFromItem());
         }
-        if (plainSelect.getJoins() != null && plainSelect.getJoins().size() > 0) {
+        if (plainSelect.getJoins() != null && !plainSelect.getJoins().isEmpty()) {
             List<Join> joins = plainSelect.getJoins();
             for (Join join : joins) {
                 if (join.getRightItem() != null) {
@@ -241,7 +240,7 @@ public abstract class AbstractPageHandler implements PageHandler {
 
     protected void isSupportedSql(String sql) {
         if (sql.trim().toUpperCase().endsWith("FOR UPDATE")) {
-            throw new RuntimeException("分页插件不支持包含for update的sql");
+            throw new SonsureJdbcException("分页插件不支持包含for update的sql");
         }
     }
 }

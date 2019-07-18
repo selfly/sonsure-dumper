@@ -118,19 +118,7 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
      * @return generic command context
      */
     protected CommandContext getCommonCommandContext(ExecutorContext executorContext) {
-        CommandContext commandContext = new CommandContext();
-//        commandContext.setModelClass(commandTable.getModelClass());
-//        commandContext.setResultType(commandTable.getResultType());
-//        String pkField = this.getPkField(commandTable);
-//        commandContext.setPkField(pkField);
-//        String pkColumn = this.getCommandExecutor().getMappingHandler().getColumn(commandTable.getModelClass(), pkField);
-//        commandContext.setPkColumn(pkColumn);
-//        if (this.commandExecutor.getKeyGenerator() == null || this.commandExecutor.getKeyGenerator().isPkValueByDb()) {
-//            commandContext.setPkValueByDb(true);
-//        } else {
-//            commandContext.setPkValueByDb(false);
-//        }
-        return commandContext;
+        return new CommandContext();
     }
 
     /**

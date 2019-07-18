@@ -190,10 +190,10 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     public <T> Page<T> pageResult(Class<T> cls) {
         CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
         commandContext.setResultType(cls);
-        return (Page<T>) this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler() {
+        return this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler<T>() {
             @Override
-            public List<?> queryList(CommandContext commandContext) {
-                return (List<?>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_LIST);
+            public List<T> queryList(CommandContext commandContext) {
+                return (List<T>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_LIST);
             }
         });
     }
@@ -201,7 +201,7 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     @Override
     public Page<Object> pageResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
-        return (Page<Object>) this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler() {
+        return this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler<Object>() {
             @Override
             public List<Object> queryList(CommandContext commandContext) {
                 return (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
@@ -213,7 +213,7 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     public <T> Page<T> oneColPageResult(Class<T> clazz) {
         CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
         commandContext.setResultType(clazz);
-        return (Page<T>) this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler() {
+        return this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler<T>() {
             @Override
             public List<T> queryList(CommandContext commandContext) {
                 return (List<T>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL_LIST);

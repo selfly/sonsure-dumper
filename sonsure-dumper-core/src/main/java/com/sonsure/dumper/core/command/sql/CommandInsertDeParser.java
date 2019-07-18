@@ -20,7 +20,7 @@ public class CommandInsertDeParser extends InsertDeParser {
         this.commandMappingHandler = commandMappingHandler;
     }
 
-
+    @Override
     public void deParse(Insert insert) {
         getBuffer().append("INSERT ");
         if (insert.getModifierPriority() != null) {

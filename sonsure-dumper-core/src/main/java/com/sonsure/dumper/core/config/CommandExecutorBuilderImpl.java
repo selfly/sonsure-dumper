@@ -10,16 +10,17 @@ import com.sonsure.dumper.core.command.mybatis.MybatisExecutorImpl;
 import com.sonsure.dumper.core.command.natives.NativeCommandContextBuilder;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutorImpl;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
 
-    protected List<Class<?>> commandExecutorClasses;
+    protected List<Class<? extends CommandExecutor>> commandExecutorClasses;
 
     public CommandExecutorBuilderImpl() {
-        commandExecutorClasses = Arrays.asList(new Class<?>[]{Insert.class, Select.class, Update.class, Delete.class, NativeExecutor.class, MybatisExecutor.class});
+        commandExecutorClasses = Arrays.asList(Insert.class, Select.class, Update.class, Delete.class, NativeExecutor.class, MybatisExecutor.class);
     }
 
     @Override
@@ -55,7 +56,10 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
         } else if (commandExecutorClass == MybatisExecutor.class) {
             commandExecutor = new MybatisExecutorImpl(jdbcEngineConfig);
             commandContextBuilder = new MybatisCommandContextBuilder();
+        } else {
+            throw new SonsureJdbcException("没有匹配的commandExecutor");
         }
+
 
         commandExecutor.setCommandContextBuilder(commandContextBuilder);
         return commandExecutor;

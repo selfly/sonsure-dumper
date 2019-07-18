@@ -9,6 +9,7 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         this.commandContextBuilder = commandContextBuilder;
     }
 
-    protected Page<?> doPageResult(CommandContext commandContext, Pagination pagination, boolean isCount, PageQueryHandler pageQueryHandler) {
+    protected <T> Page<T> doPageResult(CommandContext commandContext, Pagination pagination, boolean isCount, PageQueryHandler<T> pageQueryHandler) {
         if (pagination == null) {
             throw new SonsureJdbcException("查询分页列表请设置分页信息");
         }
@@ -46,7 +47,7 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         String pageCommand = getJdbcEngineConfig().getPageHandler().getPageCommand(commandContext.getCommand(), pagination, dialect);
         CommandContext pageCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
         pageCommandContext.setCommand(pageCommand);
-        List<?> list = pageQueryHandler.queryList(pageCommandContext);
+        List<T> list = pageQueryHandler.queryList(pageCommandContext);
 
         return new Page<>(list, pagination);
     }
@@ -60,7 +61,7 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
 
     protected <E> List<E> handleResult(List<?> result, ResultHandler<E> resultHandler) {
         if (result == null) {
-            return null;
+            return Collections.EMPTY_LIST;
         }
         List<E> resultList = new ArrayList<>();
         for (Object obj : result) {
@@ -92,8 +93,8 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         return jdbcEngineConfig;
     }
 
-    protected interface PageQueryHandler {
+    protected interface PageQueryHandler<T> {
 
-        List<?> queryList(CommandContext commandContext);
+        List<T> queryList(CommandContext commandContext);
     }
 }

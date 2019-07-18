@@ -40,23 +40,10 @@
         <constructor-arg name="modelPackages" value="com.sonsure.dumper.test.model.**"/>
     </bean>
 
-    <bean id="postgresqlPageHandler" class="com.sonsure.dumper.core.page.PostgresqlPageHandler"/>
-    <bean id="mysqlPageHandler" class="com.sonsure.dumper.core.page.MysqlPageHandler"/>
-    <bean id="oraclePageHandler" class="com.sonsure.dumper.core.page.OraclePageHandler"/>
-
-    <bean id="negotiatingPageHandler" class="com.sonsure.dumper.core.page.NegotiatingPageHandler">
-        <property name="pageHandlers">
-            <list>
-                <ref bean="postgresqlPageHandler"/>
-                <ref bean="mysqlPageHandler"/>
-                <ref bean="oraclePageHandler"/>
-            </list>
-        </property>
-    </bean>
-
     <bean id="jdbcTemplateEngine" class="com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineFactoryBean">
-        <!-- ... -->
-        <property name="pageHandler" ref="negotiatingPageHandler"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingHandler" ref="mappingHandler"/>
+        <property name="commandCase" value="lower"/>
     </bean>
 
     <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">

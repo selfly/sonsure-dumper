@@ -165,21 +165,7 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(mappedClass);
         for (PropertyDescriptor pd : pds) {
             if (pd.getWriteMethod() != null) {
-
                 this.mappedFields.put(lowerCaseName(pd.getName()), pd);
-//                String underscoredName = underscoreName(pd.getName());
-//                if (!lowerCaseName(pd.getName()).equals(underscoredName)) {
-//                    this.mappedFields.put(underscoredName, pd);
-//                }
-//
-//                Field beanField = com.sonsure.commons.utils.ClassUtils.getBeanField(mappedClass, pd.getName());
-//                if (beanField != null) {
-//                    Column column = beanField.getAnnotation(Column.class);
-//                    if (column != null) {
-//                        this.mappedFields.put(lowerCaseName(column.value()), pd);
-//                    }
-//                }
-
                 this.mappedProperties.add(pd.getName());
             }
         }
@@ -234,7 +220,7 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
         Assert.state(this.mappedClass != null, "Mapped class was not specified");
         T mappedObject = BeanUtils.instantiate(this.mappedClass);
         BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(mappedObject);
-        initBeanWrapper(bw);
+        //initBeanWrapper(bw);
 
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();
@@ -288,16 +274,6 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
         }
 
         return mappedObject;
-    }
-
-    /**
-     * Initialize the given BeanWrapper to be used for row mapping.
-     * To be called for each row.
-     * <p>The default implementation is empty. Can be overridden in subclasses.
-     *
-     * @param bw the BeanWrapper to initialize
-     */
-    protected void initBeanWrapper(BeanWrapper bw) {
     }
 
     /**

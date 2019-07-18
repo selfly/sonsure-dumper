@@ -115,12 +115,14 @@ public class JSqlParserCommandConversionHandlerTest {
         String result = "SELECT USERNAME, PASSWORD FROM USER WHERE parentId IS NULL";
         Assert.assertTrue(sql.toLowerCase().equals(result.toLowerCase()));
     }
+
     @Test
     public void commandToSql10() {
         String command = "select t.* from UserInfo t where t.userInfoId = :userInfoId and userAge = :userAge and password = ?";
         String sql = commandConversionHandler.convert(command, null);
         System.out.println(sql);
     }
+
     @Test
     public void commandToSql11() {
         String command = "insert into UserInfo (username,testUserId) values (?,`{{SEQ_TEST_USER.NEXTVAL}}`)";
@@ -135,16 +137,4 @@ public class JSqlParserCommandConversionHandlerTest {
         System.out.println(sql);
     }
 
-    @Test
-    public void commandToSql13() {
-        String command = "select orderNumber,resourceUrl,resourceIcon,sysResourceId,resourceName,routingUrl,parentId,resourceType from UserInfo where user_info_id in ( select sys_resource_id from sys_role_resource where sys_role_id = '6ff97a02b1e94584835b76de5948e4b6' ) and resource_type = 1  order by order_number asc";
-        String sql = commandConversionHandler.convert(command, null);
-        System.out.println(sql);
-    }
-    @Test
-    public void commandToSql14() {
-        String command = "select orderNumber,resourceUrl,resourceIcon,sysResourceId,resourceName,routingUrl,parentId,resourceType from SysResource where sys_resource_id in ( (select sysResourceId from SysRoleResource where sysRoleId = '11') )  order by order_number asc";
-        String sql = commandConversionHandler.convert(command, null);
-        System.out.println(sql);
-    }
 }

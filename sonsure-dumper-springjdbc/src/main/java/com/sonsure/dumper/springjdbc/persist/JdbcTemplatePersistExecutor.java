@@ -4,7 +4,6 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.GenerateKey;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.persist.AbstractPersistExecutor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -38,7 +37,7 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
     @Override
     protected String doGetDialect() {
         return jdbcOperations.execute(new ConnectionCallback<String>() {
-            public String doInConnection(Connection con) throws SQLException, DataAccessException {
+            public String doInConnection(Connection con) throws SQLException {
                 return con.getMetaData().getDatabaseProductName().toLowerCase();
             }
         });
@@ -51,7 +50,7 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
         if (generateKey.isParameter()) {
             jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
             //显示指定了主键，可能为null
-            return generateKey != null ? generateKey.getValue() : null;
+            return generateKey.getValue();
         } else {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcOperations.update(new PreparedStatementCreator() {

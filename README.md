@@ -60,6 +60,8 @@
 - 支持整合Mybatis，以Mybatis的方式书写sql
 - 易扩展，各组件如主键生成器、分页器、命令构建器(sql/hql等)、持久化实现等均可扩展或重写
 
+> 组件本质上也只是封装了一个通用dao，只不过更加方便易用。当发现组件缺少某项功能或不能满足需求时仍可以用本来原生的方式执行，完全无影响。
+
 #### 使用
 
 添加依赖，默认使用`Spring Jdbc`实现，可更换成自己想要的实现：
@@ -99,13 +101,13 @@
 5. [不传参{{ }}符号的使用](doc/not-param.md)
 6. [注解的使用](doc/use-annotation.md)
 7. [执行自定义sql](doc/native-sql.md)
-8. [整合Mybatis执行sql mybatisSqlSessionFactory](doc/mybatis-sql.md)
-9. [映射转换处理 mappingHandler](doc/mapping-handler.md)
-10. [分页处理 pageHandler](doc/page-handler.md)
-11. [主键生成 keyGenerator](doc/key-generator.md)
-12. [持久化实现 persistExecutor，扩展Hibernate示例抛砖引玉](doc/persist-executor-hibernate.md)
-13. [sql的解析转换 commandConversionHandler](doc/conversion-handler.md)
-14. 扩展Executor commandExecutorFactory
+8. [整合Mybatis执行sql MybatisSqlSessionFactory](doc/mybatis-sql.md)
+9. [映射转换处理 MappingHandler](doc/mapping-handler.md)
+10. [分页处理 PageHandler](doc/page-handler.md)
+11. [主键生成 KeyGenerator](doc/key-generator.md)
+12. [持久化实现 PersistExecutor，扩展Hibernate示例抛砖引玉](doc/persist-executor-hibernate.md)
+13. [sql的解析转换 CommandConversionHandler](doc/conversion-handler.md)
+14. 扩展CommandExecutor CommandExecutorFactory和CommandExecutorBuilder
 15. [多数据源的使用](doc/multi-ds.md)
 16. 水平分表动态表名使用
 17. 动态数据源读写分离使用

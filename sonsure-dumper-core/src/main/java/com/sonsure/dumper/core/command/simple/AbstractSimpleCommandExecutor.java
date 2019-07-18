@@ -1,6 +1,5 @@
 package com.sonsure.dumper.core.command.simple;
 
-
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
@@ -48,14 +47,12 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     public long count() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(Long.class);
-        Object result = getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL);
-        return (Long) result;
+        return (Long) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL);
     }
 
     public Object singleResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
-        Object result = getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
-        return result;
+        return getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
     }
 
     @Override
@@ -68,8 +65,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     @Override
     public List<Object> list() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
-        List<Object> result = (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-        return result;
+        return (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
     }
 
     @Override
@@ -129,8 +125,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     public <T> List<T> list(Class<T> cls) {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
         List<Map<String, Object>> mapList = (List<Map<String, Object>>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-        List<T> result = this.handleResult(mapList, getResultHandler(cls));
-        return result;
+        return this.handleResult(mapList, getResultHandler(cls));
     }
 
     @Override
@@ -142,10 +137,10 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     @Override
     public Page<Object> pageResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
-        Page<?> page = this.doPageResult(commandContext, getSimpleExecutorContext().getPagination(), getSimpleExecutorContext().isCount(), new PageQueryHandler() {
+        Page<Object> page = this.doPageResult(commandContext, getSimpleExecutorContext().getPagination(), getSimpleExecutorContext().isCount(), new PageQueryHandler<Object>() {
             @Override
-            public List<?> queryList(CommandContext commandContext) {
-                return (List<?>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
+            public List<Object> queryList(CommandContext commandContext) {
+                return (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
             }
         });
         Page<Object> resultPage = new Page<>(page.getPagination());
@@ -167,7 +162,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     public <E> Page<E> oneColPageResult(Class<E> clazz) {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(clazz);
-        return (Page<E>) this.doPageResult(commandContext, getSimpleExecutorContext().getPagination(), getSimpleExecutorContext().isCount(), new PageQueryHandler() {
+        return this.doPageResult(commandContext, getSimpleExecutorContext().getPagination(), getSimpleExecutorContext().isCount(), new PageQueryHandler<E>() {
             @Override
             public List<E> queryList(CommandContext commandContext) {
                 return (List<E>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
