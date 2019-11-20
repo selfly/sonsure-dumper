@@ -4,11 +4,14 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.GenerateKey;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.persist.AbstractPersistExecutor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -63,8 +66,8 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
                 }
             }, keyHolder);
             Map<String, Object> keys = keyHolder.getKeys();
-            //只有一个主键列，多个不支持
-            return keys.values().iterator().next();
+            //显示指定主键时为null，只有一个主键列，多个不支持
+            return keys == null ? null : keys.values().iterator().next();
         }
     }
 
@@ -114,7 +117,19 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     @Override
     public Object doExecute(CommandContext commandContext) {
-        return this.update(commandContext);
+        jdbcOperations.execute(commandContext.getCommand());
+        return true;
+    }
+
+    @Override
+    protected Object doExecuteScript(CommandContext commandContext) {
+        return jdbcOperations.execute(new ConnectionCallback<Void>() {
+            @Override
+            public Void doInConnection(Connection connection) throws SQLException, DataAccessException {
+                ScriptUtils.executeSqlScript(connection, new ByteArrayResource(commandContext.getCommand().getBytes()));
+                return null;
+            }
+        });
     }
 
     public void setJdbcOperations(JdbcOperations jdbcOperations) {

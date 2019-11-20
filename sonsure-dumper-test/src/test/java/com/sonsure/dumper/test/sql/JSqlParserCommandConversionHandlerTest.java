@@ -137,4 +137,11 @@ public class JSqlParserCommandConversionHandlerTest {
         System.out.println(sql);
     }
 
+    @Test
+    public void commandToSql13() {
+        String command = "update Content set commentCount = commentCount+1 where contentId is ?";
+        String sql = commandConversionHandler.convert(command, null);
+        System.out.println(sql);
+    }
+
 }

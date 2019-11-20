@@ -203,6 +203,12 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.EXECUTE);
     }
 
+    @Override
+    public void executeScript() {
+        CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
+        getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.EXECUTE_SCRIPT);
+    }
+
     protected <T> ResultHandler<T> getResultHandler(Class<T> cls) {
         if (this.resultHandler == null) {
             return DefaultResultHandler.newInstance(cls);

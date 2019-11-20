@@ -90,6 +90,11 @@ public class HibernatePersistExecutor extends AbstractPersistExecutor {
         return this.update(commandContext);
     }
 
+    @Override
+    protected Object doExecuteScript(CommandContext commandContext) {
+        return null;
+    }
+
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }

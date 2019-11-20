@@ -1,5 +1,8 @@
 package com.sonsure.dumper.core.command.entity;
 
+import com.sonsure.dumper.core.command.lambda.Consumer;
+import com.sonsure.dumper.core.command.lambda.LambdaConditionBuilder;
+
 /**
  * 条件构建
  * 实现标识接口
@@ -16,6 +19,15 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
     C where();
 
     /**
+     * 特定对象lambda
+     *
+     * @param obj
+     * @param <O>
+     * @return
+     */
+    <O> LambdaConditionBuilder<O, C> lambdaWith(O obj);
+
+    /**
      * where 属性条件
      *
      * @param field
@@ -27,11 +39,29 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
     /**
      * where 属性条件
      *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C where(Consumer<E> consumer, Object value);
+
+    /**
+     * where 属性条件
+     *
      * @param field
      * @param value
      * @return
      */
     C where(String field, Object[] value);
+
+    /**
+     * where 属性条件
+     *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C where(Consumer<E> consumer, Object[] value);
 
     /**
      * where 属性条件，指定操作符
@@ -42,6 +72,16 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
      * @return c
      */
     C where(String field, String operator, Object... values);
+
+    /**
+     * where 属性条件，指定操作符
+     *
+     * @param consumer the field
+     * @param operator the operator
+     * @param values   the values
+     * @return c
+     */
+    <E> C where(Consumer<E> consumer, String operator, Object... values);
 
     /**
      * 属性条件
@@ -55,11 +95,29 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
     /**
      * 属性条件
      *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C condition(Consumer<E> consumer, Object value);
+
+    /**
+     * 属性条件
+     *
      * @param field
      * @param value
      * @return
      */
     C condition(String field, Object[] value);
+
+    /**
+     * 属性条件
+     *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C condition(Consumer<E> consumer, Object[] value);
 
     /**
      * 属性条件，指定操作符
@@ -71,6 +129,15 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
      */
     C condition(String field, String operator, Object... values);
 
+    /**
+     * 属性条件，指定操作符
+     *
+     * @param consumer the field
+     * @param operator the operator
+     * @param values   the values
+     * @return c
+     */
+    <E> C condition(Consumer<E> consumer, String operator, Object... values);
 
     /**
      * 实体属性条件
@@ -117,11 +184,29 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
     /**
      * and 属性条件
      *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C and(Consumer<E> consumer, Object value);
+
+    /**
+     * and 属性条件
+     *
      * @param field
      * @param value
      * @return
      */
     C and(String field, Object[] value);
+
+    /**
+     * and 属性条件
+     *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C and(Consumer<E> consumer, Object[] value);
 
     /**
      * and 属性条件 指定操作符
@@ -132,6 +217,16 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
      * @return c
      */
     C and(String field, String operator, Object... values);
+
+    /**
+     * and 属性条件 指定操作符
+     *
+     * @param consumer the field
+     * @param operator the operator
+     * @param values   the values
+     * @return c
+     */
+    <E> C and(Consumer<E> consumer, String operator, Object... values);
 
     /**
      * or
@@ -152,11 +247,29 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
     /**
      * or 属性条件
      *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C or(Consumer<E> consumer, Object value);
+
+    /**
+     * or 属性条件
+     *
      * @param field
      * @param value
      * @return
      */
     C or(String field, Object[] value);
+
+    /**
+     * or 属性条件
+     *
+     * @param consumer
+     * @param value
+     * @return
+     */
+    <E> C or(Consumer<E> consumer, Object[] value);
 
     /**
      * or 属性条件 指定操作符
@@ -167,6 +280,16 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
      * @return c
      */
     C or(String field, String operator, Object... values);
+
+    /**
+     * or 属性条件 指定操作符
+     *
+     * @param consumer the field
+     * @param operator the operator
+     * @param values   the values
+     * @return c
+     */
+    <E> C or(Consumer<E> consumer, String operator, Object... values);
 
     /**
      * 括号开始

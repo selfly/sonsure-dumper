@@ -3,6 +3,9 @@ package com.sonsure.dumper.core.command.entity;
 import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.AbstractCommandExecutor;
+import com.sonsure.dumper.core.command.lambda.Consumer;
+import com.sonsure.dumper.core.command.lambda.LambdaConditionBuilder;
+import com.sonsure.dumper.core.command.lambda.LambdaMethod;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.management.ClassField;
 
@@ -30,6 +33,25 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
+    public <O> LambdaConditionBuilder<O, T> lambdaWith(O obj) {
+        return new LambdaConditionBuilder(obj, this);
+    }
+
+    @Override
+    public <E> T where(Consumer<E> consumer, Object value) {
+        String field = LambdaMethod.getField(consumer);
+        this.where(field, value == null ? "is" : "=", value);
+        return (T) this;
+    }
+
+    @Override
+    public <E> T where(Consumer<E> consumer, Object[] value) {
+        String field = LambdaMethod.getField(consumer);
+        this.where(field, value == null ? "is" : "=", value);
+        return (T) this;
+    }
+
     public T where(String field, Object value) {
         Object[] values = value == null ? null : (value instanceof Object[] ? (Object[]) value : new Object[]{value});
         this.where(field, value == null ? "is" : "=", values);
@@ -41,17 +63,45 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
+    public <E> T where(Consumer<E> consumer, String operator, Object... values) {
+        String field = LambdaMethod.getField(consumer);
+        this.where(field, operator, values);
+        return (T) this;
+    }
+
     public T condition(String field, Object value) {
         Object[] values = value instanceof Object[] ? (Object[]) value : new Object[]{value};
         return this.condition(field, value == null ? "is" : "=", values);
+    }
+
+    @Override
+    public <E> T condition(Consumer<E> consumer, Object value) {
+        String field = LambdaMethod.getField(consumer);
+        this.condition(field, value);
+        return (T) this;
     }
 
     public T condition(String field, Object[] value) {
         return this.condition(field, value == null ? "is" : "=", value);
     }
 
+    @Override
+    public <E> T condition(Consumer<E> consumer, Object[] value) {
+        String field = LambdaMethod.getField(consumer);
+        this.condition(field, value);
+        return (T) this;
+    }
+
     public T condition(String field, String operator, Object... values) {
         this.getWhereContext().addWhereField(null, field, operator, values);
+        return (T) this;
+    }
+
+    @Override
+    public <E> T condition(Consumer<E> consumer, String operator, Object... values) {
+        String field = LambdaMethod.getField(consumer);
+        this.condition(field, operator, values);
         return (T) this;
     }
 
@@ -104,13 +154,34 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
+    public <E> T and(Consumer<E> consumer, Object value) {
+        String field = LambdaMethod.getField(consumer);
+        this.and(field, value);
+        return (T) this;
+    }
+
     public T and(String field, Object[] value) {
         this.and(field, value == null ? "is" : "=", value);
         return (T) this;
     }
 
+    @Override
+    public <E> T and(Consumer<E> consumer, Object[] value) {
+        String field = LambdaMethod.getField(consumer);
+        this.and(field, value);
+        return (T) this;
+    }
+
     public T and(String field, String operator, Object... values) {
         this.getWhereContext().addWhereField("and", field, operator, values);
+        return (T) this;
+    }
+
+    @Override
+    public <E> T and(Consumer<E> consumer, String operator, Object... values) {
+        String field = LambdaMethod.getField(consumer);
+        this.and(field, operator, values);
         return (T) this;
     }
 
@@ -124,12 +195,33 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return this.or(field, value == null ? "is" : "=", values);
     }
 
+    @Override
+    public <E> T or(Consumer<E> consumer, Object value) {
+        String field = LambdaMethod.getField(consumer);
+        this.or(field, value);
+        return (T) this;
+    }
+
     public T or(String field, Object[] values) {
         return this.or(field, values == null ? "is" : "=", values);
     }
 
+    @Override
+    public <E> T or(Consumer<E> consumer, Object[] value) {
+        String field = LambdaMethod.getField(consumer);
+        this.or(field, value);
+        return (T) this;
+    }
+
     public T or(String field, String operator, Object... values) {
         this.getWhereContext().addWhereField("or", field, operator, values);
+        return (T) this;
+    }
+
+    @Override
+    public <E> T or(Consumer<E> consumer, String operator, Object... values) {
+        String field = LambdaMethod.getField(consumer);
+        this.or(field, operator, values);
         return (T) this;
     }
 

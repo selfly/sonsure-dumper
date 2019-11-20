@@ -58,4 +58,9 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
      * 执行
      */
     void execute();
+
+    /**
+     * 执行脚本
+     */
+    void executeScript();
 }

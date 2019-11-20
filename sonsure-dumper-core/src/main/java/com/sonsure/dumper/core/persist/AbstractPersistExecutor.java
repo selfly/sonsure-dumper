@@ -62,6 +62,8 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
                 return this.delete(commandContext);
             case EXECUTE:
                 return this.doExecute(commandContext);
+            case EXECUTE_SCRIPT:
+                return this.doExecuteScript(commandContext);
             default:
                 throw new SonsureJdbcException("不支持的CommandType:" + commandType);
         }
@@ -147,6 +149,14 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
      * @return
      */
     protected abstract Object doExecute(CommandContext commandContext);
+
+    /**
+     * 执行代码
+     *
+     * @param commandContext
+     * @return
+     */
+    protected abstract Object doExecuteScript(CommandContext commandContext);
 
 
     protected abstract String doGetDialect();

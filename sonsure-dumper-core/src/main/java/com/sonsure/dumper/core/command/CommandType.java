@@ -20,5 +20,7 @@ public enum CommandType {
 
     DELETE,
 
-    EXECUTE;
+    EXECUTE,
+
+    EXECUTE_SCRIPT;
 }
