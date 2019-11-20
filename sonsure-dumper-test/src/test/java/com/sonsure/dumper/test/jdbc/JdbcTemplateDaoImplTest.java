@@ -5,10 +5,7 @@ import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.persist.JdbcDao;
-import com.sonsure.dumper.test.model.AuthCode;
-import com.sonsure.dumper.test.model.KUserInfo;
-import com.sonsure.dumper.test.model.UidUser;
-import com.sonsure.dumper.test.model.UserInfo;
+import com.sonsure.dumper.test.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -243,6 +240,24 @@ public class JdbcTemplateDaoImplTest {
         Assert.assertTrue(user1.getUserInfoId().equals(id));
         Assert.assertTrue(user1.getLoginName().equals("name123"));
         Assert.assertTrue(user1.getPassword().equals("123321"));
+    }
+
+    @Test
+    public void insert4() {
+
+        jdbcDao.executeDelete(People.class);
+        //非自增主键，显示指定
+        String id = "airpveweid";
+        String id2 = (String) jdbcDao.insertInto(People.class)
+                .set("peopleId", id)
+                .set("peopleName", "name123")
+                .set("peopleAge", 18)
+                .set("gmtCreate", new Date())
+                .execute();
+        Assert.assertNull(id2);
+        People people = jdbcDao.get(People.class, id);
+        Assert.assertNotNull(people);
+        Assert.assertEquals(people.getPeopleId(), id);
     }
 
     @Test

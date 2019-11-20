@@ -63,8 +63,8 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
                 }
             }, keyHolder);
             Map<String, Object> keys = keyHolder.getKeys();
-            //只有一个主键列，多个不支持
-            return keys.values().iterator().next();
+            //显示指定主键时为null，只有一个主键列，多个不支持
+            return keys == null ? null : keys.values().iterator().next();
         }
     }
 
