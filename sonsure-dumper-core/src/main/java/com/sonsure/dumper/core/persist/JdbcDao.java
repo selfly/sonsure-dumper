@@ -217,6 +217,13 @@ public interface JdbcDao {
     Update update();
 
     /**
+     * 执行脚本
+     *
+     * @param script
+     */
+    void executeScript(String script);
+
+    /**
      * 创建native executor对象
      *
      * @return
