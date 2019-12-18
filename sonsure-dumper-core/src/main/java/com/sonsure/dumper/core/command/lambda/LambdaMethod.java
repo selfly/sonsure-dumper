@@ -9,15 +9,15 @@ import java.lang.reflect.Method;
 
 public class LambdaMethod {
 
-    public static <T> String getField(Consumer<T> lambda) {
+    public static <T,R> String getField(Function<T,R> lambda) {
         Method method = createMethod(lambda);
         return getMethodField(method);
     }
 
-    public static <T> String[] getFields(Consumer<T>... consumers) {
-        String[] fields = new String[consumers.length];
-        for (int i = 0; i < consumers.length; i++) {
-            fields[i] = getField(consumers[i]);
+    public static <T,R> String[] getFields(Function<T,R>... functions) {
+        String[] fields = new String[functions.length];
+        for (int i = 0; i < functions.length; i++) {
+            fields[i] = getField(functions[i]);
         }
         return fields;
     }
@@ -30,7 +30,7 @@ public class LambdaMethod {
         return NameUtils.getFirstLowerName(StringUtils.substring(name, 3));
     }
 
-    public static <T> Method createMethod(Consumer<T> lambda) {
+    public static <T,R> Method createMethod(Function<T,R> lambda) {
         SerializedLambda serializedLambda = getSerializedLambda(lambda);
         return getMethod(serializedLambda);
     }

@@ -2,7 +2,7 @@ package com.sonsure.dumper.core.command.entity;
 
 
 import com.sonsure.dumper.core.command.QueryCommandExecutor;
-import com.sonsure.dumper.core.command.lambda.Consumer;
+import com.sonsure.dumper.core.command.lambda.Function;
 
 /**
  * Created by liyd on 17/4/12.
@@ -54,10 +54,10 @@ public interface Select extends QueryCommandExecutor<Select>, ConditionCommandEx
     /**
      * 属性条件
      *
-     * @param consumers
+     * @param function
      * @return
      */
-    <E> Select orderBy(Consumer<E>... consumers);
+    <E,R> Select orderBy(Function<E,R> function);
 
     /**
      * asc排序

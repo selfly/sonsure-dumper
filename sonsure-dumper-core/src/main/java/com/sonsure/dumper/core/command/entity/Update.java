@@ -1,6 +1,6 @@
 package com.sonsure.dumper.core.command.entity;
 
-import com.sonsure.dumper.core.command.lambda.Consumer;
+import com.sonsure.dumper.core.command.lambda.Function;
 
 /**
  * Created by liyd on 17/4/14.
@@ -26,12 +26,12 @@ public interface Update extends ConditionCommandExecutor<Update> {
     /**
      * 设置属性值
      *
-     * @param consumer
+     * @param function
      * @param value
      * @param <E>
      * @return
      */
-    <E> Update set(Consumer<E> consumer, Object value);
+    <E, R> Update set(Function<E, R> function, Object value);
 
     /**
      * 根据实体类设置属性,主键设置成where条件

@@ -5,7 +5,7 @@ import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
-import com.sonsure.dumper.core.command.lambda.Consumer;
+import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.command.lambda.LambdaMethod;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
@@ -35,8 +35,8 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
     }
 
     @Override
-    public <E> Update set(Consumer<E> consumer, Object value) {
-        String field = LambdaMethod.getField(consumer);
+    public <E,R> Update set(Function<E,R> function, Object value) {
+        String field = LambdaMethod.getField(function);
         updateContext.addSetField(field, value);
         return this;
     }

@@ -7,7 +7,7 @@ import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.entity.Update;
-import com.sonsure.dumper.core.command.lambda.Consumer;
+import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.command.mybatis.MybatisExecutor;
 import com.sonsure.dumper.core.command.natives.NativeExecutor;
 
@@ -182,10 +182,10 @@ public interface JdbcDao {
     /**
      * 创建select对象
      *
-     * @param consumers
+     * @param function
      * @return
      */
-    <E> Select select(Consumer<E>... consumers);
+    <E,R> Select select(Function<E,R> function);
 
     /**
      * 创建insert对象

@@ -1,3 +1,11 @@
+drop table if exists ss_user_extend_prop;
+drop table if exists ss_user_relationship;
+drop table if exists ss_user_statement;
+drop table if exists ss_user_message_item;
+drop table if exists ss_message_text;
+drop table if exists ss_behavior_verify;
+drop table if exists ss_user_message;
+drop table if exists ss_user;
 CREATE TABLE `ss_user` (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户id',
   `username` varchar(32) NOT NULL COMMENT '用户名',
@@ -24,7 +32,6 @@ CREATE TABLE `ss_user` (
 INSERT INTO ss_user
 (username, password, user_type, status, sex, real_name, email, mobile, avatar, signature, pin_password, last_login_ip, gmt_last_login, gmt_create, creator, token, gmt_modify)
 VALUES('admin', '$2a$10$llu.PkWNrDS2twmpUvx5cuf7.221bfI5lXZbdvu/fI7IQ5GJBqTKa', '1', '1', '1', '超级管理员', 'admin@sonsure.com', NULL, 'assets/images/avatar.jpg', '欢迎使用Sonsure平台', NULL, NULL, NULL, now(), 'init', NULL, NULL);
-
 
 CREATE TABLE `ss_user_extend_prop` (
   `user_extend_prop_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',

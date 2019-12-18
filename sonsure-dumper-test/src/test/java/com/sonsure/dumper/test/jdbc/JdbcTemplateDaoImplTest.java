@@ -3,6 +3,7 @@ package com.sonsure.dumper.test.jdbc;
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.entity.Select;
+import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.persist.JdbcDao;
 import com.sonsure.dumper.test.model.AuthCode;
@@ -11,6 +12,7 @@ import com.sonsure.dumper.test.model.UidUser;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class JdbcTemplateDaoImplTest {
     @Autowired
     protected JdbcDao jdbcDao;
 
-//    @Before
+    @Before
     public void before() {
         //初始化测试数据
         jdbcDao.deleteFrom(UserInfo.class)
@@ -1016,29 +1018,19 @@ public class JdbcTemplateDaoImplTest {
     public void lambdaSelect() {
         UserInfo userInfo = new UserInfo();
         userInfo.setLoginName("name-6");
-        userInfo.setPassword("123456");
+        userInfo.setPassword("123456-6");
+        Function<UserInfo, String> getLoginName = UserInfo::getLoginName;
         List<UserInfo> list = jdbcDao.selectFrom(UserInfo.class)
-                .lambdaWith(userInfo)
-                .and(UserInfo::getLoginName)
-                .and(UserInfo::getPassword)
-                .lambdaWithEnd()
+                .and(getLoginName, userInfo.getLoginName())
+                .and(UserInfo::getPassword, userInfo.getPassword())
                 .list(UserInfo.class);
 
-        System.out.println(list);
-
-//        Select select = jdbcDao.selectFrom(UserInfo.class);
-
-
-//        LambdaConditionBuilder<UserInfo, Select> lambdaConditionBuilder = new LambdaConditionBuilder<>(userInfo, select);
-
-//        lambdaConditionBuilder
-//                .and(UserInfo::getPassword)
-//                .and(UserInfo::getLoginName);
+        Assert.assertTrue(list.size() > 0);
 
     }
 
     @Test
-    public void executeScript()throws Exception {
+    public void executeScript() throws Exception {
 
         InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("modular-osgi-user-3.0.0.sql");
 

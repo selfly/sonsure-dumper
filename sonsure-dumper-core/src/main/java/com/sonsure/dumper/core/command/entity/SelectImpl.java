@@ -6,7 +6,7 @@ import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
-import com.sonsure.dumper.core.command.lambda.Consumer;
+import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.command.lambda.LambdaMethod;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
@@ -80,8 +80,8 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     }
 
     @Override
-    public <E> Select orderBy(Consumer<E>... consumers) {
-        String[] fields = LambdaMethod.getFields(consumers);
+    public <E,R> Select orderBy(Function<E,R> function) {
+        String[] fields = LambdaMethod.getFields(function);
         this.orderBy(fields);
         return this;
     }
