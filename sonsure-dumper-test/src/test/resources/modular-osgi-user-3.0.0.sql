@@ -3,7 +3,7 @@ drop table if exists ss_user_relationship;
 drop table if exists ss_user_statement;
 drop table if exists ss_user_message_item;
 drop table if exists ss_message_text;
-drop table if exists ss_behavior_verify;
+drop table if exists ss_behaior_verify;
 drop table if exists ss_user_message;
 drop table if exists ss_user;
 CREATE TABLE `ss_user` (

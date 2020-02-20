@@ -9,12 +9,12 @@ import java.lang.reflect.Method;
 
 public class LambdaMethod {
 
-    public static <T,R> String getField(Function<T,R> lambda) {
+    public static <T, R> String getField(Function<T, R> lambda) {
         Method method = createMethod(lambda);
         return getMethodField(method);
     }
 
-    public static <T,R> String[] getFields(Function<T,R>... functions) {
+    public static <T, R> String[] getFields(Function<T, R>... functions) {
         String[] fields = new String[functions.length];
         for (int i = 0; i < functions.length; i++) {
             fields[i] = getField(functions[i]);
@@ -30,7 +30,7 @@ public class LambdaMethod {
         return NameUtils.getFirstLowerName(StringUtils.substring(name, 3));
     }
 
-    public static <T,R> Method createMethod(Function<T,R> lambda) {
+    public static <T, R> Method createMethod(Function<T, R> lambda) {
         SerializedLambda serializedLambda = getSerializedLambda(lambda);
         return getMethod(serializedLambda);
     }
@@ -46,9 +46,6 @@ public class LambdaMethod {
     }
 
     private static Method getMethod(SerializedLambda serializedLambda) {
-        if (serializedLambda == null) {
-            return null;
-        }
         String className = StringUtils.replace(serializedLambda.getImplClass(), "/", ".");
         try {
             return LambdaMethod.class.getClassLoader().loadClass(className).getDeclaredMethod(serializedLambda.getImplMethodName());

@@ -3,6 +3,7 @@ package com.sonsure.dumper.core.persist;
 
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
+import com.sonsure.dumper.core.command.CommandExecutor;
 import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
@@ -132,7 +133,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
     }
 
     @Override
-    public <E,R> Select select(Function<E,R> function) {
+    public <E, R> Select select(Function<E, R> function) {
         String[] fields = LambdaMethod.getFields(function);
         return this.select(fields);
     }
@@ -169,6 +170,11 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
     @Override
     public MybatisExecutor myBatisExecutor() {
         return this.getDefaultJdbcEngine().createExecutor(MybatisExecutor.class);
+    }
+
+    @Override
+    public <T extends CommandExecutor> T executor(Class<T> executor) {
+        return this.getDefaultJdbcEngine().createExecutor(executor);
     }
 
     public JdbcEngine getDefaultJdbcEngine() {

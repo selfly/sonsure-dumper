@@ -3,6 +3,7 @@ package com.sonsure.dumper.core.persist;
 
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
+import com.sonsure.dumper.core.command.CommandExecutor;
 import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
@@ -185,7 +186,7 @@ public interface JdbcDao {
      * @param function
      * @return
      */
-    <E,R> Select select(Function<E,R> function);
+    <E, R> Select select(Function<E, R> function);
 
     /**
      * 创建insert对象
@@ -236,4 +237,13 @@ public interface JdbcDao {
      * @return
      */
     MybatisExecutor myBatisExecutor();
+
+    /**
+     * 创建自定义executor
+     *
+     * @param executor
+     * @param <T>
+     * @return
+     */
+    <T extends CommandExecutor> T executor(Class<T> executor);
 }

@@ -15,6 +15,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -67,7 +68,14 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             }, keyHolder);
             Map<String, Object> keys = keyHolder.getKeys();
             //显示指定主键时为null，只有一个主键列，多个不支持
-            return keys == null ? null : keys.values().iterator().next();
+            if (keys == null) {
+                return null;
+            }
+            Object obj = keys.values().iterator().next();
+            if (obj instanceof BigInteger) {
+                return ((BigInteger) obj).longValue();
+            }
+            return obj;
         }
     }
 

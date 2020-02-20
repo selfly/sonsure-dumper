@@ -107,12 +107,8 @@
 11. [主键生成 KeyGenerator](doc/key-generator.md)
 12. [持久化实现 PersistExecutor，扩展Hibernate示例抛砖引玉](doc/persist-executor-hibernate.md)
 13. [sql的解析转换 CommandConversionHandler](doc/conversion-handler.md)
-14. 扩展CommandExecutor CommandExecutorFactory和CommandExecutorBuilder
+14. [扩展自定义的执行方式 CommandExecutor](doc/ext-executor.md)
 15. [多数据源的使用](doc/multi-ds.md)
-16. 水平分表动态表名使用
-17. 动态数据源读写分离使用
-
-更多待完善...
 
 ## 参与贡献
 

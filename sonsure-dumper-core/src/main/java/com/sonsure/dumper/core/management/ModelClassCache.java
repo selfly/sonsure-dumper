@@ -31,13 +31,13 @@ public class ModelClassCache {
             Class<?> clazz = ModelClassCache.class.getClassLoader().loadClass("javax.persistence.Entity");
             enableJavaxPersistence = clazz != null;
             if (LOG.isDebugEnabled()) {
-                LOG.debug("启用javax.persistence注解");
+                LOG.debug("Enable javax.persistence annotation");
             }
         } catch (ClassNotFoundException e) {
             //ignore
             enableJavaxPersistence = false;
             if (LOG.isDebugEnabled()) {
-                LOG.debug("禁用javax.persistence注解");
+                LOG.debug("Disable javax.persistence annotation");
             }
         }
     }

@@ -16,10 +16,8 @@ public class CommandContext {
      */
     private String command;
 
-    private List<String> parameterNames;
-
     /**
-     * 参数名称列表
+     * 参数列表
      */
     private List<Object> parameters;
 
@@ -34,7 +32,6 @@ public class CommandContext {
     private GenerateKey generateKey;
 
     public CommandContext() {
-        parameterNames = new ArrayList<>();
         parameters = new ArrayList<>();
     }
 
@@ -56,10 +53,6 @@ public class CommandContext {
 
     public List<Object> getParameters() {
         return parameters;
-    }
-
-    public List<String> getParameterNames() {
-        return parameterNames;
     }
 
     public Class<?> getResultType() {
