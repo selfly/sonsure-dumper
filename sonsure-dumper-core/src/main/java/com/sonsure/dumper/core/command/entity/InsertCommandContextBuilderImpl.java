@@ -11,12 +11,15 @@ import com.sonsure.dumper.core.persist.KeyGenerator;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Created by liyd on 17/4/14.
+ *
+ * @author liyd
+ * @date 17/4/14
  */
 public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuilder {
 
     private static final String COMMAND_OPEN = "insert into ";
 
+    @Override
     public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
         InsertContext insertContext = (InsertContext) executorContext;

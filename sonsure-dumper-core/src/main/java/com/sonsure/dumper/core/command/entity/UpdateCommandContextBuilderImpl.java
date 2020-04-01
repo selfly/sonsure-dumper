@@ -7,12 +7,15 @@ import com.sonsure.dumper.core.management.ClassField;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Created by liyd on 17/4/14.
+ *
+ * @author liyd
+ * @date 17/4/14
  */
 public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuilder {
 
     private static final String COMMAND_OPEN = "update ";
 
+    @Override
     public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
         UpdateContext updateContext = (UpdateContext) executorContext;

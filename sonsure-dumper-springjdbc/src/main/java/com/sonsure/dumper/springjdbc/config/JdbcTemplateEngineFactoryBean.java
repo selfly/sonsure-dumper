@@ -4,6 +4,9 @@ import com.sonsure.dumper.core.config.JdbcEngine;
 import com.sonsure.dumper.core.config.JdbcEngineImpl;
 import org.springframework.beans.factory.FactoryBean;
 
+/**
+ * @author liyd
+ */
 public class JdbcTemplateEngineFactoryBean extends JdbcTemplateEngineConfigImpl implements FactoryBean<JdbcEngine> {
 
     @Override

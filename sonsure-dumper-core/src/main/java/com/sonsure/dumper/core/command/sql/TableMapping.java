@@ -2,6 +2,9 @@ package com.sonsure.dumper.core.command.sql;
 
 import net.sf.jsqlparser.schema.Table;
 
+/**
+ * @author liyd
+ */
 public class TableMapping {
 
     private Table table;

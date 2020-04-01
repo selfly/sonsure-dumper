@@ -5,6 +5,9 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.deparser.*;
 
+/**
+ * @author liyd
+ */
 public class CommandStatementDeParser extends StatementDeParser {
 
     protected ExpressionDeParser expressionDeParser;

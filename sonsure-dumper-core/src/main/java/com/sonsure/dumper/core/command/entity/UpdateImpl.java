@@ -24,11 +24,13 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
         updateContext = new UpdateContext();
     }
 
+    @Override
     public Update table(Class<?> cls) {
         updateContext.setModelClass(cls);
         return this;
     }
 
+    @Override
     public Update set(String field, Object value) {
         updateContext.addSetField(field, value);
         return this;
@@ -41,6 +43,7 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
         return this;
     }
 
+    @Override
     public Update setForEntityWhereId(Object entity) {
         updateContext.setModelClass(entity.getClass());
         String pkField = getJdbcEngineConfig().getMappingHandler().getPkField(entity.getClass());
@@ -61,6 +64,7 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
         return this;
     }
 
+    @Override
     public Update setForEntity(Object entity) {
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
@@ -70,11 +74,13 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
         return this;
     }
 
+    @Override
     public Update updateNull() {
         updateContext.setIgnoreNull(false);
         return this;
     }
 
+    @Override
     public int execute() {
         CommandContext commandContext = this.commandContextBuilder.build(this.updateContext, getJdbcEngineConfig());
         return (Integer) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.UPDATE);

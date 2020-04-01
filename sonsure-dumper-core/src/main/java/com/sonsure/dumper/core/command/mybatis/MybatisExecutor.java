@@ -4,6 +4,9 @@ import com.sonsure.dumper.core.command.simple.SimpleCommandExecutor;
 
 import java.util.Map;
 
+/**
+ * @author liyd
+ */
 public interface MybatisExecutor extends SimpleCommandExecutor<MybatisExecutor> {
 
     /**

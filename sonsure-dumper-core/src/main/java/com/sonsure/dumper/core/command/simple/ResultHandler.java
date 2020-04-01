@@ -1,5 +1,8 @@
 package com.sonsure.dumper.core.command.simple;
 
+/**
+ * @author liyd
+ */
 public interface ResultHandler<T> {
 
     /**

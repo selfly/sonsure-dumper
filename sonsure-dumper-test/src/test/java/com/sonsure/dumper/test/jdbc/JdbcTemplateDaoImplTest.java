@@ -1035,9 +1035,10 @@ public class JdbcTemplateDaoImplTest {
         InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("modular-osgi-user-3.0.0.sql");
 
         jdbcDao.nativeExecutor()
-                .command(IOUtils.toString(resourceAsStream))
+                .command(IOUtils.toString(resourceAsStream, "utf-8"))
                 .nativeCommand()
                 .executeScript();
+        resourceAsStream.close();
 
     }
 }

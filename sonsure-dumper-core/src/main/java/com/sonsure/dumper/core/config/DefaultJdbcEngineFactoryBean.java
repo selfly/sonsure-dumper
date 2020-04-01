@@ -6,6 +6,7 @@ import org.springframework.beans.factory.FactoryBean;
 /**
  * JdbcEngine FactoryBean，使用Spring时使用
  * 使用该基础FactoryBean必须注入persistExecutor
+ * @author liyd
  */
 public class DefaultJdbcEngineFactoryBean extends DefaultJdbcEngineConfigImpl implements FactoryBean<JdbcEngine> {
 

@@ -17,8 +17,8 @@
 package com.sonsure.dumper.springjdbc.persist;
 
 import com.sonsure.dumper.core.mapping.MappingHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -48,7 +48,7 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
     /**
      * Logger available to subclasses
      */
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private MappingHandler mappingHandler;
 
@@ -215,6 +215,7 @@ public class JdbcRowMapper<T> implements RowMapper<T> {
      *
      * @see ResultSetMetaData
      */
+    @Override
     public T mapRow(ResultSet rs, int rowNumber) throws SQLException {
         Assert.state(this.mappedClass != null, "Mapped class was not specified");
         T mappedObject = BeanUtils.instantiate(this.mappedClass);

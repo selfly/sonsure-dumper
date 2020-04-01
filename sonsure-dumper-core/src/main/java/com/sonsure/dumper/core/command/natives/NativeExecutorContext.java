@@ -5,6 +5,9 @@ import com.sonsure.dumper.core.command.simple.SimpleExecutorContext;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author liyd
+ */
 public class NativeExecutorContext extends SimpleExecutorContext {
 
     protected List<Object> parameters;

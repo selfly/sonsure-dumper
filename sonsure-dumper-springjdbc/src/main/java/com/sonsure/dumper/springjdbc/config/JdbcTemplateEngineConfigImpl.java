@@ -7,7 +7,9 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * Created by liyd on 17/4/12.
+ *
+ * @author liyd
+ * @date 17/4/12
  */
 public class JdbcTemplateEngineConfigImpl extends AbstractJdbcEngineConfig {
 

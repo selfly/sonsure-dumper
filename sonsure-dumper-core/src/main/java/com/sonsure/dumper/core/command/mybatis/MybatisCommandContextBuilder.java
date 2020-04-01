@@ -15,6 +15,9 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.util.List;
 
+/**
+ * @author liyd
+ */
 public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder {
 
     @Override

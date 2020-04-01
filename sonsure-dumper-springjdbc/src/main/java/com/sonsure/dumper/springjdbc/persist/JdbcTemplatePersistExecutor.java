@@ -41,6 +41,7 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
     @Override
     protected String doGetDialect() {
         return jdbcOperations.execute(new ConnectionCallback<String>() {
+            @Override
             public String doInConnection(Connection con) throws SQLException {
                 return con.getMetaData().getDatabaseProductName().toLowerCase();
             }
@@ -58,6 +59,7 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
         } else {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcOperations.update(new PreparedStatementCreator() {
+                @Override
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                     PreparedStatement ps = con.prepareStatement(commandContext.getCommand(), new String[]{generateKey.getColumn()});
                     ArgumentPreparedStatementSetter pss = new ArgumentPreparedStatementSetter(commandContext.getParameters()

@@ -5,6 +5,9 @@ import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
+/**
+ * @author liyd
+ */
 public class NativeCommandContextBuilder extends AbstractCommandContextBuilder {
 
     @Override

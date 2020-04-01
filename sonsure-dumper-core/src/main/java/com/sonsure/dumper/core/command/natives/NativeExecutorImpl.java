@@ -17,6 +17,7 @@ public class NativeExecutorImpl extends AbstractSimpleCommandExecutor<NativeExec
         nativeExecutorContext = new NativeExecutorContext();
     }
 
+    @Override
     public NativeExecutor parameters(Object... values) {
         for (Object value : values) {
             this.nativeExecutorContext.addParameter(value);

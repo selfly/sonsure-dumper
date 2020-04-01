@@ -3,7 +3,8 @@ package com.sonsure.dumper.core.command.entity;
 import com.sonsure.dumper.core.command.lambda.Function;
 
 /**
- * Created by liyd on 17/4/14.
+ * @author liyd
+ * @date 17/4/14
  */
 public interface Update extends ConditionCommandExecutor<Update> {
 
@@ -18,8 +19,9 @@ public interface Update extends ConditionCommandExecutor<Update> {
     /**
      * 设置属性值
      *
-     * @param field
-     * @param value
+     * @param field the field
+     * @param value the value
+     * @return the update
      */
     Update set(String field, Object value);
 

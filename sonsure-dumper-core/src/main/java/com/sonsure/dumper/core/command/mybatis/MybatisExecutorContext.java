@@ -5,6 +5,9 @@ import com.sonsure.dumper.core.command.simple.SimpleExecutorContext;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author liyd
+ */
 public class MybatisExecutorContext extends SimpleExecutorContext {
 
     protected Map<String, Object> parameters;
