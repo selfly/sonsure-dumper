@@ -5,9 +5,25 @@ import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * @author liyd
+ */
 public class LambdaMethod {
+
+    private static final Field CAPTURING_CLASS_FIELD;
+
+    static {
+        try {
+            CAPTURING_CLASS_FIELD = SerializedLambda.class.getDeclaredField("capturingClass");
+            CAPTURING_CLASS_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new SonsureJdbcException("获取SerializedLambda capturingClass属性失败", e);
+        }
+    }
+
 
     public static <T, R> String getField(Function<T, R> lambda) {
         Method method = createMethod(lambda);
@@ -48,7 +64,9 @@ public class LambdaMethod {
     private static Method getMethod(SerializedLambda serializedLambda) {
         String className = StringUtils.replace(serializedLambda.getImplClass(), "/", ".");
         try {
-            return LambdaMethod.class.getClassLoader().loadClass(className).getDeclaredMethod(serializedLambda.getImplMethodName());
+            final Class<?> clazz = (Class<?>) CAPTURING_CLASS_FIELD.get(serializedLambda);
+            ClassLoader classLoader = clazz != null && clazz.getClassLoader() != null ? clazz.getClassLoader() : Thread.currentThread().getContextClassLoader();
+            return classLoader.loadClass(className).getDeclaredMethod(serializedLambda.getImplMethodName());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
