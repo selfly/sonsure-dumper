@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020. www.sonsure.com Inc. All rights reserved.
+  ~ You may obtain more information at
+  ~
+  ~   http://www.sonsure.com
+  ~
+  ~ Designed By Selfly Lee (selfly@live.com)
+  -->
+
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">

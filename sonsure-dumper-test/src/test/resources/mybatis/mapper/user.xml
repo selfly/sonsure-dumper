@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (c) 2020. www.sonsure.com Inc. All rights reserved.
+  ~ You may obtain more information at
+  ~
+  ~   http://www.sonsure.com
+  ~
+  ~ Designed By Selfly Lee (selfly@live.com)
+  -->
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sonsure.mybatis.mapper.UserMapper">

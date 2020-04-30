@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2020. www.sonsure.com Inc. All rights reserved.
+ * You may obtain more information at
+ *
+ *   http://www.sonsure.com
+ *
+ * Designed By Selfly Lee (selfly@live.com)
+ */
+
 drop table if exists ss_user_extend_prop;
 drop table if exists ss_user_relationship;
 drop table if exists ss_user_statement;
