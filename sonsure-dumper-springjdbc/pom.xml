@@ -22,6 +22,10 @@
     <artifactId>sonsure-dumper-springjdbc</artifactId>
     <packaging>bundle</packaging>
 
+    <properties>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.sonsure</groupId>
