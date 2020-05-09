@@ -129,28 +129,32 @@ public class JSqlParserCommandConversionHandlerTest {
     public void commandToSql10() {
         String command = "select t.* from UserInfo t where t.userInfoId = :userInfoId and userAge = :userAge and password = ?";
         String sql = commandConversionHandler.convert(command, null);
-        System.out.println(sql);
+        String result = "SELECT t.* FROM USER_INFO t WHERE t.USER_INFO_ID = :userInfoId AND userAge = :userAge AND password = ?";
+        Assert.assertTrue(sql.toLowerCase().equals(result.toLowerCase()));
     }
 
     @Test
     public void commandToSql11() {
         String command = "insert into UserInfo (username,testUserId) values (?,`{{SEQ_TEST_USER.NEXTVAL}}`)";
         String sql = commandConversionHandler.convert(command, null);
-        System.out.println(sql);
+        String result = "INSERT INTO USER_INFO (username, testUserId) VALUES (?, SEQ_TEST_USER.NEXTVAL)";
+        Assert.assertTrue(sql.toLowerCase().equals(result.toLowerCase()));
     }
 
     @Test
     public void commandToSql12() {
         String command = "select orderNumber,resourceUrl,resourceIcon,sysResourceId,resourceName,routingUrl,parentId,resourceType from UserInfo where user_info_id in ( select 1 from RelTag) ";
         String sql = commandConversionHandler.convert(command, null);
-        System.out.println(sql);
+        String result = "SELECT orderNumber, resourceUrl, resourceIcon, sysResourceId, resourceName, routingUrl, parentId, resourceType FROM USER_INFO WHERE user_info_id IN (SELECT 1 FROM REL_TAG)";
+        Assert.assertTrue(sql.toLowerCase().equals(result.toLowerCase()));
     }
 
     @Test
     public void commandToSql13() {
-        String command = "update Content set commentCount = commentCount+1 where contentId is ?";
+        String command = "update Content set commentCount = commentCount+1 where contentId is null";
         String sql = commandConversionHandler.convert(command, null);
-        System.out.println(sql);
+        String result = "UPDATE CONTENT SET COMMENT_COUNT = COMMENT_COUNT + 1 WHERE CONTENT_ID IS NULL";
+        Assert.assertTrue(sql.toLowerCase().equals(result.toLowerCase()));
     }
 
 }
