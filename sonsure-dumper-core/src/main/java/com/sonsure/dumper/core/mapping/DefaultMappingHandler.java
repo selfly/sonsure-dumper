@@ -25,4 +25,8 @@ public class DefaultMappingHandler extends AbstractMappingHandler {
     public DefaultMappingHandler(String modelPackages) {
         super(modelPackages);
     }
+
+    public DefaultMappingHandler(String modelPackages, ClassLoader classLoader) {
+        super(modelPackages, classLoader);
+    }
 }

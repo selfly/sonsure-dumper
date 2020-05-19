@@ -11,10 +11,14 @@ package com.sonsure.dumper.test.jdbc;
 
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
+import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.lambda.Function;
+import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.persist.JdbcDao;
+import com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineConfigImpl;
+import com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl;
 import com.sonsure.dumper.test.model.AuthCode;
 import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UidUser;
@@ -26,11 +30,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -1048,6 +1057,95 @@ public class JdbcTemplateDaoImplTest {
                 .nativeCommand()
                 .executeScript();
         resourceAsStream.close();
+
+    }
+
+    @Test
+    public void batchUpdate() {
+
+        jdbcDao.executeDelete(UserInfo.class);
+        List<UserInfo> userInfoList = new ArrayList<>();
+        for (int i = 1; i < 100000; i++) {
+            UserInfo user = new UserInfo();
+            user.setUserInfoId(Long.valueOf(i));
+            user.setLoginName("name-" + i);
+            user.setPassword("123456-" + i);
+            user.setUserAge(i);
+            user.setGmtCreate(new Date());
+            userInfoList.add(user);
+        }
+
+        final long begin = System.currentTimeMillis();
+
+        for (UserInfo userInfo : userInfoList) {
+            jdbcDao.executeInsert(userInfo);
+        }
+
+        final long end = System.currentTimeMillis();
+        System.out.println("entity插入耗时:" + (end - begin));
+        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
+        jdbcDao.executeDelete(UserInfo.class);
+
+        final JdbcTemplateDaoImpl jdbcTemplateDao = (JdbcTemplateDaoImpl) this.jdbcDao;
+        final JdbcEngineConfig jdbcEngineConfig = jdbcTemplateDao.getDefaultJdbcEngine().getJdbcEngineConfig();
+        final JdbcOperations jdbcOperations = ((JdbcTemplateEngineConfigImpl) jdbcEngineConfig).getJdbcOperations();
+
+        String sql = "INSERT INTO USER_INFO (PASSWORD, LOGIN_NAME, GMT_CREATE, USER_AGE, USER_INFO_ID) VALUES (?, ?, ?, ?, ?)";
+
+
+        final long entBegin = System.currentTimeMillis();
+        jdbcOperations.batchUpdate(sql, userInfoList, userInfoList.size(), new ParameterizedPreparedStatementSetter<UserInfo>() {
+            @Override
+            public void setValues(PreparedStatement ps, UserInfo userInfo) throws SQLException {
+                final String password = (String) ClassUtils.getPropertyValue(userInfo, "password");
+                final String loginName = (String) ClassUtils.getPropertyValue(userInfo, "loginName");
+                final int userAge = (int) ClassUtils.getPropertyValue(userInfo, "userAge");
+                final long userInfoId = (long) ClassUtils.getPropertyValue(userInfo, "userInfoId");
+                ps.setString(1, password);
+                ps.setString(2, loginName);
+                ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
+                ps.setInt(4, userAge);
+                ps.setLong(5, userInfoId);
+            }
+        });
+        final long entEnd = System.currentTimeMillis();
+        System.out.println("批量ent插入耗时:" + (entEnd - entBegin));
+        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
+        jdbcDao.executeDelete(UserInfo.class);
+
+
+        List<Object[]> objects = new ArrayList<>();
+
+        final long objBegin = System.currentTimeMillis();
+        for (UserInfo userInfo : userInfoList) {
+            objects.add(new Object[]{userInfo.getPassword(), userInfo.getLoginName(), userInfo.getGmtCreate(), userInfo.getUserAge(), userInfo.getUserInfoId()});
+        }
+        jdbcOperations.batchUpdate(sql, objects);
+        final long objEnd = System.currentTimeMillis();
+        System.out.println("批量object数组插入耗时:" + (objEnd - objBegin));
+        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
+        jdbcDao.executeDelete(UserInfo.class);
+
+        final long listGetBegin = System.currentTimeMillis();
+        jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                final UserInfo userInfo = userInfoList.get(i);
+                ps.setString(1, userInfo.getPassword());
+                ps.setString(2, userInfo.getLoginName());
+                ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
+                ps.setInt(4, userInfo.getUserAge());
+                ps.setLong(5, userInfo.getUserInfoId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return userInfoList.size();
+            }
+        });
+        final long listGetEnd = System.currentTimeMillis();
+        System.out.println("批量list get插入耗时:" + (listGetEnd - listGetBegin));
+        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
 
     }
 }

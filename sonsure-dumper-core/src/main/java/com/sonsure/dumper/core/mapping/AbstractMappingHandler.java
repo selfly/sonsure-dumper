@@ -45,6 +45,11 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     protected Map<String, String> tablePreFixMap;
 
     /**
+     * The Class loader.
+     */
+    protected ClassLoader classLoader;
+
+    /**
      * load的class
      */
     protected Map<String, Class<?>> loadedClass;
@@ -65,10 +70,15 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     protected Map<String, Class<?>> customClassMapping;
 
     public AbstractMappingHandler(String modelPackages) {
+        this(modelPackages, null);
+    }
+
+    public AbstractMappingHandler(String modelPackages, ClassLoader classLoader) {
         loadedClass = new HashMap<>();
         classMapping = new HashMap<>();
         customClassMapping = new HashMap<>();
         this.modelPackages = modelPackages;
+        this.classLoader = classLoader == null ? getClass().getClassLoader() : classLoader;
         this.init();
     }
 
@@ -100,6 +110,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         return this.getColumn(tableClass, fieldName);
     }
 
+    @Override
     public String getTable(Class<?> entityClass, Map<String, Object> params) {
 
         ModelClassMeta classMeta = ModelClassCache.getClassMeta(entityClass);
@@ -130,6 +141,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         return tableName;
     }
 
+    @Override
     public String getPkField(Class<?> entityClass) {
 
         ModelClassMeta classMeta = ModelClassCache.getClassMeta(entityClass);
@@ -148,6 +160,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         return firstLowerName + PRI_FIELD_SUFFIX;
     }
 
+    @Override
     public String getColumn(Class<?> entityClass, String fieldName) {
         ModelFieldMeta classFieldMeta = ModelClassCache.getClassFieldMeta(entityClass, fieldName);
 
@@ -182,7 +195,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         }
         String[] pks = StringUtils.split(modelPackages, ",");
         for (String pk : pks) {
-            List<String> classes = ClassPathBeanScanner.scanClasses(pk, this.getClassLoader());
+            List<String> classes = ClassPathBeanScanner.scanClasses(pk, getClassLoader());
             for (String clazz : classes) {
 
                 int index = StringUtils.lastIndexOf(clazz, ".");
@@ -235,8 +248,8 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         }
     }
 
-    protected ClassLoader getClassLoader() {
-        return getClass().getClassLoader();
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     public String getModelPackages() {

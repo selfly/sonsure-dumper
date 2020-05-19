@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- *
  * @author liyd
  * @date 17/4/12
  */
@@ -35,5 +34,9 @@ public class JdbcTemplateEngineConfigImpl extends AbstractJdbcEngineConfig {
 
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
+    }
+
+    public JdbcOperations getJdbcOperations() {
+        return jdbcOperations;
     }
 }

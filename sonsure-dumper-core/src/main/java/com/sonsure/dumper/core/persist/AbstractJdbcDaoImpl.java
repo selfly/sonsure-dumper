@@ -172,6 +172,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
                 .executeScript();
     }
 
+    @Override
     public NativeExecutor nativeExecutor() {
         return this.getDefaultJdbcEngine().createExecutor(NativeExecutor.class);
     }

@@ -25,7 +25,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by liyd on 17/4/12.
+ *
+ * @author liyd
+ * @date 17/4/12
  */
 public interface JdbcDao {
 
