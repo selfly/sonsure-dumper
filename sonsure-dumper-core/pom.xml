@@ -22,7 +22,8 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -40,15 +41,13 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.spring-beans</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>javax.persistence-api</artifactId>
-            <version>${javax.persistence-api.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -67,7 +66,6 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>Sonsure Dumper API</Bundle-Name>
                         <Import-Package>
-                            org.slf4j,
                             org.apache.commons.lang3,
                             com.sonsure.commons.utils,
                             com.sonsure.commons.bean,
@@ -84,10 +82,12 @@
                             net.sf.jsqlparser.statement.select,
                             net.sf.jsqlparser.expression.operators.relational,
                             net.sf.jsqlparser.parser,
+                            org.slf4j;resolution:=optional,
                             org.apache.ibatis.mapping;resolution:=optional,
                             org.apache.ibatis.reflection;resolution:=optional,
                             org.apache.ibatis.session;resolution:=optional,
                             org.apache.ibatis.type;resolution:=optional,
+                            org.springframework.beans.factory;resolution:=optional
                         </Import-Package>
                         <Export-Package>
                             com.sonsure.dumper.core.annotation,

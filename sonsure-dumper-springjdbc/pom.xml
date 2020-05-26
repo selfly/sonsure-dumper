@@ -23,7 +23,8 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -33,9 +34,24 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.spring-beans</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.spring-jdbc</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.spring-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.spring-tx</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -53,12 +69,22 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>Sonsure Dumper SpringJdbc实现</Bundle-Name>
                         <Import-Package>
-                            org.slf4j,
                             com.sonsure.dumper.core.command,
+                            com.sonsure.dumper.core.command.lambda,
                             com.sonsure.dumper.core.config,
-                            com.sonsure.dumper.core.persist,
+                            com.sonsure.dumper.core.exception,
                             com.sonsure.dumper.core.mapping,
-                            com.sonsure.dumper.core.exception
+                            com.sonsure.dumper.core.persist,
+                            org.slf4j;resolution:=optional,
+                            org.springframework.beans;resolution:=optional,
+                            org.springframework.beans.factory;resolution:=optional,
+                            org.springframework.core.io;resolution:=optional,
+                            org.springframework.dao;resolution:=optional,
+                            org.springframework.dao.support;resolution:=optional,
+                            org.springframework.jdbc.core;resolution:=optional,
+                            org.springframework.jdbc.datasource.init;resolution:=optional,
+                            org.springframework.jdbc.support;resolution:=optional,
+                            org.springframework.util;resolution:=optional
                         </Import-Package>
                         <Export-Package>
                             com.sonsure.dumper.springjdbc.config,
