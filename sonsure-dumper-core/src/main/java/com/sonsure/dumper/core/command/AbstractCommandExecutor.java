@@ -22,12 +22,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by liyd on 17/4/19.
+ * The type Abstract command executor.
+ *
+ * @author liyd
+ * @date 17 /4/19
  */
 public abstract class AbstractCommandExecutor implements CommandExecutor {
 
+    /**
+     * The Command context builder.
+     */
     protected CommandContextBuilder commandContextBuilder;
 
+    /**
+     * The Jdbc engine config.
+     */
     protected JdbcEngineConfig jdbcEngineConfig;
 
     public AbstractCommandExecutor(JdbcEngineConfig jdbcEngineConfig) {
@@ -104,6 +113,12 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
 
     protected interface PageQueryHandler<T> {
 
+        /**
+         * Query list list.
+         *
+         * @param commandContext the command context
+         * @return the list
+         */
         List<T> queryList(CommandContext commandContext);
     }
 }

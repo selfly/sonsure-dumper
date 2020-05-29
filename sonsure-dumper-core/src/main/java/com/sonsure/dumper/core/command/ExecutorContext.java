@@ -10,17 +10,25 @@
 package com.sonsure.dumper.core.command;
 
 /**
- * Created by liyd on 17/4/11.
+ * The interface Executor context.
+ *
+ * @author liyd
+ * @date 17 /4/11
  */
 public interface ExecutorContext {
 
     /**
      * 获取实体类
      *
-     * @return
+     * @return class [ ]
      */
     Class<?>[] getModelClasses();
 
+    /**
+     * Is native command boolean.
+     *
+     * @return the boolean
+     */
     boolean isNativeCommand();
 
 }

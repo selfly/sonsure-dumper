@@ -10,6 +10,7 @@
 package com.sonsure.dumper.test.persist;
 
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.batch.BatchCommandContext;
 import com.sonsure.dumper.core.persist.AbstractPersistExecutor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -92,6 +93,11 @@ public class HibernatePersistExecutor extends AbstractPersistExecutor {
     @Override
     public int delete(CommandContext commandContext) {
         return 0;
+    }
+
+    @Override
+    protected <T> Object batchUpdate(BatchCommandContext<T> commandContext) {
+        return null;
     }
 
     @Override

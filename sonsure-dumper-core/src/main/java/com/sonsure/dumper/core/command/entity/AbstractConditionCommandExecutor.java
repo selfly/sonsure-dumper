@@ -22,7 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liyd on 17/4/11.
+ * The type Abstract condition command executor.
+ *
+ * @param <T> the type parameter
+ * @author liyd
+ * @date 17 /4/11
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractConditionCommandExecutor<T extends ConditionCommandExecutor<T>> extends AbstractCommandExecutor implements ConditionCommandExecutor<T> {
@@ -31,11 +35,13 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         super(jdbcEngineConfig);
     }
 
+    @Override
     public T where() {
         this.getWhereContext().addWhereField("where", null, null, null);
         return (T) this;
     }
 
+    @Override
     public T where(String field, Object[] value) {
         this.where(field, value == null ? "is" : "=", value);
         return (T) this;
@@ -55,12 +61,14 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T where(String field, Object value) {
         Object[] values = value == null ? null : (value instanceof Object[] ? (Object[]) value : new Object[]{value});
         this.where(field, value == null ? "is" : "=", values);
         return (T) this;
     }
 
+    @Override
     public T where(String field, String operator, Object... values) {
         this.getWhereContext().addWhereField("where", field, operator, values);
         return (T) this;
@@ -73,6 +81,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T condition(String field, Object value) {
         Object[] values = value instanceof Object[] ? (Object[]) value : new Object[]{value};
         return this.condition(field, value == null ? "is" : "=", values);
@@ -85,6 +94,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T condition(String field, Object[] value) {
         return this.condition(field, value == null ? "is" : "=", value);
     }
@@ -96,6 +106,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T condition(String field, String operator, Object... values) {
         this.getWhereContext().addWhereField(null, field, operator, values);
         return (T) this;
@@ -108,6 +119,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T conditionEntity(Object entity) {
         return conditionEntity(entity, null, "and");
     }
@@ -146,11 +158,13 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T and() {
         this.getWhereContext().addWhereField("and", null, null, null);
         return (T) this;
     }
 
+    @Override
     public T and(String field, Object value) {
         Object[] values = value instanceof Object[] ? (Object[]) value : new Object[]{value};
         this.and(field, value == null ? "is" : "=", values);
@@ -164,6 +178,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T and(String field, Object[] value) {
         this.and(field, value == null ? "is" : "=", value);
         return (T) this;
@@ -176,6 +191,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T and(String field, String operator, Object... values) {
         this.getWhereContext().addWhereField("and", field, operator, values);
         return (T) this;
@@ -188,11 +204,13 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T or() {
         this.getWhereContext().addWhereField("or", null, null, null);
         return (T) this;
     }
 
+    @Override
     public T or(String field, Object value) {
         Object[] values = value instanceof Object[] ? (Object[]) value : new Object[]{value};
         return this.or(field, value == null ? "is" : "=", values);
@@ -205,6 +223,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T or(String field, Object[] values) {
         return this.or(field, values == null ? "is" : "=", values);
     }
@@ -216,6 +235,7 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T or(String field, String operator, Object... values) {
         this.getWhereContext().addWhereField("or", field, operator, values);
         return (T) this;
@@ -228,11 +248,13 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
+    @Override
     public T begin() {
         this.getWhereContext().addWhereField("(", null, null, null);
         return (T) this;
     }
 
+    @Override
     public T end() {
         this.getWhereContext().addWhereField(")", null, null, null);
         return (T) this;
@@ -244,5 +266,5 @@ public abstract class AbstractConditionCommandExecutor<T extends ConditionComman
         return (T) this;
     }
 
-    protected abstract WhereContext getWhereContext();
+    protected abstract AbstractWhereContext getWhereContext();
 }

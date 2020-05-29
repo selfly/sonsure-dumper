@@ -24,7 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liyd on 17/4/25.
+ * The type Abstract simple command executor.
+ *
+ * @param <T> the type parameter
+ * @author liyd
+ * @date 17 /4/25
  */
 public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecutor<T>> extends AbstractCommandExecutor implements SimpleCommandExecutor<T> {
 
@@ -59,6 +63,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         return (Long) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL);
     }
 
+    @Override
     public Object singleResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
         return getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
@@ -202,11 +207,13 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         return (Long) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.INSERT);
     }
 
+    @Override
     public int update() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
         return (Integer) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.UPDATE);
     }
 
+    @Override
     public void execute() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getSimpleExecutorContext(), getJdbcEngineConfig());
         getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.EXECUTE);

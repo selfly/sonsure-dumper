@@ -15,12 +15,16 @@ import com.sonsure.dumper.core.command.ExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 /**
- * Created by liyd on 17/4/14.
+ * The type Delete command context builder.
+ *
+ * @author liyd
+ * @date 17 /4/14
  */
 public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuilder {
 
     private static final String COMMAND_OPEN = "delete from ";
 
+    @Override
     public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
         DeleteContext deleteContext = (DeleteContext) executorContext;
         StringBuilder command = new StringBuilder(COMMAND_OPEN);

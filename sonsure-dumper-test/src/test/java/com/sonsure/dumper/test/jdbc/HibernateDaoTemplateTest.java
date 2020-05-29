@@ -10,7 +10,7 @@
 package com.sonsure.dumper.test.jdbc;
 
 
-import com.sonsure.dumper.core.persist.JdbcDao;
+import com.sonsure.dumper.core.persist.DaoTemplate;
 import com.sonsure.dumper.test.model.HbUserInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,15 +22,15 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext-hibernate.xml"})
-public class HibernateJdbcDaoTest {
+public class HibernateDaoTemplateTest {
 
     @Autowired
-    private JdbcDao jdbcDao;
+    private DaoTemplate daoTemplate;
 
     @Test
     public void findList() {
 
-        List<HbUserInfo> userInfos = jdbcDao.find(HbUserInfo.class);
+        List<HbUserInfo> userInfos = daoTemplate.find(HbUserInfo.class);
 
         System.out.println(userInfos);
     }

@@ -11,10 +11,11 @@ package com.sonsure.dumper.springjdbc.persist;
 
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.GenerateKey;
+import com.sonsure.dumper.core.command.batch.BatchCommandContext;
+import com.sonsure.dumper.core.command.batch.ParameterizedSetter;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.persist.AbstractPersistExecutor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -130,6 +131,12 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
     }
 
     @Override
+    protected <T> Object batchUpdate(BatchCommandContext<T> commandContext) {
+        final ParameterizedSetter<T> parameterizedSetter = commandContext.getParameterizedSetter();
+        return jdbcOperations.batchUpdate(commandContext.getCommand(), commandContext.getBatchData(), commandContext.getBatchSize(), parameterizedSetter::setValues);
+    }
+
+    @Override
     public int delete(CommandContext commandContext) {
         return jdbcOperations.update(commandContext.getCommand(), commandContext.getParameters().toArray());
     }
@@ -142,12 +149,9 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     @Override
     protected Object doExecuteScript(CommandContext commandContext) {
-        return jdbcOperations.execute(new ConnectionCallback<Void>() {
-            @Override
-            public Void doInConnection(Connection connection) throws SQLException, DataAccessException {
-                ScriptUtils.executeSqlScript(connection, new ByteArrayResource(commandContext.getCommand().getBytes()));
-                return null;
-            }
+        return jdbcOperations.execute((ConnectionCallback<Void>) connection -> {
+            ScriptUtils.executeSqlScript(connection, new ByteArrayResource(commandContext.getCommand().getBytes()));
+            return null;
         });
     }
 

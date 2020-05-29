@@ -13,7 +13,10 @@ package com.sonsure.dumper.core.command.natives;
 import com.sonsure.dumper.core.command.simple.SimpleCommandExecutor;
 
 /**
- * Created by liyd on 17/4/25.
+ * The interface Native executor.
+ *
+ * @author liyd
+ * @date 17 /4/25
  */
 public interface NativeExecutor extends SimpleCommandExecutor<NativeExecutor> {
 

@@ -14,7 +14,10 @@ import com.sonsure.dumper.core.command.QueryCommandExecutor;
 import com.sonsure.dumper.core.command.lambda.Function;
 
 /**
- * Created by liyd on 17/4/12.
+ * The interface Select.
+ *
+ * @author liyd
+ * @date 17 /4/12
  */
 public interface Select extends QueryCommandExecutor<Select>, ConditionCommandExecutor<Select> {
 

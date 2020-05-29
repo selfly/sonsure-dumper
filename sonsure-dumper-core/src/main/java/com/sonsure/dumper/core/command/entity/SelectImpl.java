@@ -32,8 +32,7 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     protected SelectContext selectContext;
 
     public SelectImpl(JdbcEngineConfig jdbcEngineConfig) {
-        super(jdbcEngineConfig);
-        selectContext = new SelectContext();
+        this(jdbcEngineConfig, null);
     }
 
 
@@ -89,7 +88,7 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     }
 
     @Override
-    public <E,R> Select orderBy(Function<E,R> function) {
+    public <E, R> Select orderBy(Function<E, R> function) {
         String[] fields = LambdaMethod.getFields(function);
         this.orderBy(fields);
         return this;
@@ -240,7 +239,7 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
     }
 
     @Override
-    protected WhereContext getWhereContext() {
+    protected AbstractWhereContext getWhereContext() {
         return this.selectContext;
     }
 

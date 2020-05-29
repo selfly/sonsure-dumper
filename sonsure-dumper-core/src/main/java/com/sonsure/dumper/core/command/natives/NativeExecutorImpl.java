@@ -15,7 +15,10 @@ import com.sonsure.dumper.core.command.simple.SimpleExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 /**
- * Created by liyd on 17/4/25.
+ * The type Native executor.
+ *
+ * @author liyd
+ * @date 17 /4/25
  */
 public class NativeExecutorImpl extends AbstractSimpleCommandExecutor<NativeExecutor> implements NativeExecutor {
 

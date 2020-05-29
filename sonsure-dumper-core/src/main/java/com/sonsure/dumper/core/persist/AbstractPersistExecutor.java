@@ -12,6 +12,7 @@ package com.sonsure.dumper.core.persist;
 
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
+import com.sonsure.dumper.core.command.batch.BatchCommandContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liyd on 17/4/12.
+ * The type Abstract persist executor.
+ *
+ * @author liyd
+ * @date 17 /4/12
  */
 public abstract class AbstractPersistExecutor implements PersistExecutor {
 
@@ -67,6 +71,8 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
                 return this.queryOneColList(commandContext);
             case UPDATE:
                 return this.update(commandContext);
+            case BATCH_UPDATE:
+                return this.batchUpdate(((BatchCommandContext<?>) commandContext));
             case DELETE:
                 return this.delete(commandContext);
             case EXECUTE:
@@ -82,92 +88,106 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
     /**
      * insert操作，返回主键值
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return object
      */
     protected abstract Object insert(CommandContext commandContext);
 
     /**
      * 列表查询，泛型object为某个实体对象
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return list
      */
     protected abstract List<?> queryForList(CommandContext commandContext);
 
     /**
      * 查询单个结果对象，返回结果为某个实体对象
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return object
      */
     protected abstract Object querySingleResult(CommandContext commandContext);
 
     /**
      * 查询单条记录的map结果集，key=列名，value=列值
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return map
      */
     protected abstract Map<String, Object> queryForMap(CommandContext commandContext);
 
     /**
      * 查询列表记录的map结果集，key=列名，value=列值
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return list
      */
     protected abstract List<Map<String, Object>> queryForMapList(CommandContext commandContext);
 
     /**
      * 查询某一列的值
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return object
      */
     protected abstract Object queryOneCol(CommandContext commandContext);
 
     /**
      * 查询某一列的值列表
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return list list
      */
     protected abstract List<?> queryOneColList(CommandContext commandContext);
 
     /**
      * 更新操作
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return int
      */
     protected abstract int update(CommandContext commandContext);
 
     /**
+     * 批量更新操作
+     *
+     * @param <T>            the type parameter
+     * @param commandContext the command context
+     * @return int int
+     */
+    protected abstract <T> Object batchUpdate(BatchCommandContext<T> commandContext);
+
+    /**
      * 删除操作
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return int
      */
     protected abstract int delete(CommandContext commandContext);
 
     /**
      * 执行代码
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return object
      */
     protected abstract Object doExecute(CommandContext commandContext);
 
     /**
      * 执行代码
      *
-     * @param commandContext
-     * @return
+     * @param commandContext the command context
+     * @return object
      */
     protected abstract Object doExecuteScript(CommandContext commandContext);
 
 
+    /**
+     * Do get dialect string.
+     *
+     * @return the string
+     */
     protected abstract String doGetDialect();
 
     public JdbcEngineConfig getJdbcEngineConfig() {

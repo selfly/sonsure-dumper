@@ -15,7 +15,10 @@ import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 /**
- * Created by liyd on 17/4/14.
+ * The type Delete.
+ *
+ * @author liyd
+ * @date 17 /4/14
  */
 public class DeleteImpl extends AbstractConditionCommandExecutor<Delete> implements Delete {
 
@@ -32,13 +35,14 @@ public class DeleteImpl extends AbstractConditionCommandExecutor<Delete> impleme
         return this;
     }
 
+    @Override
     public int execute() {
-        CommandContext commandContext = this.commandContextBuilder.build(deleteContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.getCommandContextBuilder().build(deleteContext, getJdbcEngineConfig());
         return (Integer) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.DELETE);
     }
 
     @Override
-    protected WhereContext getWhereContext() {
+    protected AbstractWhereContext getWhereContext() {
         return deleteContext;
     }
 }

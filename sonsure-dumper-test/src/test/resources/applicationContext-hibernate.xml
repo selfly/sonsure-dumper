@@ -90,7 +90,7 @@
         <property name="persistExecutor" ref="hibernatePersistExecutor"/>
     </bean>
 
-    <bean id="jdbcDao" class="com.sonsure.dumper.core.persist.DefaultJdbcDaoImpl">
+    <bean id="jdbcDao" class="com.sonsure.dumper.core.persist.DefaultDaoTemplateImpl">
         <property name="defaultJdbcEngine" ref="defaultJdbcEngine"/>
     </bean>
 

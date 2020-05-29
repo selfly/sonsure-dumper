@@ -20,7 +20,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectContext extends WhereContext {
+/**
+ * The type Select context.
+ *
+ * @author liyd
+ */
+public class SelectContext extends AbstractWhereContext {
 
     /**
      * 实体类型

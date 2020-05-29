@@ -24,10 +24,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 /**
- * Created by liyd on 17/4/12.
+ * The type Abstract command context builder.
+ *
+ * @author liyd
+ * @date 17 /4/12
  */
 public abstract class AbstractCommandContextBuilder implements CommandContextBuilder {
 
+    @Override
     public CommandContext build(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
         CommandContext commandContext = this.doBuild(executorContext, jdbcEngineConfig);
@@ -61,9 +65,9 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
     /**
      * 转换大小写
      *
-     * @param content
-     * @param commandCase
-     * @return
+     * @param content     the content
+     * @param commandCase the command case
+     * @return string
      */
     protected String convertCase(String content, String commandCase) {
         if (StringUtils.equalsIgnoreCase(commandCase, "upper")) {
@@ -133,11 +137,11 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
     /**
      * 构建where部分sql
      *
-     * @param whereContext the where context
+     * @param abstractWhereContext the where context
      * @return string command context
      */
-    protected CommandContext buildWhereSql(WhereContext whereContext) {
-        List<ClassField> whereFields = whereContext.getWhereFields();
+    protected CommandContext buildWhereSql(AbstractWhereContext abstractWhereContext) {
+        List<ClassField> whereFields = abstractWhereContext.getWhereFields();
         if (whereFields == null || whereFields.isEmpty()) {
             return null;
         }

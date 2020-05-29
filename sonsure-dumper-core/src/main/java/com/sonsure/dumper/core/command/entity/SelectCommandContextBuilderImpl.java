@@ -28,6 +28,7 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
 
     private static final String COMMAND_OPEN = "select ";
 
+    @Override
     public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
         SelectContext selectContext = (SelectContext) executorContext;

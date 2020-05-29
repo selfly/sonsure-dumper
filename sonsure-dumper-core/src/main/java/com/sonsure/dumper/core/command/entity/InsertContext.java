@@ -14,7 +14,7 @@ import com.sonsure.dumper.core.management.ClassField;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InsertContext extends EntityExecutorContext {
+public class InsertContext extends AbstractEntityExecutorContext {
 
     /**
      * 对应实体类

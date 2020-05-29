@@ -11,7 +11,12 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.ExecutorContext;
 
-public abstract class EntityExecutorContext implements ExecutorContext {
+/**
+ * The type Base entity executor context.
+ *
+ * @author liyd
+ */
+public abstract class AbstractEntityExecutorContext implements ExecutorContext {
 
     @Override
     public boolean isNativeCommand() {

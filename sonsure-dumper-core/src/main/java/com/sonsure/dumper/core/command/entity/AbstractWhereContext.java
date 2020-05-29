@@ -14,14 +14,14 @@ import com.sonsure.dumper.core.management.ClassField;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class WhereContext extends EntityExecutorContext {
+public abstract class AbstractWhereContext extends AbstractEntityExecutorContext {
 
     /**
      * where的属性/列
      */
     protected List<ClassField> whereFields;
 
-    public WhereContext() {
+    public AbstractWhereContext() {
         whereFields = new ArrayList<>();
     }
 

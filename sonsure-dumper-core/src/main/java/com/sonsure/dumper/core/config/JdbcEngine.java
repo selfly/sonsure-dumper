@@ -13,23 +13,29 @@ package com.sonsure.dumper.core.config;
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.CommandExecutor;
+import com.sonsure.dumper.core.command.batch.BatchUpdateExecutor;
+import com.sonsure.dumper.core.command.batch.ParameterizedSetter;
 import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.entity.Update;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by liyd on 17/4/12.
+ * The interface Jdbc engine.
+ *
+ * @author liyd
+ * @date 17 /4/12
  */
 public interface JdbcEngine {
 
     /**
      * jdbc 配置
      *
-     * @return
+     * @return jdbc engine config
      */
     JdbcEngineConfig getJdbcEngineConfig();
 
@@ -56,30 +62,30 @@ public interface JdbcEngine {
     /**
      * insert对象
      *
-     * @return
+     * @return insert
      */
     Insert insert();
 
     /**
      * insert数据
      *
-     * @param entity
-     * @return
+     * @param entity the entity
+     * @return object
      */
     Object executeInsert(Object entity);
 
     /**
      * 创建insert对象后指定into对象
      *
-     * @param cls
-     * @return
+     * @param cls the cls
+     * @return insert
      */
     Insert insertInto(Class<?> cls);
 
     /**
      * select对象
      *
-     * @return
+     * @return select
      */
     Select select();
 
@@ -87,7 +93,7 @@ public interface JdbcEngine {
      * select对象
      *
      * @param fields the fields
-     * @return select
+     * @return select select
      */
     Select select(String... fields);
 
@@ -95,35 +101,35 @@ public interface JdbcEngine {
     /**
      * 查询所有列表
      *
-     * @param cls
-     * @param <T>
-     * @return
+     * @param <T> the type parameter
+     * @param cls the cls
+     * @return list
      */
     <T> List<T> find(Class<T> cls);
 
     /**
      * 查询列表，以entity中不为null属性为where条件
      *
-     * @param entity
-     * @param <T>
-     * @return
+     * @param <T>    the type parameter
+     * @param entity the entity
+     * @return list
      */
     <T> List<T> find(T entity);
 
     /**
      * 查询分页列表,以entity中不为null属性为where条件
      *
-     * @param entity
-     * @param <T>
-     * @return
+     * @param <T>    the type parameter
+     * @param entity the entity
+     * @return page
      */
     <T extends Pageable> Page<T> pageResult(T entity);
 
     /**
      * 查询记录数
      *
-     * @param entity
-     * @return
+     * @param entity the entity
+     * @return long
      */
     long findCount(Object entity);
 
@@ -131,25 +137,25 @@ public interface JdbcEngine {
      * 查询记录数
      *
      * @param cls the cls
-     * @return long
+     * @return long long
      */
     long findCount(Class<?> cls);
 
     /**
      * 查询单个结果
      *
-     * @param entity
-     * @param <T>
-     * @return
+     * @param <T>    the type parameter
+     * @param entity the entity
+     * @return t
      */
     <T> T singleResult(T entity);
 
     /**
      * 第一个结果
      *
-     * @param entity
-     * @param <T>
-     * @return
+     * @param <T>    the type parameter
+     * @param entity the entity
+     * @return t
      */
     <T> T firstResult(T entity);
 
@@ -157,29 +163,49 @@ public interface JdbcEngine {
     /**
      * update对象
      *
-     * @return
+     * @return update
      */
     Update update();
 
     /**
      * update对象
      *
-     * @return
+     * @param cls the cls
+     * @return update
      */
     Update update(Class<?> cls);
 
     /**
      * 更新
      *
-     * @param entity
-     * @return
+     * @param entity the entity
+     * @return int
      */
     int executeUpdate(Object entity);
 
     /**
+     * Batch update batch update executor.
+     *
+     * @return the batch update executor
+     */
+    BatchUpdateExecutor batchUpdate();
+
+    /**
+     * Execute batch update object.
+     *
+     * @param <T>                 the type parameter
+     * @param command             the command
+     * @param batchData           the batch data
+     * @param batchSize           the batch size
+     * @param parameterizedSetter the parameterized setter
+     * @return the object
+     */
+    <T> Object executeBatchUpdate(String command, Collection<T> batchData, int batchSize, ParameterizedSetter<T> parameterizedSetter);
+
+    /**
      * delete对象
      *
-     * @return
+     * @return delete
      */
     Delete delete();
 
@@ -187,15 +213,15 @@ public interface JdbcEngine {
      * delete对象
      *
      * @param cls the cls
-     * @return delete
+     * @return delete delete
      */
     Delete deleteFrom(Class<?> cls);
 
     /**
      * delete对象，以entity中不为null属性做为条件
      *
-     * @param entity
-     * @return
+     * @param entity the entity
+     * @return int
      */
     int executeDelete(Object entity);
 
@@ -204,23 +230,23 @@ public interface JdbcEngine {
      *
      * @param cls the cls
      * @param id  the id
-     * @return int
+     * @return int int
      */
     int executeDelete(Class<?> cls, Serializable id);
 
     /**
      * 删除对象
      *
-     * @param cls
-     * @return
+     * @param cls the cls
+     * @return int
      */
     int executeDelete(Class<?> cls);
 
     /**
      * 创建select后指定from
      *
-     * @param cls
-     * @return
+     * @param cls the cls
+     * @return select
      */
     Select selectFrom(Class<?> cls);
 
@@ -228,10 +254,10 @@ public interface JdbcEngine {
     /**
      * 直接get对象
      *
-     * @param cls
-     * @param id
-     * @param <T>
-     * @return
+     * @param <T> the type parameter
+     * @param cls the cls
+     * @param id  the id
+     * @return t
      */
     <T> T get(Class<T> cls, Serializable id);
 

@@ -16,7 +16,9 @@ import java.util.List;
 /**
  * 执行的命令内容
  * <p>
- * Created by liyd on 17/4/12.
+ *
+ * @author liyd
+ * @date 17/4/12
  */
 public class CommandContext {
 

@@ -31,12 +31,12 @@ public class Jdbc {
 
     protected static JdbcEngine defaultJdbcEngine;
 
-    public static JdbcDao use(String name) {
+    public static DaoTemplate use(String name) {
         JdbcEngine jdbcEngine = jdbcEngineMap.get(name);
         if (jdbcEngine == null) {
             throw new SonsureJdbcException("指定的JDBC配置名称不存在:" + name);
         }
-        return new FlexibleJdbcDao(jdbcEngine);
+        return new FlexibleDaoTemplate(jdbcEngine);
     }
 
     public static void setDefaultJdbcEngine(JdbcEngine jdbcEngine) {

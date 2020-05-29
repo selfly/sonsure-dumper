@@ -22,7 +22,10 @@ import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import java.util.Map;
 
 /**
- * Created by liyd on 17/4/14.
+ * The type Update.
+ *
+ * @author liyd
+ * @date 17 /4/14
  */
 public class UpdateImpl extends AbstractConditionCommandExecutor<Update> implements Update {
 
@@ -46,7 +49,7 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
     }
 
     @Override
-    public <E,R> Update set(Function<E,R> function, Object value) {
+    public <E, R> Update set(Function<E, R> function, Object value) {
         String field = LambdaMethod.getField(function);
         updateContext.addSetField(field, value);
         return this;
@@ -96,7 +99,7 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
     }
 
     @Override
-    protected WhereContext getWhereContext() {
+    protected AbstractWhereContext getWhereContext() {
         return this.updateContext;
     }
 }

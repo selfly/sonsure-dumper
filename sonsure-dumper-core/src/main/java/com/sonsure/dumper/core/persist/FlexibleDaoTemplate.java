@@ -15,14 +15,19 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 import javax.sql.DataSource;
 
-public class FlexibleJdbcDao extends AbstractJdbcDaoImpl {
+/**
+ * The type Flexible dao template.
+ *
+ * @author liyd
+ */
+public class FlexibleDaoTemplate extends AbstractDaoTemplateImpl {
 
-    public FlexibleJdbcDao(JdbcEngine jdbcEngine) {
+    public FlexibleDaoTemplate(JdbcEngine jdbcEngine) {
         this.setDefaultJdbcEngine(jdbcEngine);
     }
 
     @Override
-    public JdbcDao use(String name) {
+    public DaoTemplate use(String name) {
         throw new UnsupportedOperationException("不支持的方法");
     }
 

@@ -14,7 +14,7 @@ import com.sonsure.dumper.core.management.ClassField;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateContext extends WhereContext {
+public class UpdateContext extends AbstractWhereContext {
 
     /**
      * 实体类型

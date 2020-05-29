@@ -13,6 +13,8 @@ package com.sonsure.dumper.core.persist;
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.CommandExecutor;
+import com.sonsure.dumper.core.command.batch.BatchUpdateExecutor;
+import com.sonsure.dumper.core.command.batch.ParameterizedSetter;
 import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
@@ -26,6 +28,7 @@ import com.sonsure.dumper.core.exception.SonsureJdbcException;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +36,7 @@ import java.util.Map;
  * Created by liyd on 17/4/13.
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractJdbcDaoImpl implements JdbcDao {
+public abstract class AbstractDaoTemplateImpl implements JdbcDao {
 
     protected DataSource dataSource;
 
@@ -44,7 +47,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
     protected boolean globalJdbc = false;
 
     @Override
-    public JdbcDao use(String name) {
+    public DaoTemplate use(String name) {
         if (jdbcEngineMap == null) {
             throw new SonsureJdbcException("使用多数据源模式请先初始化jdbcEngineMap属性");
         }
@@ -52,7 +55,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         if (jdbcEngine == null) {
             throw new SonsureJdbcException("指定的数据源操作对象不存在");
         }
-        return new FlexibleJdbcDao(jdbcEngine);
+        return new FlexibleDaoTemplate(jdbcEngine);
     }
 
     @Override
@@ -72,7 +75,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
 
     @Override
     public <T extends Pageable> Page<T> pageResult(T entity) {
-        return (Page<T>) this.getDefaultJdbcEngine().pageResult(entity);
+        return this.getDefaultJdbcEngine().pageResult(entity);
     }
 
     @Override
@@ -85,14 +88,17 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.getDefaultJdbcEngine().findCount(cls);
     }
 
+    @Override
     public <T> T singleResult(T entity) {
         return (T) this.getDefaultJdbcEngine().singleResult(entity);
     }
 
+    @Override
     public <T> T firstResult(T entity) {
         return (T) this.getDefaultJdbcEngine().firstResult(entity);
     }
 
+    @Override
     public Object executeInsert(Object entity) {
         return this.getDefaultJdbcEngine().executeInsert(entity);
     }
@@ -132,6 +138,7 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.getDefaultJdbcEngine().selectFrom(cls);
     }
 
+    @Override
     public Select select() {
         return this.getDefaultJdbcEngine().select();
     }
@@ -147,10 +154,12 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.select(fields);
     }
 
+    @Override
     public Insert insert() {
         return this.getDefaultJdbcEngine().insert();
     }
 
+    @Override
     public Delete delete() {
         return this.getDefaultJdbcEngine().delete();
     }
@@ -160,8 +169,19 @@ public abstract class AbstractJdbcDaoImpl implements JdbcDao {
         return this.getDefaultJdbcEngine().deleteFrom(cls);
     }
 
+    @Override
     public Update update() {
         return this.getDefaultJdbcEngine().update();
+    }
+
+    @Override
+    public BatchUpdateExecutor batchUpdate() {
+        return this.getDefaultJdbcEngine().batchUpdate();
+    }
+
+    @Override
+    public <T> Object executeBatchUpdate(String command, Collection<T> batchData, int batchSize, ParameterizedSetter<T> parameterizedSetter) {
+        return this.getDefaultJdbcEngine().executeBatchUpdate(command, batchData, batchSize, parameterizedSetter);
     }
 
     @Override

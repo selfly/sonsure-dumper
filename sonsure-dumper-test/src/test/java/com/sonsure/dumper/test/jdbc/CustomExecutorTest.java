@@ -9,7 +9,7 @@
 
 package com.sonsure.dumper.test.jdbc;
 
-import com.sonsure.dumper.core.persist.JdbcDao;
+import com.sonsure.dumper.core.persist.DaoTemplate;
 import com.sonsure.dumper.test.executor.CountCommandExecutor;
 import com.sonsure.dumper.test.model.UserInfo;
 import org.junit.Assert;
@@ -24,12 +24,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CustomExecutorTest {
 
     @Autowired
-    protected JdbcDao jdbcDao;
+    protected DaoTemplate daoTemplate;
 
     @Test
     public void countExecutorTest() {
 
-        long count = jdbcDao.executor(CountCommandExecutor.class)
+        long count = daoTemplate.executor(CountCommandExecutor.class)
                 .clazz(UserInfo.class)
                 .getCount();
 

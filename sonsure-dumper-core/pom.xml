@@ -92,6 +92,7 @@
                         <Export-Package>
                             com.sonsure.dumper.core.annotation,
                             com.sonsure.dumper.core.command,
+                            com.sonsure.dumper.core.command.batch,
                             com.sonsure.dumper.core.command.entity,
                             com.sonsure.dumper.core.command.lambda,
                             com.sonsure.dumper.core.command.mybatis,

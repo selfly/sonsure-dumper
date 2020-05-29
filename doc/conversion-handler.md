@@ -41,7 +41,7 @@ CommandConversionHandler的定义就一个方法：
         <property name="commandConversionHandler" ref="jSqlParserCommandConversionHandler"/>
     </bean>
 
-    <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl">
+    <bean id="jdbcDao" class="com.sonsure.dumper.springjdbc.persist.SpringJdbcDaoTemplateImpl">
         <property name="defaultJdbcEngine" ref="jdbcTemplateEngine"/>
         <property name="globalJdbc" value="true"/>
     </bean>

@@ -13,16 +13,22 @@ package com.sonsure.dumper.core.config;
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.CommandExecutor;
+import com.sonsure.dumper.core.command.batch.BatchUpdateExecutor;
+import com.sonsure.dumper.core.command.batch.ParameterizedSetter;
 import com.sonsure.dumper.core.command.entity.Delete;
 import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.entity.Update;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by liyd on 17/4/12.
+ * The type Jdbc engine.
+ *
+ * @author liyd
+ * @date 17 /4/12
  */
 public class JdbcEngineImpl implements JdbcEngine {
 
@@ -32,6 +38,7 @@ public class JdbcEngineImpl implements JdbcEngine {
         this.jdbcEngineConfig = jdbcEngineConfig;
     }
 
+    @Override
     public <T extends CommandExecutor> T createExecutor(Class<T> commandExecutorClass, Object param) {
         return (T) this.jdbcEngineConfig.getCommandExecutorFactory().getCommandExecutor(commandExecutorClass, param, this.jdbcEngineConfig);
     }
@@ -133,6 +140,16 @@ public class JdbcEngineImpl implements JdbcEngine {
     @Override
     public int executeUpdate(Object entity) {
         return this.update(entity.getClass()).setForEntityWhereId(entity).execute();
+    }
+
+    @Override
+    public BatchUpdateExecutor batchUpdate() {
+        return this.createExecutor(BatchUpdateExecutor.class);
+    }
+
+    @Override
+    public <T> Object executeBatchUpdate(String command, Collection<T> batchData, int batchSize, ParameterizedSetter<T> parameterizedSetter) {
+        return this.batchUpdate().execute(command, batchData, batchSize, parameterizedSetter);
     }
 
     @Override

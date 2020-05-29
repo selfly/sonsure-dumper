@@ -14,6 +14,9 @@ import com.sonsure.commons.model.Pageable;
 
 import java.util.List;
 
+/**
+ * @author liyd
+ */
 public interface QueryCommandExecutor<C> extends CommandExecutor {
 
     /**
@@ -45,7 +48,8 @@ public interface QueryCommandExecutor<C> extends CommandExecutor {
     /**
      * 是否count查询
      *
-     * @return select
+     * @param isCount the is count
+     * @return select c
      */
     C isCount(boolean isCount);
 

@@ -12,7 +12,7 @@ package com.sonsure.dumper.core.command.entity;
 /**
  * @author liyd
  */
-public class DeleteContext extends WhereContext {
+public class DeleteContext extends AbstractWhereContext {
 
     protected Class<?> modelClass;
 

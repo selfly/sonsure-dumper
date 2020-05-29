@@ -11,14 +11,10 @@ package com.sonsure.dumper.test.jdbc;
 
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
-import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.lambda.Function;
-import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.persist.JdbcDao;
-import com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineConfigImpl;
-import com.sonsure.dumper.springjdbc.persist.JdbcTemplateDaoImpl;
 import com.sonsure.dumper.test.model.AuthCode;
 import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UidUser;
@@ -30,16 +26,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -48,15 +39,15 @@ import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext.xml"})
-public class JdbcTemplateDaoImplTest {
+public class SpringJdbcDaoTemplateTest {
 
     @Autowired
-    protected JdbcDao jdbcDao;
+    protected JdbcDao daoTemplate;
 
     @Before
     public void before() {
         //初始化测试数据
-        jdbcDao.deleteFrom(UserInfo.class)
+        daoTemplate.deleteFrom(UserInfo.class)
                 .execute();
         for (int i = 1; i < 51; i++) {
             UserInfo user = new UserInfo();
@@ -66,14 +57,14 @@ public class JdbcTemplateDaoImplTest {
             user.setUserAge(i);
             user.setGmtCreate(new Date());
 
-            jdbcDao.executeInsert(user);
+            daoTemplate.executeInsert(user);
         }
     }
 
 
     @Test
     public void jdbcDaoGet() {
-        UserInfo user = jdbcDao.get(UserInfo.class, 30L);
+        UserInfo user = daoTemplate.get(UserInfo.class, 30L);
         Assert.assertNotNull(user);
         Assert.assertTrue(user.getUserInfoId().equals(30L));
         Assert.assertTrue(user.getLoginName().equals("name-30"));
@@ -90,10 +81,10 @@ public class JdbcTemplateDaoImplTest {
         user.setUserAge(18);
         user.setGmtCreate(new Date());
 
-        Long id = (Long) jdbcDao.executeInsert(user);
+        Long id = (Long) daoTemplate.executeInsert(user);
         Assert.assertTrue(id > 0);
 
-        UserInfo userInfo = jdbcDao.get(UserInfo.class, id);
+        UserInfo userInfo = daoTemplate.get(UserInfo.class, id);
         Assert.assertTrue(user.getLoginName().equals(userInfo.getLoginName()));
         Assert.assertTrue(user.getPassword().equals(userInfo.getPassword()));
     }
@@ -106,10 +97,10 @@ public class JdbcTemplateDaoImplTest {
         user.setPassword("666666");
         user.setLoginName("666777");
         user.setGmtModify(new Date());
-        int count = jdbcDao.executeUpdate(user);
+        int count = daoTemplate.executeUpdate(user);
         Assert.assertTrue(count == 1);
 
-        UserInfo user1 = jdbcDao.get(UserInfo.class, 20L);
+        UserInfo user1 = daoTemplate.get(UserInfo.class, 20L);
         Assert.assertNotNull(user1);
         Assert.assertTrue(user1.getUserInfoId().equals(20L));
         Assert.assertTrue(user1.getLoginName().equals("666777"));
@@ -119,16 +110,16 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void jdbcDaoDelete() {
-        int count = jdbcDao.executeDelete(UserInfo.class, 38L);
+        int count = daoTemplate.executeDelete(UserInfo.class, 38L);
         Assert.assertTrue(count == 1);
-        UserInfo user = jdbcDao.get(UserInfo.class, 38L);
+        UserInfo user = daoTemplate.get(UserInfo.class, 38L);
         Assert.assertNull(user);
     }
 
 
     @Test
     public void jdbcDaoFind() {
-        List<UserInfo> users = jdbcDao.find(UserInfo.class);
+        List<UserInfo> users = daoTemplate.find(UserInfo.class);
         Assert.assertNotNull(users);
         Assert.assertTrue(users.size() == 50);
     }
@@ -137,7 +128,7 @@ public class JdbcTemplateDaoImplTest {
     public void jdbcDaoFind1() {
         UserInfo user = new UserInfo();
         user.setUserAge(10);
-        List<UserInfo> users = jdbcDao.find(user);
+        List<UserInfo> users = daoTemplate.find(user);
         Assert.assertNotNull(users);
         Assert.assertTrue(users.size() == 1);
     }
@@ -146,7 +137,7 @@ public class JdbcTemplateDaoImplTest {
     public void jdbcDaoPageResult() {
         UserInfo user = new UserInfo();
         user.setPageSize(10);
-        Page<UserInfo> page = jdbcDao.pageResult(user);
+        Page<UserInfo> page = daoTemplate.pageResult(user);
         Assert.assertNotNull(page);
         Assert.assertTrue(page.getList().size() == 10);
     }
@@ -157,14 +148,14 @@ public class JdbcTemplateDaoImplTest {
         UserInfo user = new UserInfo();
         user.setPageSize(10);
         user.setUserAge(10);
-        Page<UserInfo> page = jdbcDao.pageResult(user);
+        Page<UserInfo> page = daoTemplate.pageResult(user);
         Assert.assertNotNull(page);
         Assert.assertTrue(page.getList().size() == 1);
     }
 
     @Test
     public void jdbcDaoPageResult3() {
-        Page<UserInfo> page = jdbcDao.selectFrom(UserInfo.class)
+        Page<UserInfo> page = daoTemplate.selectFrom(UserInfo.class)
                 .orderBy("userInfoId").asc()
                 .limit(15, 10)
                 .pageResult(UserInfo.class);
@@ -177,13 +168,13 @@ public class JdbcTemplateDaoImplTest {
     public void jdbcDaoCount() {
         UserInfo user = new UserInfo();
         user.setUserAge(10);
-        long count = jdbcDao.findCount(user);
+        long count = daoTemplate.findCount(user);
         Assert.assertTrue(count == 1);
     }
 
     @Test
     public void jdbcDaoQueryCount2() {
-        long count = jdbcDao.findCount(UserInfo.class);
+        long count = daoTemplate.findCount(UserInfo.class);
         Assert.assertTrue(count == 50);
     }
 
@@ -191,7 +182,7 @@ public class JdbcTemplateDaoImplTest {
     public void jdbcDaoSingleResult() {
         UserInfo tmp = new UserInfo();
         tmp.setUserAge(10);
-        UserInfo user = jdbcDao.singleResult(tmp);
+        UserInfo user = daoTemplate.singleResult(tmp);
         Assert.assertNotNull(user);
         Assert.assertTrue(user.getUserInfoId().equals(10L));
         Assert.assertTrue(user.getLoginName().equals("name-10"));
@@ -204,7 +195,7 @@ public class JdbcTemplateDaoImplTest {
     public void jdbcDaoFirstResult() {
         UserInfo tmp = new UserInfo();
         tmp.setUserAge(10);
-        UserInfo user = jdbcDao.firstResult(tmp);
+        UserInfo user = daoTemplate.firstResult(tmp);
         Assert.assertNotNull(user);
         Assert.assertTrue(user.getUserInfoId().equals(10L));
         Assert.assertTrue(user.getLoginName().equals("name-10"));
@@ -216,20 +207,20 @@ public class JdbcTemplateDaoImplTest {
     public void jdbcDaoDelete2() {
         UserInfo user = new UserInfo();
         user.setLoginName("name-17");
-        int count = jdbcDao.executeDelete(user);
+        int count = daoTemplate.executeDelete(user);
         Assert.assertTrue(count == 1);
 
         UserInfo tmp = new UserInfo();
         tmp.setLoginName("name-17");
-        UserInfo user1 = jdbcDao.singleResult(tmp);
+        UserInfo user1 = daoTemplate.singleResult(tmp);
         Assert.assertNull(user1);
     }
 
     @Test
     public void jdbcDaoDelete3() {
-        int count = jdbcDao.executeDelete(UserInfo.class);
+        int count = daoTemplate.executeDelete(UserInfo.class);
         Assert.assertTrue(count > 0);
-        long result = jdbcDao.findCount(UserInfo.class);
+        long result = daoTemplate.findCount(UserInfo.class);
         Assert.assertTrue(result == 0);
     }
 
@@ -242,9 +233,9 @@ public class JdbcTemplateDaoImplTest {
         user.setUserAge(60);
         user.setGmtCreate(new Date());
 
-        Long id = (Long) jdbcDao.executeInsert(user);
+        Long id = (Long) daoTemplate.executeInsert(user);
 
-        UserInfo user1 = jdbcDao.get(UserInfo.class, id);
+        UserInfo user1 = daoTemplate.get(UserInfo.class, id);
         Assert.assertNotNull(user1);
         Assert.assertTrue(user1.getUserInfoId().equals(id));
         Assert.assertTrue(user1.getLoginName().equals("name-60"));
@@ -254,12 +245,12 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void insert2() {
 
-        Long id = (Long) jdbcDao.insertInto(UserInfo.class)
+        Long id = (Long) daoTemplate.insertInto(UserInfo.class)
                 .set("loginName", "name123")
                 .set("password", "123321")
                 .execute();
 
-        UserInfo user1 = jdbcDao.get(UserInfo.class, id);
+        UserInfo user1 = daoTemplate.get(UserInfo.class, id);
         Assert.assertNotNull(user1);
         Assert.assertTrue(user1.getUserInfoId().equals(id));
         Assert.assertTrue(user1.getLoginName().equals("name123"));
@@ -276,9 +267,9 @@ public class JdbcTemplateDaoImplTest {
         ku.setGmtCreate(new Date());
         ku.setGmtModify(new Date());
 
-        Long id = (Long) jdbcDao.executeInsert(ku);
+        Long id = (Long) daoTemplate.executeInsert(ku);
 
-        KUserInfo kUserInfo = jdbcDao.get(KUserInfo.class, id);
+        KUserInfo kUserInfo = daoTemplate.get(KUserInfo.class, id);
         Assert.assertEquals("selfly", kUserInfo.getLoginName());
         Assert.assertEquals("123456", kUserInfo.getPassword());
     }
@@ -286,7 +277,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select() {
 
-        jdbcDao.executeDelete(UserInfo.class);
+        daoTemplate.executeDelete(UserInfo.class);
         for (int i = 60; i < 70; i++) {
             UserInfo user = new UserInfo();
             user.setUserInfoId(Long.valueOf(i));
@@ -294,10 +285,10 @@ public class JdbcTemplateDaoImplTest {
             user.setPassword("123456-" + i);
             user.setUserAge(19);
             user.setGmtCreate(new Date());
-            jdbcDao.executeInsert(user);
+            daoTemplate.executeInsert(user);
         }
 
-        Select select1 = jdbcDao.selectFrom(UserInfo.class)
+        Select select1 = daoTemplate.selectFrom(UserInfo.class)
                 .where("userAge", 19);
         long count1 = select1.count();
         Assert.assertTrue(count1 == 10);
@@ -308,7 +299,7 @@ public class JdbcTemplateDaoImplTest {
         Page<UserInfo> page1 = select1.paginate(1, 5).pageResult(UserInfo.class);
         Assert.assertTrue(page1.getList().size() == 5);
 
-        Select select2 = jdbcDao.selectFrom(UserInfo.class)
+        Select select2 = daoTemplate.selectFrom(UserInfo.class)
                 .where("userAge", 19)
                 .and("loginName", "name2-19");
         long count2 = select2.count();
@@ -324,7 +315,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select2() {
 
-        jdbcDao.executeDelete(UserInfo.class);
+        daoTemplate.executeDelete(UserInfo.class);
         for (int i = 1; i < 3; i++) {
             UserInfo user = new UserInfo();
             user.setUserInfoId(Long.valueOf(i));
@@ -332,10 +323,10 @@ public class JdbcTemplateDaoImplTest {
             user.setPassword("123456-" + i);
             user.setUserAge(21);
             user.setGmtCreate(new Date());
-            jdbcDao.executeInsert(user);
+            daoTemplate.executeInsert(user);
         }
         try {
-            UserInfo user = jdbcDao.selectFrom(UserInfo.class)
+            UserInfo user = daoTemplate.selectFrom(UserInfo.class)
                     .where()
                     .begin()
                     .condition("loginName", "name-19")
@@ -346,7 +337,7 @@ public class JdbcTemplateDaoImplTest {
             Assert.assertTrue("Incorrect result size: expected 1, actual 2".equals(e.getMessage()));
         }
 
-        UserInfo user2 = jdbcDao.selectFrom(UserInfo.class)
+        UserInfo user2 = daoTemplate.selectFrom(UserInfo.class)
                 .where()
                 .begin()
                 .condition("loginName", "name-19")
@@ -360,7 +351,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select3() {
 
-        List<UserInfo> list = jdbcDao.select("userInfoId", "password").from(UserInfo.class)
+        List<UserInfo> list = daoTemplate.select("userInfoId", "password").from(UserInfo.class)
                 .where("userAge", "<=", 10)
                 .list(UserInfo.class);
         Assert.assertNotNull(list);
@@ -377,7 +368,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select4() {
 
-        List<UserInfo> list = jdbcDao.selectFrom(UserInfo.class)
+        List<UserInfo> list = daoTemplate.selectFrom(UserInfo.class)
                 .exclude("userInfoId", "password")
                 .orderBy("userAge").asc()
                 .list(UserInfo.class);
@@ -397,14 +388,14 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select5() {
 
-        Long maxId = jdbcDao.select("max(userInfoId) maxid").from(UserInfo.class)
+        Long maxId = daoTemplate.select("max(userInfoId) maxid").from(UserInfo.class)
                 .oneColResult(Long.class);
         Assert.assertTrue(maxId == 50);
     }
 
     @Test
     public void select6() {
-        List<Long> ids = jdbcDao.select("userInfoId").from(UserInfo.class)
+        List<Long> ids = daoTemplate.select("userInfoId").from(UserInfo.class)
                 .oneColList(Long.class);
         Assert.assertNotNull(ids);
     }
@@ -412,7 +403,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void select8() {
-        Object result = jdbcDao.selectFrom(UserInfo.class)
+        Object result = daoTemplate.selectFrom(UserInfo.class)
                 .where("userInfoId", 15L)
                 .singleResult();
         Assert.assertTrue(result instanceof Map);
@@ -420,7 +411,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void select10() {
-        Object result = jdbcDao.selectFrom(UserInfo.class)
+        Object result = daoTemplate.selectFrom(UserInfo.class)
                 .list();
         Assert.assertTrue(result instanceof List);
         Assert.assertTrue(((List) result).get(0) instanceof Map);
@@ -430,7 +421,7 @@ public class JdbcTemplateDaoImplTest {
     public void select11() {
         UserInfo pageable = new UserInfo();
         pageable.setPageSize(5);
-        Page<?> result = jdbcDao.selectFrom(UserInfo.class)
+        Page<?> result = daoTemplate.selectFrom(UserInfo.class)
                 .paginate(pageable)
                 .pageResult();
         Assert.assertTrue(result.getList().size() == 5);
@@ -439,7 +430,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void select13() {
-        List<UserInfo> users = jdbcDao.select().from(UserInfo.class, "t1")
+        List<UserInfo> users = daoTemplate.select().from(UserInfo.class, "t1")
                 .where("t1.userInfoId", new Object[]{11L, 12L, 13L})
                 .and("t1.loginName", new Object[]{"name-11", "name-12", "name-13"})
                 .and()
@@ -450,7 +441,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void select14() {
-        List<UserInfo> users = jdbcDao.selectFrom(UserInfo.class)
+        List<UserInfo> users = daoTemplate.selectFrom(UserInfo.class)
                 .where("userInfoId", ">", 10L)
                 .and()
                 .begin()
@@ -468,7 +459,7 @@ public class JdbcTemplateDaoImplTest {
     public void select15() {
 
 
-        Select select = jdbcDao.selectFrom(UserInfo.class);
+        Select select = daoTemplate.selectFrom(UserInfo.class);
         select.where("userAge", 5);
 
         UserInfo user = new UserInfo();
@@ -485,7 +476,7 @@ public class JdbcTemplateDaoImplTest {
     public void select16() {
 
 
-        Select select = jdbcDao.selectFrom(UserInfo.class);
+        Select select = daoTemplate.selectFrom(UserInfo.class);
         //自动处理where情况
         select.and("userAge", 15);
 
@@ -500,7 +491,7 @@ public class JdbcTemplateDaoImplTest {
     public void select17() {
 
 
-        Select select = jdbcDao.selectFrom(UserInfo.class);
+        Select select = daoTemplate.selectFrom(UserInfo.class);
         select.where("userAge", 5);
 
         UserInfo user = new UserInfo();
@@ -516,7 +507,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void select18() {
         try {
-            Object result = jdbcDao.select()
+            Object result = daoTemplate.select()
                     .from(UserInfo.class)
                     .asc()
                     .firstResult();
@@ -527,7 +518,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void select19() {
-        Object result = jdbcDao.select()
+        Object result = daoTemplate.select()
                 .from(UserInfo.class)
                 .orderBy("userInfoId").asc()
                 .firstResult();
@@ -538,7 +529,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void select20() {
-        Long result = jdbcDao.select("userInfoId")
+        Long result = daoTemplate.select("userInfoId")
                 .from(UserInfo.class)
                 .orderBy("userInfoId").asc()
                 .oneColFirstResult(Long.class);
@@ -547,7 +538,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void select21() {
-        Page<Long> page = jdbcDao.select("userInfoId")
+        Page<Long> page = daoTemplate.select("userInfoId")
                 .from(UserInfo.class)
                 .orderBy("userInfoId").asc()
                 .paginate(1, 10)
@@ -560,7 +551,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void singleResultObject() {
 
-        Object object = jdbcDao.select("loginName", "password")
+        Object object = daoTemplate.select("loginName", "password")
                 .from(UserInfo.class)
                 .where("userInfoId", 5L)
                 .singleResult();
@@ -571,14 +562,14 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void singleResultObject2() {
 
-        Object object = jdbcDao.select().from(UserInfo.class, "t1", UidUser.class, "t2")
+        Object object = daoTemplate.select().from(UserInfo.class, "t1", UidUser.class, "t2")
                 .where("{{t1.userInfoId}}", "t2.uidUserId")
                 .list();
 
         Assert.assertNotNull(object instanceof Map);
 
 
-        object = jdbcDao.select("t1.loginName as name1", "t2.loginName as name2").from(UserInfo.class, "t1", UidUser.class, "t2")
+        object = daoTemplate.select("t1.loginName as name1", "t2.loginName as name2").from(UserInfo.class, "t1", UidUser.class, "t2")
                 .where()
                 .append("t1.userInfoId = t2.uidUserId")
                 .list();
@@ -588,7 +579,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void selectForAnnotation() {
-        Page<KUserInfo> page = jdbcDao.selectFrom(KUserInfo.class)
+        Page<KUserInfo> page = daoTemplate.selectFrom(KUserInfo.class)
                 .paginate(1, 10)
                 .pageResult(KUserInfo.class);
         Assert.assertTrue(page.getList().size() > 0);
@@ -603,9 +594,9 @@ public class JdbcTemplateDaoImplTest {
         user.setPassword("123456-");
         user.setUserAge(19);
         user.setGmtCreate(new Date());
-        jdbcDao.executeInsert(user);
+        daoTemplate.executeInsert(user);
 
-        Select select = jdbcDao.select("count(*) Num").from(UserInfo.class)
+        Select select = daoTemplate.select("count(*) Num").from(UserInfo.class)
                 .groupBy("userAge")
                 .orderBy("Num").desc();
         Page<Object> page = select.paginate(1, 5).pageResult();
@@ -618,7 +609,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void append() {
-        UserInfo userInfo = jdbcDao.selectFrom(UserInfo.class)
+        UserInfo userInfo = daoTemplate.selectFrom(UserInfo.class)
                 .where("userAge", ">", 5)
                 .append("and userInfoId = (select max(t2.userInfoId) from UserInfo t2 where t2.userInfoId < ?)", 40)
                 .singleResult(UserInfo.class);
@@ -628,12 +619,12 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void updateSet() {
 
-        jdbcDao.update(UserInfo.class)
+        daoTemplate.update(UserInfo.class)
                 .set("loginName", "newName")
                 .where("userInfoId", 15L)
                 .execute();
 
-        UserInfo user1 = jdbcDao.get(UserInfo.class, 15L);
+        UserInfo user1 = daoTemplate.get(UserInfo.class, 15L);
         Assert.assertTrue(user1.getLoginName().equals("newName"));
     }
 
@@ -645,11 +636,11 @@ public class JdbcTemplateDaoImplTest {
         user.setLoginName("newName22");
         user.setPassword("abc");
         //没有设置where条件，将更新所有
-        jdbcDao.update(UserInfo.class)
+        daoTemplate.update(UserInfo.class)
                 .setForEntity(user)
                 .execute();
 
-        UserInfo user1 = jdbcDao.get(UserInfo.class, 17L);
+        UserInfo user1 = daoTemplate.get(UserInfo.class, 17L);
         Assert.assertTrue(user1.getLoginName().equals("newName22"));
         Assert.assertTrue(user1.getPassword().equals("abc"));
     }
@@ -659,12 +650,12 @@ public class JdbcTemplateDaoImplTest {
 
         UserInfo user = new UserInfo();
         user.setUserInfoId(17L);
-        jdbcDao.update(UserInfo.class)
+        daoTemplate.update(UserInfo.class)
                 .setForEntityWhereId(user)
                 .updateNull()
                 .execute();
 
-        UserInfo user1 = jdbcDao.get(UserInfo.class, 17L);
+        UserInfo user1 = daoTemplate.get(UserInfo.class, 17L);
         Assert.assertNull(user1.getLoginName());
         Assert.assertNull(user1.getPassword());
         Assert.assertNull(user1.getUserAge());
@@ -680,7 +671,7 @@ public class JdbcTemplateDaoImplTest {
             user.setLoginName("newName22");
             user.setPassword("abc");
             //没有设置where条件，将更新所有
-            jdbcDao.update(UserInfo.class)
+            daoTemplate.update(UserInfo.class)
                     .setForEntityWhereId(user)
                     .execute();
         } catch (Exception e) {
@@ -696,9 +687,9 @@ public class JdbcTemplateDaoImplTest {
         ku.setPassword("123456");
         ku.setUserAge(18);
         ku.setGmtCreate(new Date());
-        Long id = (Long) jdbcDao.executeInsert(ku);
+        Long id = (Long) daoTemplate.executeInsert(ku);
 
-        KUserInfo kUserInfo = jdbcDao.get(KUserInfo.class, id);
+        KUserInfo kUserInfo = daoTemplate.get(KUserInfo.class, id);
         Assert.assertTrue(ku.getLoginName().equals(kUserInfo.getLoginName()));
         Assert.assertTrue(ku.getPassword().equals(kUserInfo.getPassword()));
     }
@@ -711,7 +702,7 @@ public class JdbcTemplateDaoImplTest {
         ku.setLoginName("777777");
         ku.setPassword("787878");
         ku.setGmtModify(new Date());
-        int count = jdbcDao.executeUpdate(ku);
+        int count = daoTemplate.executeUpdate(ku);
         Assert.assertTrue(count == 1);
     }
 
@@ -720,9 +711,9 @@ public class JdbcTemplateDaoImplTest {
 
         KUserInfo ku = new KUserInfo();
         ku.setLoginName("liyd");
-        Serializable id = (Serializable) jdbcDao.executeInsert(ku);
+        Serializable id = (Serializable) daoTemplate.executeInsert(ku);
 
-        int count = jdbcDao.executeDelete(KUserInfo.class, id);
+        int count = daoTemplate.executeDelete(KUserInfo.class, id);
         Assert.assertTrue(count == 1);
     }
 
@@ -730,36 +721,36 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void updateNative() {
 
-        jdbcDao.update(UserInfo.class)
+        daoTemplate.update(UserInfo.class)
                 .set("{{userAge}}", "userAge+1")
                 .where("userInfoId", 17L)
                 .execute();
 
-        UserInfo user = jdbcDao.get(UserInfo.class, 17L);
+        UserInfo user = daoTemplate.get(UserInfo.class, 17L);
         Assert.assertTrue(user.getUserAge() == 18);
     }
 
 
     @Test
     public void nativeExecutor() {
-        int count = jdbcDao.nativeExecutor()
+        int count = daoTemplate.nativeExecutor()
                 .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters(new Object[]{"newName", 39L})
                 .update();
         Assert.assertTrue(count == 1);
-        UserInfo user = jdbcDao.get(UserInfo.class, 39L);
+        UserInfo user = daoTemplate.get(UserInfo.class, 39L);
         Assert.assertEquals(user.getLoginName(), "newName");
     }
 
 
     @Test
     public void nativeExecutor4() {
-        int count = jdbcDao.nativeExecutor()
+        int count = daoTemplate.nativeExecutor()
                 .command("update UserInfo set loginName = ? where userInfoId = ?")
                 .parameters("newName", 39L)
                 .update();
         Assert.assertTrue(count == 1);
-        UserInfo user = jdbcDao.get(UserInfo.class, 39L);
+        UserInfo user = daoTemplate.get(UserInfo.class, 39L);
         Assert.assertEquals(user.getLoginName(), "newName");
     }
 
@@ -767,7 +758,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeExecutor5() {
 
-        Long result = jdbcDao.nativeExecutor()
+        Long result = daoTemplate.nativeExecutor()
                 .command("select count(*) from UserInfo")
                 .count();
         Assert.assertTrue(result == 50);
@@ -776,12 +767,12 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeExecutor7() {
 
-        jdbcDao.nativeExecutor()
+        daoTemplate.nativeExecutor()
                 .command("update user_info set user_age = 18 where user_age < 18")
                 .nativeCommand()
                 .execute();
 
-        long count = jdbcDao.selectFrom(UserInfo.class)
+        long count = daoTemplate.selectFrom(UserInfo.class)
                 .where("userAge", "<", 18)
                 .count();
         Assert.assertTrue(count == 0);
@@ -790,11 +781,11 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeExecutor8() {
 
-        jdbcDao.nativeExecutor()
+        daoTemplate.nativeExecutor()
                 .command("update UserInfo set userAge = 18 where userAge < 18")
                 .execute();
 
-        long count = jdbcDao.selectFrom(UserInfo.class)
+        long count = daoTemplate.selectFrom(UserInfo.class)
                 .where("userAge", "<", 18)
                 .count();
         Assert.assertTrue(count == 0);
@@ -802,7 +793,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeOneColResult() {
-        Integer integer = jdbcDao.nativeExecutor()
+        Integer integer = daoTemplate.nativeExecutor()
                 .command("select sum(userAge) from UserInfo")
                 .oneColResult(Integer.class);
         Assert.assertTrue(integer > 0);
@@ -810,7 +801,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeFirstResult() {
-        UserInfo userInfo = jdbcDao.nativeExecutor()
+        UserInfo userInfo = daoTemplate.nativeExecutor()
                 .command("select * from UserInfo order by userInfoId asc")
                 .firstResult(UserInfo.class);
 
@@ -819,7 +810,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeOneColFirstResult() {
-        Long id = jdbcDao.nativeExecutor()
+        Long id = daoTemplate.nativeExecutor()
                 .command("select userInfoId from UserInfo order by userInfoId asc")
                 .oneColFirstResult(Long.class);
 
@@ -828,12 +819,12 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeInsert() {
-        jdbcDao.nativeExecutor()
+        daoTemplate.nativeExecutor()
                 .command("insert into UserInfo(userInfoId,loginName,password,userAge) values(?,?,?,?)")
                 .parameters(100L, "100user", "123321", 18)
                 .insert();
 
-        UserInfo userInfo = jdbcDao.get(UserInfo.class, 100L);
+        UserInfo userInfo = daoTemplate.get(UserInfo.class, 100L);
         Assert.assertTrue(userInfo.getUserInfoId().equals(100L));
         Assert.assertTrue(userInfo.getLoginName().equals("100user"));
         Assert.assertTrue(userInfo.getPassword().equals("123321"));
@@ -842,12 +833,12 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeInsert2() {
-        Serializable id = jdbcDao.nativeExecutor()
+        Serializable id = daoTemplate.nativeExecutor()
                 .command("insert into UserInfo(loginName,password,userAge) values(?,?,?)")
                 .parameters("100user", "123321", 18)
                 .insert(UserInfo.class);
 
-        UserInfo userInfo = jdbcDao.get(UserInfo.class, id);
+        UserInfo userInfo = daoTemplate.get(UserInfo.class, id);
         Assert.assertTrue(userInfo.getLoginName().equals("100user"));
         Assert.assertTrue(userInfo.getPassword().equals("123321"));
         Assert.assertTrue(userInfo.getUserAge().equals(18));
@@ -855,7 +846,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeList() {
-        List<UserInfo> list = jdbcDao.nativeExecutor()
+        List<UserInfo> list = daoTemplate.nativeExecutor()
                 .command("select * from UserInfo")
                 .list(UserInfo.class);
 
@@ -864,7 +855,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeOneColList() {
-        List<Long> list = jdbcDao.nativeExecutor()
+        List<Long> list = daoTemplate.nativeExecutor()
                 .command("select userInfoId from UserInfo")
                 .oneColList(Long.class);
 
@@ -873,7 +864,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeFirstList() {
-        Object result = jdbcDao.nativeExecutor()
+        Object result = daoTemplate.nativeExecutor()
                 .command("select userInfoId from UserInfo")
                 .firstResult();
         Assert.assertTrue(result instanceof Map);
@@ -885,7 +876,7 @@ public class JdbcTemplateDaoImplTest {
         Pageable pageable = new UserInfo();
         pageable.setPageNum(2);
         pageable.setPageSize(10);
-        Page<Object> page = jdbcDao.nativeExecutor()
+        Page<Object> page = daoTemplate.nativeExecutor()
                 .command("select userInfoId from UserInfo order by userInfoId asc")
                 .paginate(pageable)
                 .pageResult();
@@ -900,7 +891,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void nativeResultHandler() {
         //这里只演示把结果转为AuthCode类
-        Page<AuthCode> page = jdbcDao.nativeExecutor()
+        Page<AuthCode> page = daoTemplate.nativeExecutor()
                 .command("select * from UserInfo order by userInfoId asc")
                 .paginate(2, 5)
                 .resultHandler(new CustomResultHandler())
@@ -912,7 +903,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void nativeLimitPage() {
-        Page<Object> page = jdbcDao.nativeExecutor()
+        Page<Object> page = daoTemplate.nativeExecutor()
                 .command("select userInfoId from UserInfo order by userInfoId asc")
                 .limit(15, 10)
                 .pageResult();
@@ -926,7 +917,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void mybatisExecutor1() {
-        UserInfo user = jdbcDao.myBatisExecutor()
+        UserInfo user = daoTemplate.myBatisExecutor()
                 .command("getUser")
                 .parameter("id", 9L)
                 .parameter("loginName", "name-9")
@@ -941,7 +932,7 @@ public class JdbcTemplateDaoImplTest {
         params.put("id", 9L);
         params.put("loginName", "name-9");
 
-        UserInfo user = jdbcDao.myBatisExecutor()
+        UserInfo user = daoTemplate.myBatisExecutor()
                 .command("getUserSql")
                 .parameters(params)
                 .nativeCommand()
@@ -957,7 +948,7 @@ public class JdbcTemplateDaoImplTest {
         userInfo.setUserInfoId(10L);
         userInfo.setLoginName("name-10");
 
-        Object user = jdbcDao.myBatisExecutor()
+        Object user = daoTemplate.myBatisExecutor()
                 .command("getUser2")
                 .parameter("user", userInfo)
                 .nativeCommand()
@@ -974,7 +965,7 @@ public class JdbcTemplateDaoImplTest {
         names.add("name-9");
         names.add("name-10");
 
-        List<?> list = jdbcDao.myBatisExecutor()
+        List<?> list = daoTemplate.myBatisExecutor()
                 .command("queryUserList")
                 .parameter("names", names)
                 .nativeCommand()
@@ -986,7 +977,7 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void mybatisExecutor5() {
 
-        int update = jdbcDao.myBatisExecutor()
+        int update = daoTemplate.myBatisExecutor()
                 .command("updateUser")
                 .parameter("loginName", "newName")
                 .parameter("userInfoId", 9L)
@@ -994,14 +985,14 @@ public class JdbcTemplateDaoImplTest {
                 .update();
 
         Assert.assertTrue(update == 1);
-        UserInfo userInfo = jdbcDao.get(UserInfo.class, 9L);
+        UserInfo userInfo = daoTemplate.get(UserInfo.class, 9L);
         Assert.assertTrue("newName".equals(userInfo.getLoginName()));
     }
 
 
     @Test
     public void mybatisExecutor6() {
-        Object user = jdbcDao.myBatisExecutor()
+        Object user = daoTemplate.myBatisExecutor()
                 .command("getUser3")
                 .parameter("userInfoId", 9L)
                 .parameter("loginName", "name-9")
@@ -1013,7 +1004,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void mybatisExecutor7() {
-        UserInfo userInfo = (UserInfo) jdbcDao.myBatisExecutor()
+        UserInfo userInfo = (UserInfo) daoTemplate.myBatisExecutor()
                 .command("getUser3")
                 .parameter("userInfoId", 9L)
                 .parameter("loginName", "name-9")
@@ -1024,7 +1015,7 @@ public class JdbcTemplateDaoImplTest {
 
     @Test
     public void mybatisExecutor8() {
-        Page<UserInfo> page = jdbcDao.myBatisExecutor()
+        Page<UserInfo> page = daoTemplate.myBatisExecutor()
                 .command("queryUserList2")
                 .paginate(1, 10)
                 .pageResult(UserInfo.class);
@@ -1038,7 +1029,7 @@ public class JdbcTemplateDaoImplTest {
         userInfo.setLoginName("name-6");
         userInfo.setPassword("123456-6");
         Function<UserInfo, String> getLoginName = UserInfo::getLoginName;
-        List<UserInfo> list = jdbcDao.selectFrom(UserInfo.class)
+        List<UserInfo> list = daoTemplate.selectFrom(UserInfo.class)
                 .and(getLoginName, userInfo.getLoginName())
                 .and(UserInfo::getPassword, userInfo.getPassword())
                 .list(UserInfo.class);
@@ -1052,7 +1043,7 @@ public class JdbcTemplateDaoImplTest {
 
         InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("modular-osgi-user-3.0.0.sql");
 
-        jdbcDao.nativeExecutor()
+        daoTemplate.nativeExecutor()
                 .command(IOUtils.toString(resourceAsStream, "utf-8"))
                 .nativeCommand()
                 .executeScript();
@@ -1063,9 +1054,9 @@ public class JdbcTemplateDaoImplTest {
     @Test
     public void batchUpdate() {
 
-        jdbcDao.executeDelete(UserInfo.class);
+        daoTemplate.executeDelete(UserInfo.class);
         List<UserInfo> userInfoList = new ArrayList<>();
-        for (int i = 1; i < 100000; i++) {
+        for (int i = 1; i < 10000; i++) {
             UserInfo user = new UserInfo();
             user.setUserInfoId(Long.valueOf(i));
             user.setLoginName("name-" + i);
@@ -1075,77 +1066,54 @@ public class JdbcTemplateDaoImplTest {
             userInfoList.add(user);
         }
 
+        String sql = "INSERT INTO USER_INFO (PASSWORD, LOGIN_NAME, GMT_CREATE, USER_AGE, USER_INFO_ID) VALUES (?, ?, ?, ?, ?)";
         final long begin = System.currentTimeMillis();
+        daoTemplate.batchUpdate()
+                .nativeCommand()
+                .execute(sql, userInfoList, userInfoList.size(), (ps, userInfo) -> {
+                    ps.setString(1, userInfo.getPassword());
+                    ps.setString(2, userInfo.getLoginName());
+                    ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
+                    ps.setInt(4, userInfo.getUserAge());
+                    ps.setLong(5, userInfo.getUserInfoId());
+                });
 
-        for (UserInfo userInfo : userInfoList) {
-            jdbcDao.executeInsert(userInfo);
-        }
 
         final long end = System.currentTimeMillis();
-        System.out.println("entity插入耗时:" + (end - begin));
-        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
-        jdbcDao.executeDelete(UserInfo.class);
+        System.out.println("daoTemplate插入耗时:" + (end - begin));
+        Assert.assertEquals(userInfoList.size(), daoTemplate.findCount(UserInfo.class));
 
-        final JdbcTemplateDaoImpl jdbcTemplateDao = (JdbcTemplateDaoImpl) this.jdbcDao;
-        final JdbcEngineConfig jdbcEngineConfig = jdbcTemplateDao.getDefaultJdbcEngine().getJdbcEngineConfig();
-        final JdbcOperations jdbcOperations = ((JdbcTemplateEngineConfigImpl) jdbcEngineConfig).getJdbcOperations();
+    }
 
-        String sql = "INSERT INTO USER_INFO (PASSWORD, LOGIN_NAME, GMT_CREATE, USER_AGE, USER_INFO_ID) VALUES (?, ?, ?, ?, ?)";
+    @Test
+    public void batchUpdate1() {
 
-
-        final long entBegin = System.currentTimeMillis();
-        jdbcOperations.batchUpdate(sql, userInfoList, userInfoList.size(), new ParameterizedPreparedStatementSetter<UserInfo>() {
-            @Override
-            public void setValues(PreparedStatement ps, UserInfo userInfo) throws SQLException {
-                final String password = (String) ClassUtils.getPropertyValue(userInfo, "password");
-                final String loginName = (String) ClassUtils.getPropertyValue(userInfo, "loginName");
-                final int userAge = (int) ClassUtils.getPropertyValue(userInfo, "userAge");
-                final long userInfoId = (long) ClassUtils.getPropertyValue(userInfo, "userInfoId");
-                ps.setString(1, password);
-                ps.setString(2, loginName);
-                ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
-                ps.setInt(4, userAge);
-                ps.setLong(5, userInfoId);
-            }
-        });
-        final long entEnd = System.currentTimeMillis();
-        System.out.println("批量ent插入耗时:" + (entEnd - entBegin));
-        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
-        jdbcDao.executeDelete(UserInfo.class);
-
-
-        List<Object[]> objects = new ArrayList<>();
-
-        final long objBegin = System.currentTimeMillis();
-        for (UserInfo userInfo : userInfoList) {
-            objects.add(new Object[]{userInfo.getPassword(), userInfo.getLoginName(), userInfo.getGmtCreate(), userInfo.getUserAge(), userInfo.getUserInfoId()});
+        daoTemplate.executeDelete(UserInfo.class);
+        List<UserInfo> userInfoList = new ArrayList<>();
+        for (int i = 1; i < 10000; i++) {
+            UserInfo user = new UserInfo();
+            user.setUserInfoId(Long.valueOf(i));
+            user.setLoginName("name-" + i);
+            user.setPassword("123456-" + i);
+            user.setUserAge(i);
+            user.setGmtCreate(new Date());
+            userInfoList.add(user);
         }
-        jdbcOperations.batchUpdate(sql, objects);
-        final long objEnd = System.currentTimeMillis();
-        System.out.println("批量object数组插入耗时:" + (objEnd - objBegin));
-        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
-        jdbcDao.executeDelete(UserInfo.class);
 
-        final long listGetBegin = System.currentTimeMillis();
-        jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                final UserInfo userInfo = userInfoList.get(i);
-                ps.setString(1, userInfo.getPassword());
-                ps.setString(2, userInfo.getLoginName());
-                ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
-                ps.setInt(4, userInfo.getUserAge());
-                ps.setLong(5, userInfo.getUserInfoId());
-            }
+        String sql1 = "INSERT INTO UserInfo (PASSWORD, loginName, gmtCreate, userAge, userInfoId) VALUES (?, ?, ?, ?, ?)";
+        final long begin1 = System.currentTimeMillis();
 
-            @Override
-            public int getBatchSize() {
-                return userInfoList.size();
-            }
+        daoTemplate.executeBatchUpdate(sql1, userInfoList, userInfoList.size(), (ps, userInfo) -> {
+            ps.setString(1, userInfo.getPassword());
+            ps.setString(2, userInfo.getLoginName());
+            ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
+            ps.setInt(4, userInfo.getUserAge());
+            ps.setLong(5, userInfo.getUserInfoId());
         });
-        final long listGetEnd = System.currentTimeMillis();
-        System.out.println("批量list get插入耗时:" + (listGetEnd - listGetBegin));
-        System.out.println("总记录数：" + jdbcDao.findCount(UserInfo.class));
+
+        final long end1 = System.currentTimeMillis();
+        System.out.println("daoTemplate插入耗时:" + (end1 - begin1));
+        Assert.assertEquals(userInfoList.size(), daoTemplate.findCount(UserInfo.class));
 
     }
 }
