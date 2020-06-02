@@ -12,6 +12,9 @@ package com.sonsure.dumper.core.command.sql;
 
 import java.util.Map;
 
+/**
+ * @author liyd
+ */
 public interface CommandConversionHandler {
 
     /**

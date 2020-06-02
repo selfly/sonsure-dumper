@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author liyd
+ */
 public abstract class AbstractMappingHandler implements MappingHandler {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MappingHandler.class);
@@ -38,6 +41,10 @@ public abstract class AbstractMappingHandler implements MappingHandler {
      */
     protected static final String PRI_FIELD_SUFFIX = "Id";
 
+    /**
+     * class不存在时是否失败 (抛出异常)
+     */
+    protected boolean failOnMissingClass;
 
     /**
      * 表前缀定义, 如 com.sonsure 开头的class表名统一加ss_  com.sonsure.User -> ss_user
@@ -74,6 +81,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     }
 
     public AbstractMappingHandler(String modelPackages, ClassLoader classLoader) {
+        this.failOnMissingClass = true;
         loadedClass = new HashMap<>();
         classMapping = new HashMap<>();
         customClassMapping = new HashMap<>();
@@ -101,13 +109,13 @@ public abstract class AbstractMappingHandler implements MappingHandler {
     @Override
     public String getTable(String className, Map<String, Object> params) {
         Class<?> tableClass = this.getTableClass(className);
-        return this.getTable(tableClass, params);
+        return tableClass == null ? className : this.getTable(tableClass, params);
     }
 
     @Override
     public String getColumn(String clazzName, String fieldName) {
         Class<?> tableClass = this.getTableClass(clazzName);
-        return this.getColumn(tableClass, fieldName);
+        return tableClass == null ? fieldName : this.getColumn(tableClass, fieldName);
     }
 
     @Override
@@ -233,7 +241,7 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         if (clazz == null && !classMapping.isEmpty()) {
             clazz = classMapping.get(className);
         }
-        if (clazz == null) {
+        if (clazz == null && failOnMissingClass) {
             throw new SonsureJdbcException("没有找到对应的class:" + className);
         }
 
@@ -246,6 +254,14 @@ public abstract class AbstractMappingHandler implements MappingHandler {
         } catch (ClassNotFoundException e) {
             throw new SonsureJdbcException("加载class失败:" + className);
         }
+    }
+
+    public boolean isFailOnMissingClass() {
+        return failOnMissingClass;
+    }
+
+    public void setFailOnMissingClass(boolean failOnMissingClass) {
+        this.failOnMissingClass = failOnMissingClass;
     }
 
     public ClassLoader getClassLoader() {

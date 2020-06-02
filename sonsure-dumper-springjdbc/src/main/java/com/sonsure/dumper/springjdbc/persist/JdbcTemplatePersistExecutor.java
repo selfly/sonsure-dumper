@@ -20,20 +20,18 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.math.BigInteger;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liyd on 17/4/12.
+ * @author liyd
+ * @date 17/4/12
  */
 public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
@@ -50,12 +48,7 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     @Override
     protected String doGetDialect() {
-        return jdbcOperations.execute(new ConnectionCallback<String>() {
-            @Override
-            public String doInConnection(Connection con) throws SQLException {
-                return con.getMetaData().getDatabaseProductName().toLowerCase();
-            }
-        });
+        return jdbcOperations.execute((ConnectionCallback<String>) con -> con.getMetaData().getDatabaseProductName().toLowerCase());
     }
 
     @Override
@@ -68,15 +61,12 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             return generateKey.getValue();
         } else {
             KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcOperations.update(new PreparedStatementCreator() {
-                @Override
-                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement ps = con.prepareStatement(commandContext.getCommand(), new String[]{generateKey.getColumn()});
-                    ArgumentPreparedStatementSetter pss = new ArgumentPreparedStatementSetter(commandContext.getParameters()
-                            .toArray());
-                    pss.setValues(ps);
-                    return ps;
-                }
+            jdbcOperations.update(con -> {
+                PreparedStatement ps = con.prepareStatement(commandContext.getCommand(), new String[]{generateKey.getColumn()});
+                ArgumentPreparedStatementSetter pss = new ArgumentPreparedStatementSetter(commandContext.getParameters()
+                        .toArray());
+                pss.setValues(ps);
+                return ps;
             }, keyHolder);
             Map<String, Object> keys = keyHolder.getKeys();
             //显示指定主键时为null，只有一个主键列，多个不支持

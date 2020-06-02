@@ -11,6 +11,7 @@ package com.sonsure.dumper.test.sql;
 
 import com.sonsure.dumper.core.command.sql.CommandConversionHandler;
 import com.sonsure.dumper.core.command.sql.JSqlParserCommandConversionHandler;
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.mapping.DefaultMappingHandler;
 import com.sonsure.dumper.test.model.*;
 import org.junit.Assert;
@@ -156,5 +157,26 @@ public class JSqlParserCommandConversionHandlerTest {
         String result = "UPDATE CONTENT SET COMMENT_COUNT = COMMENT_COUNT + 1 WHERE CONTENT_ID IS NULL";
         Assert.assertTrue(sql.toLowerCase().equals(result.toLowerCase()));
     }
+
+    @Test
+    public void commandToSql14() throws Exception {
+        try {
+            String command3 = "select loginName,password from UnUserInfo where userInfoId = ?";
+            String sql3 = commandConversionHandler.convert(command3, null);
+        } catch (SonsureJdbcException e) {
+            Assert.assertEquals(e.getCause().getMessage(), "没有找到对应的class:UnUserInfo");
+        }
+    }
+
+    @Test
+    public void commandToSql15() throws Exception {
+        DefaultMappingHandler mh = new DefaultMappingHandler();
+        mh.setFailOnMissingClass(false);
+        JSqlParserCommandConversionHandler cch = new JSqlParserCommandConversionHandler(mh);
+        String command3 = "select loginName, password from UnUserInfo where userInfoId = ?";
+        String sql3 = cch.convert(command3, null);
+        Assert.assertTrue(command3.toLowerCase().equals(sql3.toLowerCase()));
+    }
+
 
 }

@@ -43,7 +43,8 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
 
         String resolvedCommand = commandContext.getCommand();
         if (!executorContext.isNativeCommand()) {
-            Map<String, Object> params = new HashMap<>();
+            // todo 需要收集参数信息，待完成
+            Map<String, Object> params = Collections.emptyMap();
             resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
         }
         if (StringUtils.isNotBlank(jdbcEngineConfig.getCommandCase())) {

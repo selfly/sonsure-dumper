@@ -85,20 +85,28 @@ public class ModelClassCache {
      * @return class fields
      */
     public static Collection<ModelFieldMeta> getClassFieldMetas(Class<?> clazz) {
+        assertClassNotNull(clazz);
         ModelClassMeta modelClassMeta = getClassMeta(clazz);
         return modelClassMeta.getModelFieldMetas();
     }
 
     public static ModelFieldMeta getClassFieldMeta(Class<?> clazz, String fieldName) {
+        assertClassNotNull(clazz);
         ModelClassMeta classMeta = getClassMeta(clazz);
         return classMeta.getModelFieldMeta(fieldName);
     }
 
     public static ModelFieldMeta getMappedFieldMeta(Class<?> clazz, String columnName) {
+        assertClassNotNull(clazz);
         ModelClassMeta classMeta = getClassMeta(clazz);
         return classMeta.getMappedFieldMeta(columnName);
     }
 
+    private static void assertClassNotNull(Class<?> clazz) {
+        if (clazz == null) {
+            throw new SonsureJdbcException("class不能为null");
+        }
+    }
 
     /**
      * 初始化实体类缓存
