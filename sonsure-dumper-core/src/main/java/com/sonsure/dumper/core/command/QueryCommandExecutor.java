@@ -17,14 +17,14 @@ import java.util.List;
 /**
  * @author liyd
  */
-public interface QueryCommandExecutor<C> extends CommandExecutor {
+public interface QueryCommandExecutor<C extends QueryCommandExecutor<C>> extends CommonCommandExecutor<C> {
 
     /**
      * 分页信息
      *
-     * @param pageNum
-     * @param pageSize
-     * @return
+     * @param pageNum  the page num
+     * @param pageSize the page size
+     * @return c
      */
     C paginate(int pageNum, int pageSize);
 
@@ -32,7 +32,7 @@ public interface QueryCommandExecutor<C> extends CommandExecutor {
      * 分页信息
      *
      * @param pageable the pageable
-     * @return select
+     * @return select c
      */
     C paginate(Pageable pageable);
 
@@ -57,7 +57,7 @@ public interface QueryCommandExecutor<C> extends CommandExecutor {
     /**
      * count查询
      *
-     * @return
+     * @return long
      */
     long count();
 
@@ -96,21 +96,27 @@ public interface QueryCommandExecutor<C> extends CommandExecutor {
     /**
      * 简单查询，返回单一的结果，例如Long、Integer、String等
      *
-     * @return
+     * @param <T>   the type parameter
+     * @param clazz the clazz
+     * @return t
      */
     <T> T oneColResult(Class<T> clazz);
 
     /**
      * 查询结果，返回单一的结果列表，例如List<Long>
      *
-     * @return
+     * @param <T>   the type parameter
+     * @param clazz the clazz
+     * @return list
      */
     <T> List<T> oneColList(Class<T> clazz);
 
     /**
      * 简单查询，返回单一的结果，只取第一条
      *
-     * @return
+     * @param <T>   the type parameter
+     * @param clazz the clazz
+     * @return t
      */
     <T> T oneColFirstResult(Class<T> clazz);
 

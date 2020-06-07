@@ -10,9 +10,11 @@
 package com.sonsure.dumper.core.command.entity;
 
 /**
- * Created by liyd on 17/4/14.
+ *
+ * @author liyd
+ * @date 17/4/14
  */
-public interface Delete extends ConditionCommandExecutor<Delete> {
+public interface Delete extends EntityConditionCommandExecutor<Delete> {
 
     /**
      * 指定表

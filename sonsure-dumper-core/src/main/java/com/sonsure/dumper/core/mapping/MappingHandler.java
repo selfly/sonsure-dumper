@@ -15,7 +15,9 @@ import java.util.Map;
 /**
  * 实体映射处理
  * <p>
- * Created by liyd on 17/4/11.
+ *
+ * @author liyd
+ * @date 17/4/11
  */
 public interface MappingHandler {
 

@@ -11,7 +11,6 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.commons.model.Pagination;
-import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.management.CommandClass;
 import org.apache.commons.lang3.ArrayUtils;
@@ -78,7 +77,7 @@ public class SelectContext extends AbstractWhereContext {
         for (CommandClass fromClass : fromClasses) {
             classes.add(fromClass.getCls());
         }
-        return classes.toArray(new Class<?>[classes.size()]);
+        return classes.toArray(new Class<?>[0]);
     }
 
     public void addSelectFields(String[] fields) {
@@ -132,25 +131,25 @@ public class SelectContext extends AbstractWhereContext {
         }
     }
 
-    /**
-     * 设置排序类型
-     *
-     * @param type
-     */
-    public void setOrderByType(String type) {
-        if (orderByFields.isEmpty()) {
-            throw new SonsureJdbcException("请先指定需要排序的属性");
-        }
-        int size = orderByFields.size();
-        for (int i = size - 1; i >= 0; i--) {
-            ClassField classField = orderByFields.get(i);
-            if (StringUtils.isNotBlank(classField.getFieldOperator())) {
-                //已经指定了，跳出
-                break;
-            }
-            classField.setFieldOperator(type);
-        }
-    }
+//    /**
+//     * 设置排序类型
+//     *
+//     * @param type
+//     */
+//    public void setOrderByType(String type) {
+//        if (orderByFields.isEmpty()) {
+//            throw new SonsureJdbcException("请先指定需要排序的属性");
+//        }
+//        int size = orderByFields.size();
+//        for (int i = size - 1; i >= 0; i--) {
+//            ClassField classField = orderByFields.get(i);
+//            if (StringUtils.isNotBlank(classField.getFieldOperator())) {
+//                //已经指定了，跳出
+//                break;
+//            }
+//            classField.setFieldOperator(type);
+//        }
+//    }
 
     public void isCount(boolean isCount) {
         this.isCount = isCount;

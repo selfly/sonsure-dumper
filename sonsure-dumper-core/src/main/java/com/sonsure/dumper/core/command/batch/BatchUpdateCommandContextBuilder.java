@@ -10,7 +10,7 @@
 package com.sonsure.dumper.core.command.batch;
 
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.ExecutorContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
@@ -22,8 +22,7 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
 public class BatchUpdateCommandContextBuilder extends AbstractCommandContextBuilder {
 
     @Override
-    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
-        BatchUpdateExecutorContext<?> batchUpdateExecutorContext = (BatchUpdateExecutorContext<?>) executorContext;
-        return new BatchCommandContext<>(batchUpdateExecutorContext);
+    public CommandContext doBuild(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
+        return new BatchCommandContext<>(executorContext);
     }
 }

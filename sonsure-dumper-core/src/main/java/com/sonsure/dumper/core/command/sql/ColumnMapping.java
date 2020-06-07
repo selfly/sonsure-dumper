@@ -12,6 +12,9 @@ package com.sonsure.dumper.core.command.sql;
 import net.sf.jsqlparser.schema.Column;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author liyd
+ */
 public class ColumnMapping {
 
     private Column column;

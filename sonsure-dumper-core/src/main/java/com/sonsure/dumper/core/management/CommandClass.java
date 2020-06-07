@@ -9,6 +9,9 @@
 
 package com.sonsure.dumper.core.management;
 
+/**
+ * @author liyd
+ */
 public class CommandClass {
 
     /**

@@ -10,13 +10,14 @@
 package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.ExecutorContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.management.ClassField;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 /**
- *
  * @author liyd
  * @date 17/4/14
  */
@@ -25,22 +26,25 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
     private static final String COMMAND_OPEN = "update ";
 
     @Override
-    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
+    public CommandContext doBuild(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
-        UpdateContext updateContext = (UpdateContext) executorContext;
-        CommandContext commandContext = getCommonCommandContext(updateContext);
+        CommandContext commandContext = getCommonCommandContext(executorContext);
 
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
-        command.append(this.getModelAliasName(updateContext.getModelClass(), null)).append(" set ");
+        final Class<?> modelClass = executorContext.getUniqueModelClass();
+        command.append(this.getModelAliasName(modelClass, null)).append(" set ");
 
-        String pkField = this.getPkField(updateContext.getModelClass(), jdbcEngineConfig.getMappingHandler());
-        for (ClassField classField : updateContext.getSetFields()) {
+        String pkField = this.getPkField(modelClass, jdbcEngineConfig.getMappingHandler());
+        final CommandExecutorContext.UpdateContext updateContext = executorContext.updateContext();
+        final List<ClassField> setFields = updateContext.getSetFields();
+        final boolean ignoreNull = updateContext.isIgnoreNull();
+        for (ClassField classField : setFields) {
             //主键 不管怎么更新都不更新主键
             if (StringUtils.equals(pkField, classField.getName())) {
                 continue;
             }
             //null值
-            if (classField.getValue() == null && updateContext.isIgnoreNull()) {
+            if (classField.getValue() == null && ignoreNull) {
                 continue;
             }
 
@@ -50,17 +54,18 @@ public class UpdateCommandContextBuilderImpl extends AbstractCommandContextBuild
             } else if (classField.isNative()) {
                 command.append(classField.getValue());
             } else {
-                command.append("?");
-                commandContext.addParameter(classField.getValue());
+                final String placeholder = this.createParameterPlaceholder(classField.getName(), executorContext.isNamedParameter());
+                command.append(placeholder);
+                commandContext.addCommandParameter(classField.getName(), classField.getValue());
             }
             command.append(",");
         }
         command.deleteCharAt(command.length() - 1);
 
-        CommandContext whereCommandContext = this.buildWhereSql(updateContext);
+        CommandContext whereCommandContext = this.buildWhereSql(executorContext.entityWhereContext(), executorContext.isNamedParameter());
         if (whereCommandContext != null) {
             command.append(whereCommandContext.getCommand());
-            commandContext.addParameters(whereCommandContext.getParameters());
+            commandContext.addCommandParameters(whereCommandContext.getCommandParameters());
         }
 
         commandContext.setCommand(command.toString());

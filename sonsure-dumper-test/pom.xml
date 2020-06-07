@@ -70,9 +70,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -120,6 +120,17 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jdbc</artifactId>
+            <version>2.0.0.RELEASE</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.data</groupId>-->
+        <!--            <artifactId>spring-data-jpa</artifactId>-->
+        <!--            <version>2.3.0.RELEASE</version>-->
+        <!--        </dependency>-->
     </dependencies>
 
 </project>

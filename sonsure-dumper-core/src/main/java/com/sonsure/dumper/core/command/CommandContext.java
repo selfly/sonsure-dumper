@@ -18,7 +18,7 @@ import java.util.List;
  * <p>
  *
  * @author liyd
- * @date 17/4/12
+ * @date 17 /4/12
  */
 public class CommandContext {
 
@@ -28,7 +28,22 @@ public class CommandContext {
     private String command;
 
     /**
-     * 参数列表
+     * The Is native command.
+     */
+    private boolean isNativeCommand;
+
+    /**
+     * The Is named parameter.
+     */
+    private boolean isNamedParameter;
+
+    /**
+     * The Command parameters.
+     */
+    private List<CommandParameter> commandParameters;
+
+    /**
+     * The Parameters.
      */
     private List<Object> parameters;
 
@@ -43,7 +58,30 @@ public class CommandContext {
     private GenerateKey generateKey;
 
     public CommandContext() {
+        isNativeCommand = false;
+        isNamedParameter = false;
+        commandParameters = new ArrayList<>();
         parameters = new ArrayList<>();
+    }
+
+    public void addCommandParameters(List<CommandParameter> commandParameters) {
+        this.commandParameters.addAll(commandParameters);
+    }
+
+    public void addCommandParameter(CommandParameter commandParameter) {
+        this.commandParameters.add(commandParameter);
+    }
+
+    public void addCommandParameter(String name, Object value) {
+        this.addCommandParameter(new CommandParameter(name, value));
+    }
+
+    public List<Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<Object> parameters) {
+        this.parameters = parameters;
     }
 
     public String getCommand() {
@@ -52,18 +90,6 @@ public class CommandContext {
 
     public void setCommand(String command) {
         this.command = command;
-    }
-
-    public void addParameter(Object parameter) {
-        this.parameters.add(parameter);
-    }
-
-    public void addParameters(List<Object> parameters) {
-        this.parameters.addAll(parameters);
-    }
-
-    public List<Object> getParameters() {
-        return parameters;
     }
 
     public Class<?> getResultType() {
@@ -82,8 +108,23 @@ public class CommandContext {
         this.generateKey = generateKey;
     }
 
-    public void setParameters(List<Object> parameters) {
-        this.parameters = parameters;
+    public boolean isNativeCommand() {
+        return isNativeCommand;
     }
 
+    public void setNativeCommand(boolean nativeCommand) {
+        isNativeCommand = nativeCommand;
+    }
+
+    public boolean isNamedParameter() {
+        return isNamedParameter;
+    }
+
+    public void setNamedParameter(boolean namedParameter) {
+        isNamedParameter = namedParameter;
+    }
+
+    public List<CommandParameter> getCommandParameters() {
+        return commandParameters;
+    }
 }

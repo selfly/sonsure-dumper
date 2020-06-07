@@ -9,6 +9,10 @@
 
 package com.sonsure.dumper.core.command;
 
+/**
+ * @author liyd
+ */
+
 public enum LogicalOperator {
 
     AND("and"),

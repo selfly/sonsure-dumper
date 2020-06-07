@@ -11,13 +11,17 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.dumper.core.command.lambda.Function;
 
+import java.util.Map;
+
 /**
  * 条件构建
  * 实现标识接口
  * <p>
- * Created by liyd on 17/4/11.
+ *
+ * @author liyd
+ * @date 17/4/11
  */
-public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>> extends EntityCommandExecutor {
+public interface EntityConditionCommandExecutor<C extends EntityConditionCommandExecutor<C>> extends EntityCommandExecutor<C> {
 
     /**
      * where 关键字
@@ -312,5 +316,14 @@ public interface ConditionCommandExecutor<C extends ConditionCommandExecutor<C>>
      * @return c
      */
     C append(String segment, Object... params);
+
+    /**
+     * append sql片断
+     *
+     * @param segment the segment
+     * @param params  the params
+     * @return c c
+     */
+    C append(String segment, Map<String, Object> params);
 
 }

@@ -14,6 +14,7 @@ import com.sonsure.commons.bean.BeanKit;
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.command.lambda.LambdaMethod;
@@ -25,11 +26,12 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.List;
 
 /**
- * Created by liyd on 17/4/12.
+ * @author liyd
+ * @date 17/4/12
  */
-public class SelectImpl extends AbstractConditionCommandExecutor<Select> implements Select {
+public class SelectImpl extends AbstractEntityConditionCommandExecutor<Select> implements Select {
 
-    protected SelectContext selectContext;
+    private CommandExecutorContext.SelectContext selectContext;
 
     public SelectImpl(JdbcEngineConfig jdbcEngineConfig) {
         this(jdbcEngineConfig, null);
@@ -38,9 +40,9 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
 
     public SelectImpl(JdbcEngineConfig jdbcEngineConfig, String[] fields) {
         super(jdbcEngineConfig);
-        selectContext = new SelectContext();
+        this.selectContext = getCommandExecutorContext().selectContext();
         if (fields != null) {
-            selectContext.addSelectFields(fields);
+            this.selectContext.addSelectFields(fields);
         }
     }
 
@@ -108,31 +110,31 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
 
     @Override
     public Select paginate(int pageNum, int pageSize) {
-        this.selectContext.paginate(pageNum, pageSize);
+        this.getCommandExecutorContext().paginate(pageNum, pageSize);
         return this;
     }
 
     @Override
     public Select paginate(Pageable pageable) {
-        this.selectContext.paginate(pageable);
+        this.getCommandExecutorContext().paginate(pageable);
         return this;
     }
 
     @Override
     public Select limit(int offset, int size) {
-        this.selectContext.limit(offset, size);
+        this.getCommandExecutorContext().limit(offset, size);
         return this;
     }
 
     @Override
     public Select isCount(boolean isCount) {
-        selectContext.isCount(isCount);
+        getCommandExecutorContext().setCount(isCount);
         return this;
     }
 
     @Override
     public long count() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         PersistExecutor persistExecutor = this.jdbcEngineConfig.getPersistExecutor();
         String countCommand = this.jdbcEngineConfig.getPageHandler().getCountCommand(commandContext.getCommand(), persistExecutor.getDialect());
         CommandContext countCommandContext = BeanKit.copyProperties(new CommandContext(), commandContext);
@@ -144,14 +146,14 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
 
     @Override
     public <T> T singleResult(Class<T> cls) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(cls);
         return (T) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_SINGLE_RESULT);
     }
 
     @Override
     public Object singleResult() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         return this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
     }
 
@@ -171,14 +173,14 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
 
     @Override
     public <E> E oneColResult(Class<E> clazz) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(clazz);
         return (E) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL);
     }
 
     @Override
     public <E> List<E> oneColList(Class<E> clazz) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(clazz);
         return (List<E>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
     }
@@ -192,55 +194,35 @@ public class SelectImpl extends AbstractConditionCommandExecutor<Select> impleme
 
     @Override
     public <T> List<T> list(Class<T> cls) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(cls);
         return (List<T>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_LIST);
     }
 
     @Override
     public List<Object> list() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         return (List<Object>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
     }
 
     @Override
     public <T> Page<T> pageResult(Class<T> cls) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(cls);
-        return this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler<T>() {
-            @Override
-            public List<T> queryList(CommandContext commandContext) {
-                return (List<T>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_LIST);
-            }
-        });
+        return this.doPageResult(commandContext, getCommandExecutorContext().getPagination(), getCommandExecutorContext().isCount(), commandContext1 -> (List<T>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext1, CommandType.QUERY_FOR_LIST));
     }
 
     @Override
     public Page<Object> pageResult() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
-        return this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler<Object>() {
-            @Override
-            public List<Object> queryList(CommandContext commandContext) {
-                return (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
-            }
-        });
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
+        return this.doPageResult(commandContext, getCommandExecutorContext().getPagination(), getCommandExecutorContext().isCount(), commandContext1 -> (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext1, CommandType.QUERY_FOR_MAP_LIST));
     }
 
     @Override
     public <T> Page<T> oneColPageResult(Class<T> clazz) {
-        CommandContext commandContext = this.commandContextBuilder.build(this.selectContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         commandContext.setResultType(clazz);
-        return this.doPageResult(commandContext, selectContext.getPagination(), selectContext.isCount(), new PageQueryHandler<T>() {
-            @Override
-            public List<T> queryList(CommandContext commandContext) {
-                return (List<T>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_ONE_COL_LIST);
-            }
-        });
-    }
-
-    @Override
-    protected AbstractWhereContext getWhereContext() {
-        return this.selectContext;
+        return this.doPageResult(commandContext, getCommandExecutorContext().getPagination(), getCommandExecutorContext().isCount(), commandContext1 -> (List<T>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext1, CommandType.QUERY_ONE_COL_LIST));
     }
 
 }

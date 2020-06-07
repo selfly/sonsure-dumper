@@ -11,7 +11,7 @@ package com.sonsure.dumper.core.command.entity;
 
 
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.ExecutorContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import com.sonsure.dumper.core.management.ClassField;
@@ -22,18 +22,19 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by liyd on 17/4/12.
+ * @author liyd
+ * @date 17/4/12
  */
 public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuilder {
 
     private static final String COMMAND_OPEN = "select ";
 
     @Override
-    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
+    public CommandContext doBuild(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
-        SelectContext selectContext = (SelectContext) executorContext;
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
 
+        final CommandExecutorContext.SelectContext selectContext = executorContext.selectContext();
         List<ClassField> selectFields = selectContext.getSelectFields();
         List<CommandClass> fromClasses = selectContext.getFromClasses();
         if (fromClasses.isEmpty()) {
@@ -67,12 +68,12 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
         }
         command.deleteCharAt(command.length() - 1);
 
-        CommandContext commandContext = getCommonCommandContext(selectContext);
+        CommandContext commandContext = getCommonCommandContext(executorContext);
 
-        CommandContext whereCommandContext = this.buildWhereSql(selectContext);
+        CommandContext whereCommandContext = this.buildWhereSql(executorContext.entityWhereContext(), executorContext.isNamedParameter());
         if (whereCommandContext != null) {
             command.append(whereCommandContext.getCommand());
-            commandContext.addParameters(whereCommandContext.getParameters());
+            commandContext.addCommandParameters(whereCommandContext.getCommandParameters());
         }
 
         String groupBySql = this.buildGroupBySql(selectContext);

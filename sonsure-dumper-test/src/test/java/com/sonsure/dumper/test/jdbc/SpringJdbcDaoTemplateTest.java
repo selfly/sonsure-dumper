@@ -29,6 +29,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.sql.DataSource;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
@@ -617,6 +618,18 @@ public class SpringJdbcDaoTemplateTest {
     }
 
     @Test
+    public void append2() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userInfoId", 40L);
+        UserInfo userInfo = daoTemplate.selectFrom(UserInfo.class)
+                .namedParameter()
+                .where("userAge", ">", 5)
+                .append("and userInfoId = (select max(t2.userInfoId) from UserInfo t2 where t2.userInfoId < :userInfoId)", params)
+                .singleResult(UserInfo.class);
+        Assert.assertNotNull(userInfo);
+    }
+
+    @Test
     public void updateSet() {
 
         daoTemplate.update(UserInfo.class)
@@ -1116,4 +1129,46 @@ public class SpringJdbcDaoTemplateTest {
         Assert.assertEquals(userInfoList.size(), daoTemplate.findCount(UserInfo.class));
 
     }
+
+    @Autowired
+    private DataSource dataSource;
+
+//    @Test
+//    public void batchUpdate2() {
+//
+//        UserInfo userInfo = new UserInfo();
+//
+//        List<String> names = new ArrayList<>();
+//        names.add("1111");
+//        names.add("2222");
+//        names.add("3333");
+//
+//        userInfo.setNames(names);
+//        userInfo.setPassword("abc");
+//
+//
+//        final SQL sql = new SQL();
+//        Map<String, Object> params = new HashMap<>();
+//
+//        sql.SELECT("username,password");
+//        sql.FROM("user_info");
+//
+//        sql.WHERE("login_name in (:names)");
+//
+////        sql.AND().WHERE("password = ?");
+//
+//
+//        System.out.println(sql.toString());
+//
+//        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+//
+//        namedParameterJdbcTemplate.queryForList(sql.toString(), new BeanPropertySqlParameterSource(userInfo));
+////
+////
+////        daoTemplate.selectFrom(UserInfo.class)
+////                .where(UserInfo::getLoginName,"aaa")
+////                .and(UserInfo::getPassword,"in","")
+//
+//
+//    }
 }

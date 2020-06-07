@@ -7,8 +7,9 @@
  * Designed By Selfly Lee (selfly@live.com)
  */
 
-package com.sonsure.dumper.core.command;
+package com.sonsure.dumper.core.command.simple;
 
+import com.sonsure.dumper.core.command.AbstractQueryCommandExecutorContext;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
@@ -16,7 +17,7 @@ import org.apache.commons.lang3.ArrayUtils;
  *
  * @author liyd
  */
-public abstract class AbstractCommandExecutorContext extends AbstractPaginationExecutorContext {
+public abstract class AbstractSimpleCommandExecutorContext extends AbstractQueryCommandExecutorContext {
 
     /**
      * The Command.

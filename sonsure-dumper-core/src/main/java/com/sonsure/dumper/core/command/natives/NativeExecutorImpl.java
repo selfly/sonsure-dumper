@@ -11,7 +11,6 @@ package com.sonsure.dumper.core.command.natives;
 
 
 import com.sonsure.dumper.core.command.simple.AbstractSimpleCommandExecutor;
-import com.sonsure.dumper.core.command.simple.SimpleExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 /**
@@ -22,23 +21,19 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
  */
 public class NativeExecutorImpl extends AbstractSimpleCommandExecutor<NativeExecutor> implements NativeExecutor {
 
-    protected NativeExecutorContext nativeExecutorContext;
+    private static final String DEFAULT_NATIVE_PARAM_PREFIX = "nativeParam";
 
     public NativeExecutorImpl(JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
-        nativeExecutorContext = new NativeExecutorContext();
     }
 
     @Override
     public NativeExecutor parameters(Object... values) {
+        int count = 1;
         for (Object value : values) {
-            this.nativeExecutorContext.addParameter(value);
+            this.getCommandExecutorContext().addCommandParameter(DEFAULT_NATIVE_PARAM_PREFIX + (count++), value);
         }
         return this;
     }
 
-    @Override
-    protected SimpleExecutorContext getSimpleExecutorContext() {
-        return nativeExecutorContext;
-    }
 }

@@ -20,29 +20,22 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
  * @author liyd
  * @date 17 /4/14
  */
-public class DeleteImpl extends AbstractConditionCommandExecutor<Delete> implements Delete {
-
-    protected DeleteContext deleteContext;
+public class DeleteImpl extends AbstractEntityConditionCommandExecutor<Delete> implements Delete {
 
     public DeleteImpl(JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
-        deleteContext = new DeleteContext();
     }
 
     @Override
     public Delete from(Class<?> cls) {
-        deleteContext.setModelClass(cls);
+        getCommandExecutorContext().addModelClass(cls);
         return this;
     }
 
     @Override
     public int execute() {
-        CommandContext commandContext = this.getCommandContextBuilder().build(deleteContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.getCommandContextBuilder().build(getCommandExecutorContext(), getJdbcEngineConfig());
         return (Integer) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.DELETE);
     }
 
-    @Override
-    protected AbstractWhereContext getWhereContext() {
-        return deleteContext;
-    }
 }

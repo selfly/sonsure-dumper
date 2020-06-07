@@ -14,6 +14,9 @@ import com.sonsure.dumper.core.management.ClassField;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author liyd
+ */
 public class UpdateContext extends AbstractWhereContext {
 
     /**

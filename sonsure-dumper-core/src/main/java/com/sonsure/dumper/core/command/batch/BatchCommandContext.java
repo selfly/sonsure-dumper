@@ -10,6 +10,7 @@
 package com.sonsure.dumper.core.command.batch;
 
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
 
 import java.util.Collection;
 
@@ -35,11 +36,9 @@ public class BatchCommandContext<T> extends CommandContext {
      */
     private ParameterizedSetter<T> parameterizedSetter;
 
-    public BatchCommandContext() {
-    }
-
-    public BatchCommandContext(BatchUpdateExecutorContext<T> batchUpdateExecutorContext) {
-        this.setCommand(batchUpdateExecutorContext.getCommand());
+    public BatchCommandContext(CommandExecutorContext commandExecutorContext) {
+        this.setCommand(commandExecutorContext.getCommand());
+        final CommandExecutorContext.BatchUpdateExecutorContext<T> batchUpdateExecutorContext = commandExecutorContext.batchUpdateExecutorContext();
         this.batchData = batchUpdateExecutorContext.getBatchData();
         this.batchSize = batchUpdateExecutorContext.getBatchSize();
         this.parameterizedSetter = batchUpdateExecutorContext.getParameterizedSetter();

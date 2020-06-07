@@ -58,7 +58,6 @@
         <commons-dbutils.version>1.7</commons-dbutils.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <slf4j-log4j12.version>1.6.6</slf4j-log4j12.version>
         <commons-collections.version>3.2.1</commons-collections.version>
         <jsqlparser.version>1.1</jsqlparser.version>
         <mysql.version>5.1.25</mysql.version>

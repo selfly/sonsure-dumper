@@ -10,12 +10,14 @@
 package com.sonsure.dumper.core.command.entity;
 
 
-import com.sonsure.dumper.core.command.CommandExecutor;
+import com.sonsure.dumper.core.command.CommonCommandExecutor;
 
 /**
  * 实体执行标识接口
  * <p>
- * Created by liyd on 17/4/19.
+ *
+ * @author liyd
+ * @date 17/4/19
  */
-public interface EntityCommandExecutor extends CommandExecutor {
+public interface EntityCommandExecutor<T extends EntityCommandExecutor<T>> extends CommonCommandExecutor<T> {
 }

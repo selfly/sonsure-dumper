@@ -69,6 +69,16 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
     protected SqlSessionFactory mybatisSqlSessionFactory;
 
     /**
+     * The Native command.
+     */
+    protected boolean nativeCommand;
+
+    /**
+     * The Named parameter.
+     */
+    protected boolean namedParameter;
+
+    /**
      * command大小写
      */
     protected String commandCase;
@@ -137,6 +147,25 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
 
     public void setCommandCase(String commandCase) {
         this.commandCase = commandCase;
+    }
+
+
+    @Override
+    public boolean isNativeCommand() {
+        return nativeCommand;
+    }
+
+    public void setNativeCommand(boolean nativeCommand) {
+        this.nativeCommand = nativeCommand;
+    }
+
+    @Override
+    public boolean isNamedParameter() {
+        return namedParameter;
+    }
+
+    public void setNamedParameter(boolean namedParameter) {
+        this.namedParameter = namedParameter;
     }
 
     @Override

@@ -11,39 +11,35 @@ package com.sonsure.dumper.core.command.mybatis;
 
 
 import com.sonsure.dumper.core.command.simple.AbstractSimpleCommandExecutor;
-import com.sonsure.dumper.core.command.simple.SimpleExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 import java.util.Map;
 
 /**
- * Created by liyd on 17/4/25.
+ * @author liyd
+ * @date 17/4/25
  */
 public class MybatisExecutorImpl extends AbstractSimpleCommandExecutor<MybatisExecutor> implements MybatisExecutor {
 
-    protected MybatisExecutorContext mybatisExecutorContext;
-
     public MybatisExecutorImpl(JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
-        mybatisExecutorContext = new MybatisExecutorContext();
+        this.getCommandExecutorContext().setNamedParameter(true);
     }
 
     @Override
     public MybatisExecutor parameters(Map<String, Object> parameters) {
-        if (parameters != null) {
-            this.mybatisExecutorContext.addParameters(parameters);
+        if (parameters == null) {
+            return this;
+        }
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            this.getCommandExecutorContext().addCommandParameter(entry.getKey(), entry.getValue());
         }
         return this;
     }
 
     @Override
     public MybatisExecutor parameter(String name, Object value) {
-        this.mybatisExecutorContext.addParameter(name, value);
+        this.getCommandExecutorContext().addCommandParameter(name, value);
         return this;
-    }
-
-    @Override
-    protected SimpleExecutorContext getSimpleExecutorContext() {
-        return mybatisExecutorContext;
     }
 }

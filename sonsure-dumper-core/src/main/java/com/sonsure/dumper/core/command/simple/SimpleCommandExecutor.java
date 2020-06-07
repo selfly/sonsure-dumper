@@ -10,7 +10,6 @@
 package com.sonsure.dumper.core.command.simple;
 
 
-import com.sonsure.dumper.core.command.NativeDecisionCommandExecutor;
 import com.sonsure.dumper.core.command.QueryCommandExecutor;
 
 import java.io.Serializable;
@@ -22,7 +21,7 @@ import java.io.Serializable;
  * @author liyd
  * @date 17 /4/25
  */
-public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> extends QueryCommandExecutor<T>, NativeDecisionCommandExecutor<T> {
+public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> extends QueryCommandExecutor<T> {
 
     /**
      * 命令

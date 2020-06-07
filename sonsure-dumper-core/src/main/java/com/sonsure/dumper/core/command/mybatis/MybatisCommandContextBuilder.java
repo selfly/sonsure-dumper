@@ -10,7 +10,8 @@
 package com.sonsure.dumper.core.command.mybatis;
 
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.ExecutorContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
+import com.sonsure.dumper.core.command.CommandParameter;
 import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import org.apache.ibatis.mapping.BoundSql;
@@ -30,16 +31,15 @@ import java.util.List;
 public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder {
 
     @Override
-    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
+    public CommandContext doBuild(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
-        MybatisExecutorContext mybatisExecutorContext = (MybatisExecutorContext) executorContext;
         CommandContext commandContext = new CommandContext();
 
         SqlSessionFactory sqlSessionFactory = jdbcEngineConfig.getMybatisSqlSessionFactory();
-        MappedStatement statement = sqlSessionFactory.getConfiguration().getMappedStatement(mybatisExecutorContext.getCommand());
+        MappedStatement statement = sqlSessionFactory.getConfiguration().getMappedStatement(executorContext.getCommand());
         Configuration configuration = sqlSessionFactory.getConfiguration();
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-        BoundSql boundSql = statement.getBoundSql(mybatisExecutorContext.getParameters());
+        BoundSql boundSql = statement.getBoundSql(executorContext.getParameters());
         Object parameterObject = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
@@ -58,7 +58,7 @@ public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder 
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
                     }
-                    commandContext.addParameter(value);
+                    commandContext.addCommandParameter(new CommandParameter(propertyName, value));
                 }
             }
         }

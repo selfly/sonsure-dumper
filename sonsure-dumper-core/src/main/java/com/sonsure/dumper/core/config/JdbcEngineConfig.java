@@ -20,7 +20,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * jdbc配置类
  * <p>
- * Created by liyd on 17/4/11.
+ *
+ * @author liyd
+ * @date 17/4/11
  */
 public interface JdbcEngineConfig {
 
@@ -75,6 +77,20 @@ public interface JdbcEngineConfig {
      * @return
      */
     SqlSessionFactory getMybatisSqlSessionFactory();
+
+    /**
+     * Native command boolean.
+     *
+     * @return the boolean
+     */
+    boolean isNativeCommand();
+
+    /**
+     * Named parameter boolean.
+     *
+     * @return the boolean
+     */
+    boolean isNamedParameter();
 
     /**
      * command大小写

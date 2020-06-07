@@ -14,7 +14,9 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
 /**
  * CommandContext构建
  * <p>
- * Created by liyd on 17/4/11.
+ *
+ * @author liyd
+ * @date 17/4/11
  */
 public interface CommandContextBuilder {
 
@@ -25,6 +27,6 @@ public interface CommandContextBuilder {
      * @param jdbcEngineConfig the jdbc engine config
      * @return command context
      */
-    CommandContext build(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig);
+    CommandContext build(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig);
 
 }

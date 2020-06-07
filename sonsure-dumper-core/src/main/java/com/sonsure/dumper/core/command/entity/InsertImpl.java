@@ -11,7 +11,6 @@ package com.sonsure.dumper.core.command.entity;
 
 import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
-import com.sonsure.dumper.core.command.AbstractCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.command.lambda.Function;
@@ -21,35 +20,31 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import java.util.Map;
 
 /**
- *
  * @author liyd
  * @date 17/4/14
  */
-public class InsertImpl extends AbstractCommandExecutor implements Insert {
-
-    private InsertContext insertContext;
+public class InsertImpl extends AbstractEntityCommandExecutor<Insert> implements Insert {
 
     public InsertImpl(JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
-        insertContext = new InsertContext();
     }
 
     @Override
     public Insert into(Class<?> cls) {
-        this.insertContext.setModelClass(cls);
+        this.getCommandExecutorContext().addModelClass(cls);
         return this;
     }
 
     @Override
     public Insert set(String field, Object value) {
-        this.insertContext.addInsertField(field, value);
+        this.getCommandExecutorContext().addInsertField(field, value);
         return this;
     }
 
     @Override
     public <E, R> Insert set(Function<E, R> function, Object value) {
         String field = LambdaMethod.getField(function);
-        this.insertContext.addInsertField(field, value);
+        this.getCommandExecutorContext().addInsertField(field, value);
         return this;
     }
 
@@ -62,14 +57,15 @@ public class InsertImpl extends AbstractCommandExecutor implements Insert {
             if (entry.getValue() == null) {
                 continue;
             }
-            this.insertContext.addInsertField(entry.getKey(), entry.getValue());
+            this.getCommandExecutorContext().addInsertField(entry.getKey(), entry.getValue());
         }
         return this;
     }
 
     @Override
     public Object execute() {
-        CommandContext commandContext = this.commandContextBuilder.build(insertContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(getCommandExecutorContext(), getJdbcEngineConfig());
         return getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.INSERT);
     }
+
 }

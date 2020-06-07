@@ -77,4 +77,10 @@
         <property name="globalJdbc" value="true"/>
     </bean>
 
+    <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg>
+            <ref bean="dataSource"/>
+        </constructor-arg>
+    </bean>
+
 </beans>

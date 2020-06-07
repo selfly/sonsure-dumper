@@ -9,8 +9,7 @@
 
 package com.sonsure.dumper.core.command.batch;
 
-import com.sonsure.dumper.core.command.CommandExecutor;
-import com.sonsure.dumper.core.command.NativeDecisionCommandExecutor;
+import com.sonsure.dumper.core.command.CommonCommandExecutor;
 
 import java.util.Collection;
 
@@ -19,7 +18,7 @@ import java.util.Collection;
  *
  * @author liyd
  */
-public interface BatchUpdateExecutor extends CommandExecutor, NativeDecisionCommandExecutor<BatchUpdateExecutor> {
+public interface BatchUpdateExecutor extends CommonCommandExecutor<BatchUpdateExecutor> {
 
     /**
      * Execute object.

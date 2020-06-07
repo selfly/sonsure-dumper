@@ -11,7 +11,7 @@ package com.sonsure.dumper.core.command.entity;
 
 
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.ExecutorContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 
 /**
@@ -25,17 +25,17 @@ public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuild
     private static final String COMMAND_OPEN = "delete from ";
 
     @Override
-    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
-        DeleteContext deleteContext = (DeleteContext) executorContext;
+    public CommandContext doBuild(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
-        command.append(this.getModelAliasName(deleteContext.getModelClass(), null));
+        final Class<?> modelClass = executorContext.getUniqueModelClass();
+        command.append(this.getModelAliasName(modelClass, null));
 
-        CommandContext commandContext = getCommonCommandContext(deleteContext);
+        CommandContext commandContext = getCommonCommandContext(executorContext);
 
-        CommandContext whereCommandContext = this.buildWhereSql(deleteContext);
+        CommandContext whereCommandContext = this.buildWhereSql(executorContext.entityWhereContext(), executorContext.isNamedParameter());
         if (whereCommandContext != null) {
             command.append(whereCommandContext.getCommand());
-            commandContext.addParameters(whereCommandContext.getParameters());
+            commandContext.addCommandParameters(whereCommandContext.getCommandParameters());
         }
         commandContext.setCommand(command.toString());
         return commandContext;

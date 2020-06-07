@@ -54,6 +54,7 @@ public class UserInfo extends Model {
      */
     private Date gmtModify;
 
+
     public Long getUserInfoId() {
         return userInfoId;
     }

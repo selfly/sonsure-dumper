@@ -27,7 +27,12 @@ import java.util.List;
  * @author liyd
  * @date 17 /4/19
  */
-public abstract class AbstractCommandExecutor implements CommandExecutor {
+public abstract class AbstractCommonCommandExecutor<E extends CommonCommandExecutor<E>> implements CommonCommandExecutor<E> {
+
+    /**
+     * The Common command executor context.
+     */
+    protected CommandExecutorContext commandExecutorContext;
 
     /**
      * The Command context builder.
@@ -39,12 +44,35 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
      */
     protected JdbcEngineConfig jdbcEngineConfig;
 
-    public AbstractCommandExecutor(JdbcEngineConfig jdbcEngineConfig) {
+    public AbstractCommonCommandExecutor(JdbcEngineConfig jdbcEngineConfig) {
         this.jdbcEngineConfig = jdbcEngineConfig;
+        commandExecutorContext = new CommandExecutorContext(jdbcEngineConfig);
     }
 
     public void setCommandContextBuilder(CommandContextBuilder commandContextBuilder) {
         this.commandContextBuilder = commandContextBuilder;
+    }
+
+    @Override
+    public E nativeCommand() {
+        return this.nativeCommand(true);
+    }
+
+    @Override
+    public E nativeCommand(boolean nativeCommand) {
+        this.commandExecutorContext.setNativeCommand(nativeCommand);
+        return (E) this;
+    }
+
+    @Override
+    public E namedParameter() {
+        return this.namedParameter(true);
+    }
+    
+    @Override
+    public E namedParameter(boolean namedParameter) {
+        this.commandExecutorContext.setNamedParameter(namedParameter);
+        return (E) this;
     }
 
     protected <T> Page<T> doPageResult(CommandContext commandContext, Pagination pagination, boolean isCount, PageQueryHandler<T> pageQueryHandler) {
@@ -70,37 +98,41 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         return new Page<>(list, pagination);
     }
 
-    protected <E> E handleResult(Object result, ResultHandler<E> resultHandler) {
+    protected <T> T handleResult(Object result, ResultHandler<T> resultHandler) {
         if (result == null) {
             return null;
         }
         return resultHandler.handle(result);
     }
 
-    protected <E> List<E> handleResult(List<?> result, ResultHandler<E> resultHandler) {
+    protected <T> List<T> handleResult(List<?> result, ResultHandler<T> resultHandler) {
         if (result == null) {
             return Collections.emptyList();
         }
-        List<E> resultList = new ArrayList<>();
+        List<T> resultList = new ArrayList<>();
         for (Object obj : result) {
-            E e = this.handleResult(obj, resultHandler);
+            T e = this.handleResult(obj, resultHandler);
             resultList.add(e);
         }
         return resultList;
     }
 
-    protected <E> Page<E> handleResult(Page<?> page, ResultHandler<E> resultHandler) {
-        Page<E> newPage = new Page<>(page.getPagination());
+    protected <T> Page<T> handleResult(Page<?> page, ResultHandler<T> resultHandler) {
+        Page<T> newPage = new Page<>(page.getPagination());
         if (page.getList() == null || page.getList().isEmpty()) {
             return newPage;
         }
-        List<E> resultList = new ArrayList<>();
+        List<T> resultList = new ArrayList<>();
         for (Object obj : page.getList()) {
-            E e = this.handleResult(obj, resultHandler);
+            T e = this.handleResult(obj, resultHandler);
             resultList.add(e);
         }
         newPage.setList(resultList);
         return newPage;
+    }
+
+    public CommandExecutorContext getCommandExecutorContext() {
+        return commandExecutorContext;
     }
 
     public CommandContextBuilder getCommandContextBuilder() {

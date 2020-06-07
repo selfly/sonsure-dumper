@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author liyd
@@ -99,6 +100,15 @@ public abstract class AbstractMappingHandler implements MappingHandler {
 
     public void addClassMapping(Class<?>[] classes) {
         if (ArrayUtils.isEmpty(classes)) {
+            return;
+        }
+        for (Class<?> aClass : classes) {
+            this.addClassMapping(aClass);
+        }
+    }
+
+    public void addClassMapping(Set<Class<?>> classes) {
+        if (classes == null || classes.isEmpty()) {
             return;
         }
         for (Class<?> aClass : classes) {

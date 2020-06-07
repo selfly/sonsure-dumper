@@ -12,7 +12,9 @@ package com.sonsure.dumper.core.management;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Created by liyd on 17/4/11.
+ *
+ * @author liyd
+ * @date 17/4/11
  */
 public class ClassField {
 
@@ -81,6 +83,10 @@ public class ClassField {
      * 字段来源
      */
     public enum Type {
+
+        /**
+         * Where append type.
+         */
         WHERE_APPEND;
 
         /**

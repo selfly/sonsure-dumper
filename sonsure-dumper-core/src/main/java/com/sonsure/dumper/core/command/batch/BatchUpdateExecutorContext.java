@@ -9,7 +9,7 @@
 
 package com.sonsure.dumper.core.command.batch;
 
-import com.sonsure.dumper.core.command.AbstractCommandExecutorContext;
+import com.sonsure.dumper.core.command.simple.AbstractSimpleCommandExecutorContext;
 
 import java.util.Collection;
 
@@ -18,7 +18,7 @@ import java.util.Collection;
  *
  * @author liyd
  */
-public class BatchUpdateExecutorContext<T> extends AbstractCommandExecutorContext {
+public class BatchUpdateExecutorContext<T> extends AbstractSimpleCommandExecutorContext {
 
     /**
      * The Batch data.
@@ -34,10 +34,6 @@ public class BatchUpdateExecutorContext<T> extends AbstractCommandExecutorContex
      * The Parameterized setter.
      */
     private ParameterizedSetter<T> parameterizedSetter;
-
-    public BatchUpdateExecutorContext() {
-
-    }
 
     public Collection<T> getBatchData() {
         return batchData;

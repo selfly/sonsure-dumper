@@ -23,8 +23,8 @@ public interface NativeExecutor extends SimpleCommandExecutor<NativeExecutor> {
     /**
      * 参数
      *
-     * @param parameters
-     * @return
+     * @param parameters the parameters
+     * @return native executor
      */
     NativeExecutor parameters(Object... parameters);
 

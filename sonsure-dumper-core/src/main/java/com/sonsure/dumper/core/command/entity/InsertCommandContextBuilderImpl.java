@@ -11,7 +11,8 @@ package com.sonsure.dumper.core.command.entity;
 
 
 import com.sonsure.dumper.core.command.CommandContext;
-import com.sonsure.dumper.core.command.ExecutorContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
+import com.sonsure.dumper.core.command.CommandParameter;
 import com.sonsure.dumper.core.command.GenerateKey;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.management.ClassField;
@@ -20,7 +21,6 @@ import com.sonsure.dumper.core.persist.KeyGenerator;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
  * @author liyd
  * @date 17/4/14
  */
@@ -29,16 +29,16 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
     private static final String COMMAND_OPEN = "insert into ";
 
     @Override
-    public CommandContext doBuild(ExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
+    public CommandContext doBuild(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 
-        InsertContext insertContext = (InsertContext) executorContext;
-        CommandContext commandContext = getCommonCommandContext(insertContext);
+        CommandContext commandContext = getCommonCommandContext(executorContext);
         MappingHandler mappingHandler = jdbcEngineConfig.getMappingHandler();
-        String pkField = this.getPkField(insertContext.getModelClass(), mappingHandler);
-        String pkColumn = mappingHandler.getColumn(insertContext.getModelClass(), pkField);
+        final Class<?> modelClass = executorContext.getUniqueModelClass();
+        String pkField = this.getPkField(modelClass, mappingHandler);
+        String pkColumn = mappingHandler.getColumn(modelClass, pkField);
         pkColumn = this.convertCase(pkColumn, jdbcEngineConfig.getCommandCase());
         GenerateKey generateKey = new GenerateKey();
-        generateKey.setClazz(insertContext.getModelClass());
+        generateKey.setClazz(modelClass);
         generateKey.setColumn(pkColumn);
 
         commandContext.setGenerateKey(generateKey);
@@ -46,22 +46,23 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
         StringBuilder argsCommand = new StringBuilder("(");
 
-        command.append(this.getModelName(insertContext.getModelClass())).append(" (");
+        command.append(this.getModelName(modelClass)).append(" (");
 
         boolean hasPkParam = false;
-        for (ClassField classField : insertContext.getInsertFields()) {
+        for (ClassField classField : executorContext.getInsertFields()) {
             String fieldName = classField.getName();
             if (StringUtils.equalsIgnoreCase(pkField, fieldName)) {
                 hasPkParam = true;
             }
+            final String placeholder = this.createParameterPlaceholder(fieldName, executorContext.isNamedParameter());
             command.append(fieldName).append(",");
-            argsCommand.append("?").append(",");
-            commandContext.addParameter(classField.getValue());
+            argsCommand.append(placeholder).append(",");
+            commandContext.addCommandParameter(new CommandParameter(fieldName, classField.getValue()));
         }
         if (!hasPkParam) {
             KeyGenerator keyGenerator = jdbcEngineConfig.getKeyGenerator();
             if (keyGenerator != null) {
-                Object generateKeyValue = keyGenerator.generateKeyValue(insertContext.getModelClass());
+                Object generateKeyValue = keyGenerator.generateKeyValue(modelClass);
                 generateKey.setValue(generateKeyValue);
                 boolean isParam = true;
                 if (generateKeyValue instanceof String) {
@@ -71,13 +72,13 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
                 //设置主键值，insert之后返回用
                 commandContext.setGenerateKey(generateKey);
                 //传参
+                command.append(pkField).append(",");
                 if (isParam) {
-                    command.append(pkField).append(",");
-                    argsCommand.append("?").append(",");
-                    commandContext.addParameter(generateKeyValue);
+                    final String placeholder = this.createParameterPlaceholder(pkField, executorContext.isNamedParameter());
+                    argsCommand.append(placeholder).append(",");
+                    commandContext.addCommandParameter(pkField, generateKeyValue);
                 } else {
                     //不传参方式，例如是oracle的序列名
-                    command.append(pkField).append(",");
                     argsCommand.append(generateKeyValue).append(",");
                 }
             }

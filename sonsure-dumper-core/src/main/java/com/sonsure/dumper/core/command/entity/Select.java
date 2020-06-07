@@ -19,7 +19,7 @@ import com.sonsure.dumper.core.command.lambda.Function;
  * @author liyd
  * @date 17 /4/12
  */
-public interface Select extends QueryCommandExecutor<Select>, ConditionCommandExecutor<Select> {
+public interface Select extends QueryCommandExecutor<Select>, EntityConditionCommandExecutor<Select> {
 
     /**
      * from表
@@ -69,7 +69,7 @@ public interface Select extends QueryCommandExecutor<Select>, ConditionCommandEx
      * @param function
      * @return
      */
-    <E,R> Select orderBy(Function<E,R> function);
+    <E, R> Select orderBy(Function<E, R> function);
 
     /**
      * asc排序

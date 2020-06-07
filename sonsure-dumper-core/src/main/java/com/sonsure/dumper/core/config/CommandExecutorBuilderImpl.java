@@ -9,7 +9,7 @@
 
 package com.sonsure.dumper.core.config;
 
-import com.sonsure.dumper.core.command.AbstractCommandExecutor;
+import com.sonsure.dumper.core.command.AbstractCommonCommandExecutor;
 import com.sonsure.dumper.core.command.CommandContextBuilder;
 import com.sonsure.dumper.core.command.CommandExecutor;
 import com.sonsure.dumper.core.command.batch.BatchUpdateCommandContextBuilder;
@@ -48,7 +48,7 @@ public class CommandExecutorBuilderImpl extends AbstractCommandExecutorBuilder {
     @Override
     public CommandExecutor build(Class<? extends CommandExecutor> commandExecutorClass, Object param, JdbcEngineConfig jdbcEngineConfig) {
 
-        AbstractCommandExecutor commandExecutor = null;
+        AbstractCommonCommandExecutor commandExecutor = null;
         CommandContextBuilder commandContextBuilder = null;
 
         if (commandExecutorClass == Insert.class) {

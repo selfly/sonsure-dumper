@@ -13,6 +13,7 @@ package com.sonsure.dumper.core.command.entity;
 import com.sonsure.commons.utils.ClassUtils;
 import com.sonsure.dumper.core.annotation.Transient;
 import com.sonsure.dumper.core.command.CommandContext;
+import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.command.lambda.LambdaMethod;
@@ -27,24 +28,24 @@ import java.util.Map;
  * @author liyd
  * @date 17 /4/14
  */
-public class UpdateImpl extends AbstractConditionCommandExecutor<Update> implements Update {
+public class UpdateImpl extends AbstractEntityConditionCommandExecutor<Update> implements Update {
 
-    protected UpdateContext updateContext;
+    private CommandExecutorContext.UpdateContext updateContext;
 
     public UpdateImpl(JdbcEngineConfig jdbcEngineConfig) {
         super(jdbcEngineConfig);
-        updateContext = new UpdateContext();
+        updateContext = this.getCommandExecutorContext().updateContext();
     }
 
     @Override
     public Update table(Class<?> cls) {
-        updateContext.setModelClass(cls);
+        this.getCommandExecutorContext().addModelClass(cls);
         return this;
     }
 
     @Override
     public Update set(String field, Object value) {
-        updateContext.addSetField(field, value);
+        this.updateContext.addSetField(field, value);
         return this;
     }
 
@@ -57,7 +58,7 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
 
     @Override
     public Update setForEntityWhereId(Object entity) {
-        updateContext.setModelClass(entity.getClass());
+        getCommandExecutorContext().addModelClass(entity.getClass());
         String pkField = getJdbcEngineConfig().getMappingHandler().getPkField(entity.getClass());
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
         //处理主键成where条件
@@ -94,12 +95,8 @@ public class UpdateImpl extends AbstractConditionCommandExecutor<Update> impleme
 
     @Override
     public int execute() {
-        CommandContext commandContext = this.commandContextBuilder.build(this.updateContext, getJdbcEngineConfig());
+        CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
         return (Integer) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.UPDATE);
     }
 
-    @Override
-    protected AbstractWhereContext getWhereContext() {
-        return this.updateContext;
-    }
 }
