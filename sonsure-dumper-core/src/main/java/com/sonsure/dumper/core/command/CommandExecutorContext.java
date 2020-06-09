@@ -14,8 +14,8 @@ import com.sonsure.commons.model.Pagination;
 import com.sonsure.dumper.core.command.batch.ParameterizedSetter;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.management.CommandClass;
+import com.sonsure.dumper.core.management.CommandField;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,16 +63,6 @@ public class CommandExecutorContext {
      * The constant pagination.
      */
     private static final String PAGINATION = "pagination";
-//
-//    /**
-//     * The constant PARAMETERS.
-//     */
-//    private static final String PARAMETERS = "parameters";
-//
-//    /**
-//     * The constant NAMED_PARAMETERS.
-//     */
-//    private static final String NAMED_PARAMETERS = "namedParameters";
 
     /**
      * The constant COMMAND_PARAMETER.
@@ -84,10 +74,10 @@ public class CommandExecutorContext {
      */
     private Map<String, Object> context = new HashMap<>();
 
-//    /**
-//     * The Command parameters.
-//     */
-//    private List<CommandParameter> commandParameters;
+    /**
+     * The Jdbc engine config.
+     */
+    private JdbcEngineConfig jdbcEngineConfig;
 
     /**
      * The Select context.
@@ -110,6 +100,7 @@ public class CommandExecutorContext {
     private BatchUpdateExecutorContext batchUpdateExecutorContext;
 
     public CommandExecutorContext(JdbcEngineConfig jdbcEngineConfig) {
+        this.jdbcEngineConfig = jdbcEngineConfig;
         this.setNativeCommand(jdbcEngineConfig.isNativeCommand());
         this.setNamedParameter(jdbcEngineConfig.isNamedParameter());
     }
@@ -140,14 +131,26 @@ public class CommandExecutorContext {
      * @param value the value
      */
     public void addInsertField(String field, Object value) {
-        List<ClassField> insertFields = this.getInsertFields();
+        this.addInsertField(field, value, null);
+    }
+
+    /**
+     * Add insert field.
+     *
+     * @param field the field
+     * @param value the value
+     * @param cls   the cls
+     */
+    public void addInsertField(String field, Object value, Class<?> cls) {
+        List<CommandField> insertFields = this.getInsertFields();
         if (insertFields == null) {
             insertFields = new ArrayList<>();
             context.put(INSERT_FIELDS, insertFields);
         }
-        ClassField classField = this.createCommandClassField(field, false);
-        classField.setValue(value);
-        insertFields.add(classField);
+        CommandField.Type type = cls == null ? CommandField.Type.MANUAL_FIELD : CommandField.Type.ENTITY_FIELD;
+        CommandField commandField = this.createCommandClassField(field, false, type, cls);
+        commandField.setValue(value);
+        insertFields.add(commandField);
     }
 
     /**
@@ -155,8 +158,8 @@ public class CommandExecutorContext {
      *
      * @return the insert fields
      */
-    public List<ClassField> getInsertFields() {
-        return (List<ClassField>) context.get(INSERT_FIELDS);
+    public List<CommandField> getInsertFields() {
+        return (List<CommandField>) context.get(INSERT_FIELDS);
     }
 
     /**
@@ -232,6 +235,14 @@ public class CommandExecutorContext {
         context.put(IS_NAMED_PARAMETER, namedParameter);
     }
 
+    /**
+     * Gets jdbc engine config.
+     *
+     * @return the jdbc engine config
+     */
+    public JdbcEngineConfig getJdbcEngineConfig() {
+        return jdbcEngineConfig;
+    }
 
     /**
      * Paginate.
@@ -390,10 +401,22 @@ public class CommandExecutorContext {
      *
      * @param name              the name
      * @param analyseTableAlias the analyse table alias
+     * @param type              the type
      * @return the class field
      */
-    public ClassField createCommandClassField(String name, boolean analyseTableAlias) {
-        return new ClassField(name, analyseTableAlias);
+    public CommandField createCommandClassField(String name, boolean analyseTableAlias, CommandField.Type type) {
+        return this.createCommandClassField(name, analyseTableAlias, type, null);
+    }
+
+    /**
+     * Create class field class field.
+     *
+     * @param name              the name
+     * @param analyseTableAlias the analyse table alias
+     * @return the class field
+     */
+    public CommandField createCommandClassField(String name, boolean analyseTableAlias, CommandField.Type type, Class<?> cls) {
+        return new CommandField(name, analyseTableAlias, type, cls);
     }
 
     public class SelectContext {
@@ -427,13 +450,13 @@ public class CommandExecutorContext {
             if (ArrayUtils.isEmpty(fields)) {
                 return;
             }
-            List<ClassField> selectFields = this.getSelectFields();
+            List<CommandField> selectFields = this.getSelectFields();
             for (String field : fields) {
-                selectFields.add(new ClassField(field, true));
+                selectFields.add(CommandExecutorContext.this.createCommandClassField(field, true, CommandField.Type.MANUAL_FIELD));
             }
         }
 
-        public List<ClassField> getSelectFields() {
+        public List<CommandField> getSelectFields() {
             return CommandExecutorContext.this.getOrInitIfAbsentList(SELECT_FIELDS);
         }
 
@@ -450,52 +473,52 @@ public class CommandExecutorContext {
             return CommandExecutorContext.this.getOrInitIfAbsentList(FROM_CLASSES);
         }
 
-        public List<ClassField> getExcludeFields() {
+        public List<CommandField> getExcludeFields() {
             return CommandExecutorContext.this.getOrInitIfAbsentList(EXCLUDE_FIELDS);
         }
 
         public void addExcludeFields(String... fields) {
-            final List<ClassField> excludeFields = this.getExcludeFields();
+            final List<CommandField> excludeFields = this.getExcludeFields();
             for (String field : fields) {
-                excludeFields.add(CommandExecutorContext.this.createCommandClassField(field, true));
+                excludeFields.add(CommandExecutorContext.this.createCommandClassField(field, true, CommandField.Type.MANUAL_FIELD));
             }
         }
 
-        public List<ClassField> getGroupByFields() {
+        public List<CommandField> getGroupByFields() {
             return CommandExecutorContext.this.getOrInitIfAbsentList(GROUP_BY_FIELDS);
         }
 
         public void addGroupByField(String... fields) {
-            final List<ClassField> groupByFields = this.getGroupByFields();
+            final List<CommandField> groupByFields = this.getGroupByFields();
             for (String field : fields) {
-                groupByFields.add(CommandExecutorContext.this.createCommandClassField(field, true));
+                groupByFields.add(CommandExecutorContext.this.createCommandClassField(field, true, CommandField.Type.MANUAL_FIELD));
             }
         }
 
-        public List<ClassField> getOrderByFields() {
+        public List<CommandField> getOrderByFields() {
             return CommandExecutorContext.this.getOrInitIfAbsentList(ORDER_BY_FIELDS);
         }
 
         public void addOrderByField(String... fields) {
-            final List<ClassField> orderByFields = this.getOrderByFields();
+            final List<CommandField> orderByFields = this.getOrderByFields();
             for (String field : fields) {
-                orderByFields.add(new ClassField(field, true));
+                orderByFields.add(CommandExecutorContext.this.createCommandClassField(field, true, CommandField.Type.MANUAL_FIELD));
             }
         }
 
         public void setOrderByType(String type) {
-            final List<ClassField> orderByFields = this.getOrderByFields();
+            final List<CommandField> orderByFields = this.getOrderByFields();
             if (orderByFields.isEmpty()) {
                 throw new SonsureJdbcException("请先指定需要排序的属性");
             }
             int size = orderByFields.size();
             for (int i = size - 1; i >= 0; i--) {
-                ClassField classField = orderByFields.get(i);
-                if (StringUtils.isNotBlank(classField.getFieldOperator())) {
+                CommandField commandField = orderByFields.get(i);
+                if (StringUtils.isNotBlank(commandField.getFieldOperator())) {
                     //已经指定了，跳出
                     break;
                 }
-                classField.setFieldOperator(type);
+                commandField.setFieldOperator(type);
             }
         }
 
@@ -507,13 +530,13 @@ public class CommandExecutorContext {
          * @return
          */
         public boolean isExcludeField(String field) {
-            final List<ClassField> excludeFields = this.getExcludeFields();
+            final List<CommandField> excludeFields = this.getExcludeFields();
             if (excludeFields == null || excludeFields.isEmpty()) {
                 return false;
             }
-            ClassField classField = new ClassField(field, true);
-            for (ClassField excludeField : excludeFields) {
-                if (StringUtils.equals(classField.getTableAlias(), excludeField.getTableAlias()) && StringUtils.equals(classField.getName(), excludeField.getName())) {
+            CommandField commandField = CommandExecutorContext.this.createCommandClassField(field, true, CommandField.Type.MANUAL_FIELD);
+            for (CommandField excludeField : excludeFields) {
+                if (StringUtils.equals(commandField.getTableAlias(), excludeField.getTableAlias()) && StringUtils.equals(commandField.getFieldName(), excludeField.getFieldName())) {
                     return true;
                 }
             }
@@ -531,16 +554,16 @@ public class CommandExecutorContext {
         /**
          * set的属性
          */
-        protected List<ClassField> setFields;
+        protected List<CommandField> setFields;
 
         public UpdateContext() {
             setFields = new ArrayList<>();
         }
 
         public void addSetField(String field, Object value) {
-            ClassField classField = CommandExecutorContext.this.createCommandClassField(field, true);
-            classField.setValue(value);
-            this.setFields.add(classField);
+            CommandField commandField = CommandExecutorContext.this.createCommandClassField(field, true, CommandField.Type.MANUAL_FIELD);
+            commandField.setValue(value);
+            this.setFields.add(commandField);
         }
 
         public boolean isIgnoreNull() {
@@ -551,7 +574,7 @@ public class CommandExecutorContext {
             isIgnoreNull = ignoreNull;
         }
 
-        public List<ClassField> getSetFields() {
+        public List<CommandField> getSetFields() {
             return setFields;
         }
 
@@ -565,25 +588,25 @@ public class CommandExecutorContext {
         private static final String WHERE_FIELDS = "whereFields";
 
 
-        public void addWhereField(String logicalOperator, String name, String fieldOperator, Object value, ClassField.Type type) {
-            boolean analyseTableAlias = ClassField.Type.isAnalyseTableAlias(type);
-            ClassField classField = CommandExecutorContext.this.createCommandClassField(name, analyseTableAlias);
-            classField.setLogicalOperator(logicalOperator);
-            classField.setFieldOperator(fieldOperator);
-            classField.setValue(value);
-            classField.setType(type);
-            this.getWhereFields().add(classField);
+        public void addWhereField(String logicalOperator, String name, String fieldOperator, Object value, CommandField.Type type) {
+            boolean analyseTableAlias = CommandField.Type.isAnalyseTableAlias(type);
+            CommandField commandField = CommandExecutorContext.this.createCommandClassField(name, analyseTableAlias, CommandField.Type.MANUAL_FIELD);
+            commandField.setLogicalOperator(logicalOperator);
+            commandField.setFieldOperator(fieldOperator);
+            commandField.setValue(value);
+            commandField.setType(type);
+            this.getWhereFields().add(commandField);
         }
 
-        public void addWhereFields(List<ClassField> classFields) {
-            this.getWhereFields().addAll(classFields);
+        public void addWhereFields(List<CommandField> commandFields) {
+            this.getWhereFields().addAll(commandFields);
         }
 
         public void addWhereField(String logicalOperator, String name, String fieldOperator, Object value) {
             this.addWhereField(logicalOperator, name, fieldOperator, value, null);
         }
 
-        public List<ClassField> getWhereFields() {
+        public List<CommandField> getWhereFields() {
             return CommandExecutorContext.this.getOrInitIfAbsentList(WHERE_FIELDS);
         }
 

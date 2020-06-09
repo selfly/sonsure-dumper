@@ -9,14 +9,14 @@
 
 package com.sonsure.dumper.core.management;
 
+import com.sonsure.dumper.core.exception.SonsureJdbcException;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
  * @author liyd
  * @date 17/4/11
  */
-public class ClassField {
+public class CommandField {
 
     /**
      * value需要native内容前后包围符号
@@ -27,7 +27,7 @@ public class ClassField {
     /**
      * 名称
      */
-    private String name;
+    private String fieldName;
 
     /**
      * 表别名
@@ -49,6 +49,14 @@ public class ClassField {
      */
     private Object value;
 
+    /**
+     * field所属class，非entity操作可能为null
+     */
+    private Class<?> cls;
+
+    /**
+     * The Is native.
+     */
     private boolean isNative = false;
 
     /**
@@ -56,16 +64,24 @@ public class ClassField {
      */
     private Type type;
 
-    public ClassField(String name, boolean analyseTableAlias) {
-        this.name = name;
-        if (StringUtils.startsWith(name, ClassField.NATIVE_FIELD_OPEN_TOKEN) && StringUtils.endsWith(name, ClassField.NATIVE_FIELD_CLOSE_TOKEN)) {
-            isNative = true;
-            this.name = StringUtils.substring(name, ClassField.NATIVE_FIELD_OPEN_TOKEN.length(), name.length() - ClassField.NATIVE_FIELD_CLOSE_TOKEN.length());
+    public CommandField(String fieldName, boolean analyseTableAlias, Type type) {
+        this(fieldName, analyseTableAlias, type, null);
+    }
+
+    public CommandField(String fieldName, boolean analyseTableAlias, Type type, Class<?> cls) {
+        this.fieldName = fieldName;
+        this.type = type;
+        if (type == Type.ENTITY_FIELD && cls == null) {
+            throw new SonsureJdbcException("ENTITY_FIELD Field必须指定class");
         }
-        if (analyseTableAlias && StringUtils.indexOf(this.name, ".") != -1) {
-            String[] fieldInfo = StringUtils.split(this.name, ".");
+        if (StringUtils.startsWith(fieldName, CommandField.NATIVE_FIELD_OPEN_TOKEN) && StringUtils.endsWith(fieldName, CommandField.NATIVE_FIELD_CLOSE_TOKEN)) {
+            isNative = true;
+            this.fieldName = StringUtils.substring(fieldName, CommandField.NATIVE_FIELD_OPEN_TOKEN.length(), fieldName.length() - CommandField.NATIVE_FIELD_CLOSE_TOKEN.length());
+        }
+        if (analyseTableAlias && StringUtils.indexOf(this.fieldName, ".") != -1) {
+            String[] fieldInfo = StringUtils.split(this.fieldName, ".");
             this.tableAlias = fieldInfo[0];
-            this.name = fieldInfo[1];
+            this.fieldName = fieldInfo[1];
         }
     }
 
@@ -85,6 +101,16 @@ public class ClassField {
     public enum Type {
 
         /**
+         * Entity处理的，会有class
+         */
+        ENTITY_FIELD,
+
+        /**
+         * 手动添加组装的
+         */
+        MANUAL_FIELD,
+
+        /**
          * Where append type.
          */
         WHERE_APPEND;
@@ -96,17 +122,17 @@ public class ClassField {
          * @return
          */
         public static boolean isAnalyseTableAlias(Type type) {
-            //目前只有一个，其实有点多余，后期会扩展
+            //append片断无需解析表别名
             return type != WHERE_APPEND;
         }
     }
 
-    public String getName() {
-        return name;
+    public String getFieldName() {
+        return fieldName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
     public String getTableAlias() {
@@ -155,5 +181,13 @@ public class ClassField {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public Class<?> getCls() {
+        return cls;
+    }
+
+    public void setCls(Class<?> cls) {
+        this.cls = cls;
     }
 }

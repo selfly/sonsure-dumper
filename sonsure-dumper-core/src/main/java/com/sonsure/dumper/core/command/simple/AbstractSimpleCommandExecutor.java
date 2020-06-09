@@ -16,6 +16,7 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandType;
 import com.sonsure.dumper.core.command.GenerateKey;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
+import com.sonsure.dumper.core.management.BeanParameter;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 
 import java.io.Serializable;
@@ -42,6 +43,29 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     public T command(String command) {
         this.getCommandExecutorContext().setCommand(command);
         return (T) this;
+    }
+
+
+    @Override
+    public T parameters(Map<String, Object> parameters) {
+        if (parameters == null) {
+            return (T) this;
+        }
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            this.getCommandExecutorContext().addCommandParameter(entry.getKey(), entry.getValue());
+        }
+        return (T) this;
+    }
+
+    @Override
+    public T parameter(String name, Object value) {
+        this.getCommandExecutorContext().addCommandParameter(name, value);
+        return (T) this;
+    }
+
+    @Override
+    public T parameter(BeanParameter beanParameter) {
+        return null;
     }
 
     @Override

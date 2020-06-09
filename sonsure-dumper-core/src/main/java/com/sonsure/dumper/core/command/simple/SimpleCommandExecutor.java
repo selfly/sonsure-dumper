@@ -11,8 +11,10 @@ package com.sonsure.dumper.core.command.simple;
 
 
 import com.sonsure.dumper.core.command.QueryCommandExecutor;
+import com.sonsure.dumper.core.management.BeanParameter;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * The interface Simple command executor.
@@ -30,6 +32,31 @@ public interface SimpleCommandExecutor<T extends SimpleCommandExecutor<T>> exten
      * @return t
      */
     T command(String command);
+
+    /**
+     * 参数
+     *
+     * @param parameters the parameters
+     * @return mybatis executor
+     */
+    T parameters(Map<String, Object> parameters);
+
+    /**
+     * 参数
+     *
+     * @param name  the name
+     * @param value the value
+     * @return mybatis executor
+     */
+    T parameter(String name, Object value);
+
+    /**
+     * 参数
+     *
+     * @param beanParameter the bean parameter
+     * @return mybatis executor
+     */
+    T parameter(BeanParameter beanParameter);
 
     /**
      * 结果处理器

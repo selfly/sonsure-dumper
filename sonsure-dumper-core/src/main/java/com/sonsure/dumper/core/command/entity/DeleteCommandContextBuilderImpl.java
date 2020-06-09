@@ -32,7 +32,7 @@ public class DeleteCommandContextBuilderImpl extends AbstractCommandContextBuild
 
         CommandContext commandContext = getCommonCommandContext(executorContext);
 
-        CommandContext whereCommandContext = this.buildWhereSql(executorContext.entityWhereContext(), executorContext.isNamedParameter());
+        CommandContext whereCommandContext = this.buildWhereSql(executorContext);
         if (whereCommandContext != null) {
             command.append(whereCommandContext.getCommand());
             commandContext.addCommandParameters(whereCommandContext.getCommandParameters());

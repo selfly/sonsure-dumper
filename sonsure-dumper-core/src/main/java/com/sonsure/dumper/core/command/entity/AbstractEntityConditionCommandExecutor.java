@@ -17,7 +17,7 @@ import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.command.lambda.LambdaMethod;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.management.ClassField;
+import com.sonsure.dumper.core.management.CommandField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,17 +146,17 @@ public abstract class AbstractEntityConditionCommandExecutor<T extends EntityCon
         Map<String, Object> beanPropMap = ClassUtils.getSelfBeanPropMap(entity, Transient.class);
 
         int count = 1;
-        List<ClassField> fieldList = new ArrayList<>();
+        List<CommandField> fieldList = new ArrayList<>();
         for (Map.Entry<String, Object> entry : beanPropMap.entrySet()) {
             //忽略掉null
             if (entry.getValue() == null) {
                 continue;
             }
-            ClassField classField = this.getCommandExecutorContext().createCommandClassField(entry.getKey(), false);
-            classField.setLogicalOperator(count > 1 ? fieldLogicalOperator : null);
-            classField.setFieldOperator("=");
-            classField.setValue(entry.getValue());
-            fieldList.add(classField);
+            CommandField commandField = this.getCommandExecutorContext().createCommandClassField(entry.getKey(), false, CommandField.Type.ENTITY_FIELD, entity.getClass());
+            commandField.setLogicalOperator(count > 1 ? fieldLogicalOperator : null);
+            commandField.setFieldOperator("=");
+            commandField.setValue(entry.getValue());
+            fieldList.add(commandField);
             count++;
         }
         //防止属性全为null的情况
@@ -276,13 +276,13 @@ public abstract class AbstractEntityConditionCommandExecutor<T extends EntityCon
         if (this.commandExecutorContext.isNamedParameter()) {
             throw new SonsureJdbcException("Named Parameter 方式不能使用数组传参");
         }
-        this.entityWhereContext.addWhereField(null, segment, null, params, ClassField.Type.WHERE_APPEND);
+        this.entityWhereContext.addWhereField(null, segment, null, params, CommandField.Type.WHERE_APPEND);
         return (T) this;
     }
 
     @Override
     public T append(String segment, Map<String, Object> params) {
-        this.entityWhereContext.addWhereField(null, segment, null, params, ClassField.Type.WHERE_APPEND);
+        this.entityWhereContext.addWhereField(null, segment, null, params, CommandField.Type.WHERE_APPEND);
         return (T) this;
     }
 }

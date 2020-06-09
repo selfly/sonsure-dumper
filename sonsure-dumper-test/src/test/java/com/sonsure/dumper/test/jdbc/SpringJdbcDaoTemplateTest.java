@@ -72,7 +72,6 @@ public class SpringJdbcDaoTemplateTest {
         Assert.assertTrue(user.getPassword().equals("123456-30"));
     }
 
-
     @Test
     public void jdbcDaoInsert() {
 
@@ -352,8 +351,8 @@ public class SpringJdbcDaoTemplateTest {
     @Test
     public void select3() {
 
-        List<UserInfo> list = daoTemplate.select("userInfoId", "password").from(UserInfo.class)
-                .where("userAge", "<=", 10)
+        List<UserInfo> list = daoTemplate.select("user_Info_Id", "password").from(UserInfo.class)
+                .where("user_Age", "<=", 10)
                 .list(UserInfo.class);
         Assert.assertNotNull(list);
         Assert.assertTrue(list.size() == 10);
@@ -755,6 +754,20 @@ public class SpringJdbcDaoTemplateTest {
         Assert.assertEquals(user.getLoginName(), "newName");
     }
 
+    @Test
+    public void nativeExecutor1() {
+        int count = daoTemplate.nativeExecutor()
+                .namedParameter()
+                .nativeCommand()
+                .command("update User_Info set login_Name = :loginName where user_Info_Id = :userInfoId")
+                .parameter("loginName", "newName")
+                .parameter("userInfoId", 39L)
+                .update();
+        Assert.assertTrue(count == 1);
+        UserInfo user = daoTemplate.get(UserInfo.class, 39L);
+        Assert.assertEquals(user.getLoginName(), "newName");
+    }
+
 
     @Test
     public void nativeExecutor4() {
@@ -1071,7 +1084,7 @@ public class SpringJdbcDaoTemplateTest {
         List<UserInfo> userInfoList = new ArrayList<>();
         for (int i = 1; i < 10000; i++) {
             UserInfo user = new UserInfo();
-            user.setUserInfoId(Long.valueOf(i));
+            user.setUserInfoId((long) i);
             user.setLoginName("name-" + i);
             user.setPassword("123456-" + i);
             user.setUserAge(i);

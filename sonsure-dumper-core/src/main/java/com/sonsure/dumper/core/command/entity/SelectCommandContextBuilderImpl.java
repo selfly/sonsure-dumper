@@ -14,8 +14,8 @@ import com.sonsure.dumper.core.command.CommandContext;
 import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
-import com.sonsure.dumper.core.management.ClassField;
 import com.sonsure.dumper.core.management.CommandClass;
+import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.management.ModelFieldMeta;
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
         StringBuilder command = new StringBuilder(COMMAND_OPEN);
 
         final CommandExecutorContext.SelectContext selectContext = executorContext.selectContext();
-        List<ClassField> selectFields = selectContext.getSelectFields();
+        List<CommandField> selectFields = selectContext.getSelectFields();
         List<CommandClass> fromClasses = selectContext.getFromClasses();
         if (fromClasses.isEmpty()) {
             throw new SonsureJdbcException("from class必须指定");
@@ -54,8 +54,9 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
                 }
             }
         } else {
-            for (ClassField selectField : selectFields) {
-                String field = this.getTableAliasField(selectField.getTableAlias(), selectField.getName());
+            for (CommandField selectField : selectFields) {
+                final String filedCommandName = this.getFiledCommandName(selectField, executorContext);
+                String field = this.getTableAliasField(selectField.getTableAlias(), filedCommandName);
                 command.append(field).append(",");
             }
         }
@@ -70,16 +71,16 @@ public class SelectCommandContextBuilderImpl extends AbstractCommandContextBuild
 
         CommandContext commandContext = getCommonCommandContext(executorContext);
 
-        CommandContext whereCommandContext = this.buildWhereSql(executorContext.entityWhereContext(), executorContext.isNamedParameter());
+        CommandContext whereCommandContext = this.buildWhereSql(executorContext);
         if (whereCommandContext != null) {
             command.append(whereCommandContext.getCommand());
             commandContext.addCommandParameters(whereCommandContext.getCommandParameters());
         }
 
-        String groupBySql = this.buildGroupBySql(selectContext);
+        String groupBySql = this.buildGroupBySql(executorContext);
         command.append(groupBySql);
 
-        String orderBySql = this.buildOrderBySql(selectContext);
+        String orderBySql = this.buildOrderBySql(executorContext);
         command.append(orderBySql);
 
         commandContext.setCommand(command.toString());

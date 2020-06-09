@@ -15,7 +15,7 @@ import com.sonsure.dumper.core.command.CommandExecutorContext;
 import com.sonsure.dumper.core.command.CommandParameter;
 import com.sonsure.dumper.core.command.GenerateKey;
 import com.sonsure.dumper.core.config.JdbcEngineConfig;
-import com.sonsure.dumper.core.management.ClassField;
+import com.sonsure.dumper.core.management.CommandField;
 import com.sonsure.dumper.core.mapping.MappingHandler;
 import com.sonsure.dumper.core.persist.KeyGenerator;
 import org.apache.commons.lang3.StringUtils;
@@ -49,15 +49,15 @@ public class InsertCommandContextBuilderImpl extends AbstractCommandContextBuild
         command.append(this.getModelName(modelClass)).append(" (");
 
         boolean hasPkParam = false;
-        for (ClassField classField : executorContext.getInsertFields()) {
-            String fieldName = classField.getName();
-            if (StringUtils.equalsIgnoreCase(pkField, fieldName)) {
+        for (CommandField commandField : executorContext.getInsertFields()) {
+            if (StringUtils.equalsIgnoreCase(pkField, commandField.getFieldName())) {
                 hasPkParam = true;
             }
-            final String placeholder = this.createParameterPlaceholder(fieldName, executorContext.isNamedParameter());
-            command.append(fieldName).append(",");
+            final String placeholder = this.createParameterPlaceholder(commandField.getFieldName(), executorContext.isNamedParameter());
+            final String filedCommandName = this.getFiledCommandName(commandField, executorContext);
+            command.append(filedCommandName).append(",");
             argsCommand.append(placeholder).append(",");
-            commandContext.addCommandParameter(new CommandParameter(fieldName, classField.getValue()));
+            commandContext.addCommandParameter(new CommandParameter(commandField.getFieldName(), commandField.getValue()));
         }
         if (!hasPkParam) {
             KeyGenerator keyGenerator = jdbcEngineConfig.getKeyGenerator();

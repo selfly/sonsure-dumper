@@ -57,7 +57,7 @@ public class InsertImpl extends AbstractEntityCommandExecutor<Insert> implements
             if (entry.getValue() == null) {
                 continue;
             }
-            this.getCommandExecutorContext().addInsertField(entry.getKey(), entry.getValue());
+            this.getCommandExecutorContext().addInsertField(entry.getKey(), entry.getValue(), entity.getClass());
         }
         return this;
     }

@@ -10,14 +10,13 @@
 //package com.sonsure.dumper.test.executor;
 //
 //import com.sonsure.dumper.core.command.CommandContext;
-//import com.sonsure.dumper.core.command.AbstractCommonCommandExecutorContext;
 //import com.sonsure.dumper.core.command.entity.AbstractCommandContextBuilder;
 //import com.sonsure.dumper.core.config.JdbcEngineConfig;
 //
 //public class CountCommandContextBuilder extends AbstractCommandContextBuilder {
 //
 //    @Override
-//    public CommandContext doBuild(AbstractCommonCommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
+//    public CommandContext doBuild(CommandExecutorContext executorContext, JdbcEngineConfig jdbcEngineConfig) {
 //        Class<?> clazz = executorContext.getModelClasses()[0];
 //        CommandContext commandContext = new CommandContext();
 //        commandContext.setCommand("select count(*) from " + clazz.getSimpleName());

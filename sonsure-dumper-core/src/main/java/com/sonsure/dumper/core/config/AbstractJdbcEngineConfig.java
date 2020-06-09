@@ -24,7 +24,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import javax.sql.DataSource;
 
 /**
- * Created by liyd on 17/4/11.
+ *
+ * @author liyd
+ * @date 17/4/11
  */
 public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
 
