@@ -63,6 +63,7 @@ public class MybatisCommandContextBuilder extends AbstractCommandContextBuilder 
             }
         }
         commandContext.setCommand(boundSql.getSql());
+        executorContext.setNamedParameter(false);
         return commandContext;
     }
 }
