@@ -14,7 +14,7 @@
     <parent>
         <artifactId>sonsure-dumper</artifactId>
         <groupId>com.sonsure</groupId>
-        <version>4.0.0-1</version>
+        <version>4.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -96,6 +96,7 @@
                             com.sonsure.dumper.core.command.entity,
                             com.sonsure.dumper.core.command.lambda,
                             com.sonsure.dumper.core.command.mybatis,
+                            com.sonsure.dumper.core.command.named,
                             com.sonsure.dumper.core.command.natives,
                             com.sonsure.dumper.core.command.simple,
                             com.sonsure.dumper.core.command.sql,
