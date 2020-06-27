@@ -17,15 +17,15 @@ import com.sonsure.dumper.core.config.JdbcEngineConfig;
 import com.sonsure.dumper.core.persist.AbstractPersistExecutor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
-import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -61,19 +61,14 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             return generateKey.getValue();
         } else {
             KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcOperations.update(con -> {
-                PreparedStatement ps = con.prepareStatement(commandContext.getCommand(), new String[]{generateKey.getColumn()});
-                ArgumentPreparedStatementSetter pss = new ArgumentPreparedStatementSetter(commandContext.getParameters()
-                        .toArray());
-                pss.setValues(ps);
-                return ps;
-            }, keyHolder);
+            jdbcOperations.update(new InsertPreparedStatementCreator(commandContext, generateKey), keyHolder);
             Map<String, Object> keys = keyHolder.getKeys();
             //显示指定主键时为null，只有一个主键列，多个不支持
             if (keys == null) {
                 return null;
             }
             Object obj = keys.values().iterator().next();
+            //Spring 5 return BigInteger
             if (obj instanceof BigInteger) {
                 return ((BigInteger) obj).longValue();
             }
@@ -147,5 +142,36 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
+    }
+
+    private static class InsertPreparedStatementCreator implements PreparedStatementCreator, PreparedStatementSetter, SqlProvider {
+
+        private final CommandContext commandContext;
+
+        private final GenerateKey generateKey;
+
+        public InsertPreparedStatementCreator(CommandContext commandContext, GenerateKey generateKey) {
+            this.commandContext = commandContext;
+            this.generateKey = generateKey;
+        }
+
+        @Override
+        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+            PreparedStatement ps = con.prepareStatement(commandContext.getCommand(), new String[]{generateKey.getColumn()});
+            setValues(ps);
+            return ps;
+        }
+
+        @Override
+        public void setValues(PreparedStatement ps) throws SQLException {
+            ArgumentPreparedStatementSetter pss = new ArgumentPreparedStatementSetter(commandContext.getParameters()
+                    .toArray());
+            pss.setValues(ps);
+        }
+
+        @Override
+        public String getSql() {
+            return commandContext.getCommand();
+        }
     }
 }
