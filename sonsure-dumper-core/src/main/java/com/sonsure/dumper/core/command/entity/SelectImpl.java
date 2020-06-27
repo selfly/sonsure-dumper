@@ -24,6 +24,7 @@ import com.sonsure.dumper.core.persist.PersistExecutor;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author liyd
@@ -152,9 +153,9 @@ public class SelectImpl extends AbstractEntityConditionCommandExecutor<Select> i
     }
 
     @Override
-    public Object singleResult() {
+    public Map<String, Object> singleResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
-        return this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
+        return (Map<String, Object>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
     }
 
     @Override
@@ -165,9 +166,9 @@ public class SelectImpl extends AbstractEntityConditionCommandExecutor<Select> i
     }
 
     @Override
-    public Object firstResult() {
+    public Map<String, Object> firstResult() {
         this.paginate(1, 1).isCount(false);
-        Page<Object> page = this.pageResult();
+        Page<Map<String, Object>> page = this.pageResult();
         return page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
     }
 
@@ -200,9 +201,9 @@ public class SelectImpl extends AbstractEntityConditionCommandExecutor<Select> i
     }
 
     @Override
-    public List<Object> list() {
+    public List<Map<String, Object>> list() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
-        return (List<Object>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
+        return (List<Map<String, Object>>) this.getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
     }
 
     @Override
@@ -213,9 +214,9 @@ public class SelectImpl extends AbstractEntityConditionCommandExecutor<Select> i
     }
 
     @Override
-    public Page<Object> pageResult() {
+    public Page<Map<String, Object>> pageResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
-        return this.doPageResult(commandContext, getCommandExecutorContext().getPagination(), getCommandExecutorContext().isCount(), commandContext1 -> (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext1, CommandType.QUERY_FOR_MAP_LIST));
+        return this.doPageResult(commandContext, getCommandExecutorContext().getPagination(), getCommandExecutorContext().isCount(), commandContext1 -> (List<Map<String, Object>>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext1, CommandType.QUERY_FOR_MAP_LIST));
     }
 
     @Override

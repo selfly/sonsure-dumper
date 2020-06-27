@@ -13,6 +13,7 @@ import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author liyd
@@ -75,7 +76,7 @@ public interface QueryCommandExecutor<C extends QueryCommandExecutor<C>> extends
      *
      * @return t object
      */
-    Object singleResult();
+    Map<String,Object> singleResult();
 
     /**
      * 第一条结果
@@ -91,7 +92,7 @@ public interface QueryCommandExecutor<C extends QueryCommandExecutor<C>> extends
      *
      * @return t object
      */
-    Object firstResult();
+    Map<String,Object> firstResult();
 
     /**
      * 简单查询，返回单一的结果，例如Long、Integer、String等
@@ -134,7 +135,7 @@ public interface QueryCommandExecutor<C extends QueryCommandExecutor<C>> extends
      *
      * @return list
      */
-    List<Object> list();
+    List<Map<String,Object>> list();
 
     /**
      * 分页列表查询
@@ -150,7 +151,7 @@ public interface QueryCommandExecutor<C extends QueryCommandExecutor<C>> extends
      *
      * @return page page
      */
-    Page<Object> pageResult();
+    Page<Map<String,Object>> pageResult();
 
     /**
      * singleColumnList分页查询

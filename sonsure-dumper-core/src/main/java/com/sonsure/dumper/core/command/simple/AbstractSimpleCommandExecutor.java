@@ -88,9 +88,9 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     @Override
-    public Object singleResult() {
+    public Map<String, Object> singleResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
-        return getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
+        return (Map<String, Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP);
     }
 
     @Override
@@ -101,9 +101,9 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     @Override
-    public List<Object> list() {
+    public List<Map<String, Object>> list() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
-        return (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
+        return (List<Map<String, Object>>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.QUERY_FOR_MAP_LIST);
     }
 
     @Override
@@ -145,9 +145,9 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
     }
 
     @Override
-    public Object firstResult() {
+    public Map<String, Object> firstResult() {
         this.paginate(1, 1).isCount(false);
-        Page<Object> page = this.pageResult();
+        Page<Map<String, Object>> page = this.pageResult();
         return page.getList() != null && !page.getList().isEmpty() ? page.getList().iterator().next() : null;
     }
 
@@ -168,17 +168,17 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     @Override
     public <T> Page<T> pageResult(Class<T> cls) {
-        Page<Object> page = this.pageResult();
+        Page<Map<String, Object>> page = this.pageResult();
         return this.handleResult(page, getResultHandler(cls));
     }
 
     @Override
-    public Page<Object> pageResult() {
+    public Page<Map<String, Object>> pageResult() {
         CommandContext commandContext = this.commandContextBuilder.build(this.getCommandExecutorContext(), getJdbcEngineConfig());
-        Page<Object> page = this.doPageResult(commandContext, getCommandExecutorContext().getPagination(), getCommandExecutorContext().isCount(), commandContext1 -> (List<Object>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext1, CommandType.QUERY_FOR_MAP_LIST));
-        Page<Object> resultPage = new Page<>(page.getPagination());
+        Page<Map<String, Object>> page = this.doPageResult(commandContext, getCommandExecutorContext().getPagination(), getCommandExecutorContext().isCount(), commandContext1 -> (List<Map<String, Object>>) getJdbcEngineConfig().getPersistExecutor().execute(commandContext1, CommandType.QUERY_FOR_MAP_LIST));
+        Page<Map<String, Object>> resultPage = new Page<>(page.getPagination());
         if (page.getList() != null) {
-            List<Object> list = new ArrayList<>(page.getList());
+            List<Map<String, Object>> list = new ArrayList<>(page.getList());
             resultPage.setList(list);
         }
         return resultPage;
@@ -239,10 +239,10 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
         getJdbcEngineConfig().getPersistExecutor().execute(commandContext, CommandType.EXECUTE_SCRIPT);
     }
 
-    protected <T> ResultHandler<T> getResultHandler(Class<T> cls) {
+    protected <E> ResultHandler<E> getResultHandler(Class<E> cls) {
         if (this.resultHandler == null) {
             return DefaultResultHandler.newInstance(cls);
         }
-        return (ResultHandler<T>) this.resultHandler;
+        return (ResultHandler<E>) this.resultHandler;
     }
 }

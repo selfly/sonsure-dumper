@@ -599,11 +599,11 @@ public class SpringJdbcDaoTemplateTest {
         Select select = daoTemplate.select("count(*) Num").from(UserInfo.class)
                 .groupBy("userAge")
                 .orderBy("Num").desc();
-        Page<Object> page = select.paginate(1, 5).pageResult();
+        Page<Map<String, Object>> page = select.paginate(1, 5).pageResult();
 
         Assert.assertTrue(page.getList().size() == 5);
 
-        List<Object> objects = select.list();
+        List<Map<String, Object>> objects = select.list();
         Assert.assertTrue(objects.size() == 50);
     }
 
@@ -902,15 +902,15 @@ public class SpringJdbcDaoTemplateTest {
         Pageable pageable = new UserInfo();
         pageable.setPageNum(2);
         pageable.setPageSize(10);
-        Page<Object> page = daoTemplate.nativeExecutor()
+        Page<Map<String, Object>> page = daoTemplate.nativeExecutor()
                 .command("select userInfoId from UserInfo order by userInfoId asc")
                 .paginate(pageable)
                 .pageResult();
         Assert.assertTrue(page.getList().size() == 10);
         Assert.assertTrue(page.getList().get(0) instanceof Map);
-        Map<String, Object> map = (Map<String, Object>) page.getList().get(0);
+        Map<String, Object> map = page.getList().get(0);
         Assert.assertTrue(map.get("USER_INFO_ID").equals(11L));
-        Map<String, Object> map2 = (Map<String, Object>) page.getList().get(9);
+        Map<String, Object> map2 = page.getList().get(9);
         Assert.assertTrue(map2.get("USER_INFO_ID").equals(20L));
     }
 
@@ -929,15 +929,15 @@ public class SpringJdbcDaoTemplateTest {
 
     @Test
     public void nativeLimitPage() {
-        Page<Object> page = daoTemplate.nativeExecutor()
+        Page<Map<String, Object>> page = daoTemplate.nativeExecutor()
                 .command("select userInfoId from UserInfo order by userInfoId asc")
                 .limit(15, 10)
                 .pageResult();
         Assert.assertTrue(page.getList().size() == 10);
         Assert.assertTrue(page.getList().get(0) instanceof Map);
-        Map<String, Object> map = (Map<String, Object>) page.getList().get(0);
+        Map<String, Object> map = page.getList().get(0);
         Assert.assertTrue(map.get("USER_INFO_ID").equals(11L));
-        Map<String, Object> map2 = (Map<String, Object>) page.getList().get(9);
+        Map<String, Object> map2 = page.getList().get(9);
         Assert.assertTrue(map2.get("USER_INFO_ID").equals(20L));
     }
 
