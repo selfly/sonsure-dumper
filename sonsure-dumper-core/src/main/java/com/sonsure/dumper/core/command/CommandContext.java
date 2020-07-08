@@ -38,6 +38,11 @@ public class CommandContext {
     private boolean isNamedParameter;
 
     /**
+     * The Named param names.
+     */
+    private List<String> namedParamNames;
+
+    /**
      * The Command parameters.
      */
     private List<CommandParameter> commandParameters;
@@ -126,5 +131,13 @@ public class CommandContext {
 
     public List<CommandParameter> getCommandParameters() {
         return commandParameters;
+    }
+
+    public List<String> getNamedParamNames() {
+        return namedParamNames;
+    }
+
+    public void setNamedParamNames(List<String> namedParamNames) {
+        this.namedParamNames = namedParamNames;
     }
 }

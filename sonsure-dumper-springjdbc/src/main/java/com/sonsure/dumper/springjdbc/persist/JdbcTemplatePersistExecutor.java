@@ -118,7 +118,7 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
     @Override
     protected <T> Object batchUpdate(BatchCommandContext<T> commandContext) {
         final ParameterizedSetter<T> parameterizedSetter = commandContext.getParameterizedSetter();
-        return jdbcOperations.batchUpdate(commandContext.getCommand(), commandContext.getBatchData(), commandContext.getBatchSize(), parameterizedSetter::setValues);
+        return jdbcOperations.batchUpdate(commandContext.getCommand(), commandContext.getBatchData(), commandContext.getBatchSize(), (ps, argument) -> parameterizedSetter.setValues(ps, commandContext.getNamedParamNames(), argument));
     }
 
     @Override

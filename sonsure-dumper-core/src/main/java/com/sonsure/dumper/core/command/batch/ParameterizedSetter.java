@@ -11,6 +11,7 @@ package com.sonsure.dumper.core.command.batch;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * The interface Parameterized setter.
@@ -26,5 +27,5 @@ public interface ParameterizedSetter<T> {
      * @param argument the argument
      * @throws SQLException the sql exception
      */
-    void setValues(PreparedStatement ps, T argument) throws SQLException;
+    void setValues(PreparedStatement ps, List<String> paramNames, T argument) throws SQLException;
 }

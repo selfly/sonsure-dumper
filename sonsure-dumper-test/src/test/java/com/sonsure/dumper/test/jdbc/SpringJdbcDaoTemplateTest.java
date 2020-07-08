@@ -1096,7 +1096,7 @@ public class SpringJdbcDaoTemplateTest {
         final long begin = System.currentTimeMillis();
         daoTemplate.batchUpdate()
                 .nativeCommand()
-                .execute(sql, userInfoList, userInfoList.size(), (ps, userInfo) -> {
+                .execute(sql, userInfoList, userInfoList.size(), (ps, names, userInfo) -> {
                     ps.setString(1, userInfo.getPassword());
                     ps.setString(2, userInfo.getLoginName());
                     ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
@@ -1129,7 +1129,7 @@ public class SpringJdbcDaoTemplateTest {
         String sql1 = "INSERT INTO UserInfo (PASSWORD, loginName, gmtCreate, userAge, userInfoId) VALUES (?, ?, ?, ?, ?)";
         final long begin1 = System.currentTimeMillis();
 
-        daoTemplate.executeBatchUpdate(sql1, userInfoList, userInfoList.size(), (ps, userInfo) -> {
+        daoTemplate.executeBatchUpdate(sql1, userInfoList, userInfoList.size(), (ps, names, userInfo) -> {
             ps.setString(1, userInfo.getPassword());
             ps.setString(2, userInfo.getLoginName());
             ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
@@ -1140,6 +1140,35 @@ public class SpringJdbcDaoTemplateTest {
         final long end1 = System.currentTimeMillis();
         System.out.println("daoTemplate插入耗时:" + (end1 - begin1));
         Assert.assertEquals(userInfoList.size(), daoTemplate.findCount(UserInfo.class));
+
+    }
+
+    @Test
+    public void batchUpdate2() {
+
+        daoTemplate.executeDelete(UserInfo.class);
+        String sql = "INSERT INTO USER_INFO (PASSWORD, LOGIN_NAME, GMT_CREATE, USER_AGE, USER_INFO_ID) VALUES (:PASSWORD, :LOGIN_NAME, :GMT_CREATE, :USER_AGE, :USER_INFO_ID)";
+        List<UserInfo> userInfoList = new ArrayList<>();
+        for (int i = 1; i < 10000; i++) {
+            UserInfo user = new UserInfo();
+            user.setUserInfoId(Long.valueOf(i));
+            user.setLoginName("name-" + i);
+            user.setPassword("123456-" + i);
+            user.setUserAge(i);
+            user.setGmtCreate(new Date());
+            userInfoList.add(user);
+        }
+        daoTemplate.batchUpdate()
+                .nativeCommand()
+                .namedParameter()
+                .execute(sql, userInfoList, userInfoList.size(), (ps, names, userInfo) -> {
+                    ps.setString(1, userInfo.getPassword());
+                    ps.setString(2, userInfo.getLoginName());
+                    ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
+                    ps.setInt(4, userInfo.getUserAge());
+                    ps.setLong(5, userInfo.getUserInfoId());
+                });
+
 
     }
 

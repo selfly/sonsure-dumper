@@ -63,6 +63,7 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
             final String sqlToUse = NamedParameterUtils.substituteNamedParameters(parsedSql, paramMap);
             final Object[] objects = NamedParameterUtils.buildValueArray(parsedSql, paramMap);
             commandContext.setCommand(sqlToUse);
+            commandContext.setNamedParamNames(parsedSql.getParameterNames());
             commandContext.setParameters(Arrays.asList(objects));
         } else {
             final List<Object> objects = commandContext.getCommandParameters().stream()

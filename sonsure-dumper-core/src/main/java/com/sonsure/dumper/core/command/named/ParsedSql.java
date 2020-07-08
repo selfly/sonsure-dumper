@@ -74,7 +74,7 @@ public class ParsedSql {
      * Return all of the parameters (bind variables) in the parsed SQL statement.
      * Repeated occurrences of the same parameter name are included here.
      */
-    List<String> getParameterNames() {
+    public List<String> getParameterNames() {
         return this.parameterNames;
     }
 
