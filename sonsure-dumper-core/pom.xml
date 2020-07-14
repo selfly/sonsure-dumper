@@ -71,6 +71,7 @@
                             com.sonsure.commons.bean,
                             com.sonsure.commons.model,
                             com.sonsure.commons.exception,
+                            com.sonsure.commons.spring,
                             com.sonsure.commons.spring.scan,
                             net.sf.jsqlparser.schema,
                             net.sf.jsqlparser.expression,

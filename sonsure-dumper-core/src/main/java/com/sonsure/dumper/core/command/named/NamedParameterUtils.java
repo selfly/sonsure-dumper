@@ -95,9 +95,6 @@ public abstract class NamedParameterUtils {
             actualSql.append(originalSql, lastIndex, startIndex);
             if (paramMap != null && paramMap.containsKey(paramName)) {
                 Object value = paramMap.get(paramName);
-//                if (value instanceof SqlParameterValue) {
-//                    value = ((SqlParameterValue) value).getValue();
-//                }
                 if (value instanceof Iterable) {
                     Iterator<?> entryIter = ((Iterable<?>) value).iterator();
                     int k = 0;
@@ -121,6 +118,14 @@ public abstract class NamedParameterUtils {
                             actualSql.append('?');
                         }
                     }
+                } else if (value.getClass().isArray()) {
+                    final Object[] values = (Object[]) value;
+                    for (int k = 0; k < values.length; k++) {
+                        if (k > 0) {
+                            actualSql.append(", ");
+                        }
+                        actualSql.append('?');
+                    }
                 } else {
                     actualSql.append('?');
                 }
@@ -143,7 +148,6 @@ public abstract class NamedParameterUtils {
     public static Object[] buildValueArray(
             ParsedSql parsedSql, Map<String, Object> paramMap) {
 
-        Object[] paramArray = new Object[parsedSql.getTotalParameterCount()];
         if (parsedSql.getNamedParameterCount() > 0 && parsedSql.getUnnamedParameterCount() > 0) {
             throw new SonsureJdbcException(
                     "Not allowed to mix named and traditional ? placeholders. You have " +
@@ -151,18 +155,27 @@ public abstract class NamedParameterUtils {
                             parsedSql.getUnnamedParameterCount() + " traditional placeholder(s) in statement: " +
                             parsedSql.getOriginalSql());
         }
+        List<Object> paramArray = new ArrayList<>();
         List<String> paramNames = parsedSql.getParameterNames();
         for (int i = 0; i < paramNames.size(); i++) {
             String paramName = paramNames.get(i);
             try {
                 Object value = paramMap.get(paramName);
-                paramArray[i] = value;
+                if (value == null) {
+                    paramArray.add(null);
+                } else if (value instanceof Iterable) {
+                    ((Iterable<?>) value).forEach(paramArray::add);
+                } else if (value.getClass().isArray()) {
+                    paramArray.addAll(Arrays.asList(((Object[]) value)));
+                } else {
+                    paramArray.add(value);
+                }
             } catch (IllegalArgumentException ex) {
                 throw new SonsureJdbcException(
                         "No value supplied for the SQL parameter '" + paramName + "': " + ex.getMessage());
             }
         }
-        return paramArray;
+        return paramArray.toArray();
     }
 
 

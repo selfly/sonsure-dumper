@@ -29,7 +29,6 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.sql.DataSource;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
@@ -768,6 +767,33 @@ public class SpringJdbcDaoTemplateTest {
         Assert.assertEquals(user.getLoginName(), "newName");
     }
 
+    @Test
+    public void nativeExecutor2() {
+
+        List<Long> ids = new ArrayList<>();
+        ids.add(39L);
+        ids.add(40L);
+
+        Long[] userInfoId2 = new Long[]{23L, 24l};
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("loginName", "newName");
+        params.put("userInfoId", ids);
+        params.put("userInfoId2", userInfoId2);
+
+        String sql = "update User_Info set login_Name = :loginName where user_Info_Id in (:userInfoId) or user_info_id in (:userInfoId2)";
+
+        int count = daoTemplate.nativeExecutor()
+                .namedParameter()
+                .nativeCommand()
+                .command(sql)
+                .parameters(params)
+                .update();
+        Assert.assertEquals(4, count);
+        UserInfo user = daoTemplate.get(UserInfo.class, 39L);
+        Assert.assertEquals(user.getLoginName(), "newName");
+    }
+
 
     @Test
     public void nativeExecutor4() {
@@ -1171,46 +1197,4 @@ public class SpringJdbcDaoTemplateTest {
 
 
     }
-
-    @Autowired
-    private DataSource dataSource;
-
-//    @Test
-//    public void batchUpdate2() {
-//
-//        UserInfo userInfo = new UserInfo();
-//
-//        List<String> names = new ArrayList<>();
-//        names.add("1111");
-//        names.add("2222");
-//        names.add("3333");
-//
-//        userInfo.setNames(names);
-//        userInfo.setPassword("abc");
-//
-//
-//        final SQL sql = new SQL();
-//        Map<String, Object> params = new HashMap<>();
-//
-//        sql.SELECT("username,password");
-//        sql.FROM("user_info");
-//
-//        sql.WHERE("login_name in (:names)");
-//
-////        sql.AND().WHERE("password = ?");
-//
-//
-//        System.out.println(sql.toString());
-//
-//        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-//
-//        namedParameterJdbcTemplate.queryForList(sql.toString(), new BeanPropertySqlParameterSource(userInfo));
-////
-////
-////        daoTemplate.selectFrom(UserInfo.class)
-////                .where(UserInfo::getLoginName,"aaa")
-////                .and(UserInfo::getPassword,"in","")
-//
-//
-//    }
 }
