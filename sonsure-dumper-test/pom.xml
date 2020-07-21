@@ -104,9 +104,9 @@
 
         <!--oracle的jdbc驱动，maven中央库无，自行替换-->
         <dependency>
-            <groupId>com.ktanx</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>12.2.0.1</version>
+            <groupId>com.sonsure</groupId>
+            <artifactId>ojdbc6-11g</artifactId>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
 

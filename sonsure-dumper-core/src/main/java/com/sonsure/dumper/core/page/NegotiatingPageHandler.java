@@ -26,6 +26,7 @@ public class NegotiatingPageHandler implements PageHandler {
         defaultPageHandlers.add(new MysqlPageHandler());
         defaultPageHandlers.add(new OraclePageHandler());
         defaultPageHandlers.add(new PostgresqlPageHandler());
+        defaultPageHandlers.add(new SqlServerPageHandler());
     }
 
     @Override

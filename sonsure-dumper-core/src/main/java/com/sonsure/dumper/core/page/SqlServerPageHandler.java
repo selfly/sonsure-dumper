@@ -2,7 +2,7 @@
  * Copyright (c) 2020. www.sonsure.com Inc. All rights reserved.
  * You may obtain more information at
  *
- *   http://www.sonsure.com
+ *   https://www.sonsure.com
  *
  * Designed By Selfly Lee (selfly@live.com)
  */
@@ -15,21 +15,17 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author liyd
  */
-public class MysqlPageHandler extends AbstractPageHandler {
+public class SqlServerPageHandler extends AbstractPageHandler {
+
+    protected SqlServerParser sqlServerParser = new SqlServerParser();
 
     @Override
     public boolean support(String dialect) {
-        return StringUtils.indexOfIgnoreCase(dialect, "mysql") != -1;
+        return StringUtils.indexOfIgnoreCase(dialect, "sql server") != -1;
     }
 
     @Override
     public String getPageCommand(String command, Pagination pagination, String dialect) {
-        StringBuilder pageSql = new StringBuilder(200);
-        pageSql.append(command);
-        pageSql.append(" limit ");
-        pageSql.append(pagination.getBeginIndex());
-        pageSql.append(",");
-        pageSql.append(pagination.getPageSize());
-        return pageSql.toString();
+        return sqlServerParser.convertToPageSql(command, pagination.getBeginIndex(), pagination.getPageSize());
     }
 }

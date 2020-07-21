@@ -22,8 +22,8 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import java.math.BigInteger;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -48,7 +48,10 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
 
     @Override
     protected String doGetDialect() {
-        return jdbcOperations.execute((ConnectionCallback<String>) con -> con.getMetaData().getDatabaseProductName().toLowerCase());
+        return jdbcOperations.execute((ConnectionCallback<String>) con -> {
+            final DatabaseMetaData metaData = con.getMetaData();
+            return metaData.getDatabaseProductName().toLowerCase() + "/" + metaData.getDatabaseProductVersion();
+        });
     }
 
     @Override
@@ -69,8 +72,8 @@ public class JdbcTemplatePersistExecutor extends AbstractPersistExecutor {
             }
             Object obj = keys.values().iterator().next();
             //Spring 5 return BigInteger
-            if (obj instanceof BigInteger) {
-                return ((BigInteger) obj).longValue();
+            if (obj instanceof Number) {
+                return ((Number) obj).longValue();
             }
             return obj;
         }

@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liyd on 17/4/13.
+ *
+ * @author liyd
+ * @date 17/4/13
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractDaoTemplateImpl implements JdbcDao {

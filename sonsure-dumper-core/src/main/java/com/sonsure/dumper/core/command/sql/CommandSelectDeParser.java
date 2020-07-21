@@ -13,9 +13,11 @@ import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.Pivot;
-import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.util.deparser.SelectDeParser;
 
+/**
+ * @author liyd
+ */
 public class CommandSelectDeParser extends SelectDeParser {
 
     private CommandMappingHandler commandMappingHandler;
@@ -23,11 +25,6 @@ public class CommandSelectDeParser extends SelectDeParser {
     public CommandSelectDeParser(ExpressionVisitor expressionVisitor, StringBuilder buffer, CommandMappingHandler commandMappingHandler) {
         super(expressionVisitor, buffer);
         this.commandMappingHandler = commandMappingHandler;
-    }
-
-    @Override
-    public void visit(PlainSelect plainSelect) {
-        super.visit(plainSelect);
     }
 
     @Override

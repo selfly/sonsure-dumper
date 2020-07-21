@@ -20,6 +20,9 @@ import net.sf.jsqlparser.util.deparser.InsertDeParser;
 
 import java.util.Iterator;
 
+/**
+ * @author liyd
+ */
 public class CommandInsertDeParser extends InsertDeParser {
 
     private CommandMappingHandler commandMappingHandler;

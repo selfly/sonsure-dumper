@@ -12,6 +12,9 @@ package com.sonsure.dumper.core.page;
 import com.sonsure.commons.model.Pagination;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author liyd
+ */
 public class OraclePageHandler extends AbstractPageHandler {
 
     @Override
@@ -22,10 +25,10 @@ public class OraclePageHandler extends AbstractPageHandler {
     @Override
     public String getPageCommand(String command, Pagination pagination, String dialect) {
         StringBuilder pageSql = new StringBuilder(200);
-        pageSql.append("select * from ( select rownum _num,_temp.* from (");
+        pageSql.append("select * from ( select rownum rownum_,temp_.* from (");
         pageSql.append(command);
-        pageSql.append(") _temp where rownum <= ").append(pagination.getEndIndex());
-        pageSql.append(") where _num > ").append(pagination.getBeginIndex());
+        pageSql.append(") temp_ where rownum <= ").append(pagination.getEndIndex() + 1);
+        pageSql.append(") where rownum_ > ").append(pagination.getBeginIndex());
         return pageSql.toString();
     }
 }

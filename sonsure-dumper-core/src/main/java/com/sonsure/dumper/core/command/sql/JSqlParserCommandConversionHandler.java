@@ -20,24 +20,21 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author liyd
+ */
 public class JSqlParserCommandConversionHandler implements CommandConversionHandler {
 
-    protected Map<String, String> CACHE = new WeakHashMap<>(new ConcurrentHashMap<String, String>());
+    protected Map<String, String> CACHE = new WeakHashMap<>(new ConcurrentHashMap<>());
 
     /**
      * 映射处理器
      */
     protected MappingHandler mappingHandler;
 
-
-    public JSqlParserCommandConversionHandler() {
-
-    }
-
     public JSqlParserCommandConversionHandler(MappingHandler mappingHandler) {
         this.mappingHandler = mappingHandler;
     }
-
 
     @Override
     public String convert(String command, Map<String, Object> params) {
@@ -45,9 +42,9 @@ public class JSqlParserCommandConversionHandler implements CommandConversionHand
         String convertedCommand = CACHE.get(command);
         if (convertedCommand == null) {
             try {
+                StringBuilder buffer = new StringBuilder();
                 Statement statement = CCJSqlParserUtil.parse(command);
                 CommandMappingHandler commandMappingHandler = new CommandMappingHandler(statement, mappingHandler, params);
-                StringBuilder buffer = new StringBuilder();
                 ExpressionDeParser expressionDeParser = new CommandExpressionDeParser();
                 SelectDeParser selectDeParser = new CommandSelectDeParser(expressionDeParser, buffer, commandMappingHandler);
                 expressionDeParser.setSelectVisitor(selectDeParser);
@@ -60,7 +57,6 @@ public class JSqlParserCommandConversionHandler implements CommandConversionHand
         }
         return convertedCommand;
     }
-
 
     public MappingHandler getMappingHandler() {
         return mappingHandler;

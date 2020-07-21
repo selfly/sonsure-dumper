@@ -16,6 +16,9 @@ import net.sf.jsqlparser.util.deparser.DeleteDeParser;
 import net.sf.jsqlparser.util.deparser.LimitDeparser;
 import net.sf.jsqlparser.util.deparser.OrderByDeParser;
 
+/**
+ * @author liyd
+ */
 public class CommandDeleteDeParser extends DeleteDeParser {
 
     private CommandMappingHandler commandMappingHandler;

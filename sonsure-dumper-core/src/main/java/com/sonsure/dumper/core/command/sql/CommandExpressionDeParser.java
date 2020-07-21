@@ -15,6 +15,9 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author liyd
+ */
 public class CommandExpressionDeParser extends ExpressionDeParser {
 
     @Override

@@ -71,6 +71,7 @@
                         <Import-Package>
                             com.sonsure.dumper.core.command,
                             com.sonsure.dumper.core.command.lambda,
+                            com.sonsure.dumper.core.command.batch,
                             com.sonsure.dumper.core.config,
                             com.sonsure.dumper.core.exception,
                             com.sonsure.dumper.core.mapping,

@@ -94,7 +94,7 @@ public class JSqlParserCommandConversionHandlerTest {
         String command6 = "update UserInfo set loginName = ?,password = ? where userInfoId = ?";
         String sql6 = commandConversionHandler.convert(command6, null);
         String result6 = "update user_info set login_name = ?, password = ? where user_info_id = ?";
-        Assert.assertTrue(sql6.toLowerCase().equals(result6));
+        Assert.assertEquals(sql6.toLowerCase(), result6);
         System.out.println(sql6.toLowerCase());
     }
 

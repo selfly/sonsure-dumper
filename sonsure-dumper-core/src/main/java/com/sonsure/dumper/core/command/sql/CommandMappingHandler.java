@@ -77,7 +77,7 @@ public class CommandMappingHandler {
 
             Update update = (Update) statement;
 
-            this.extractTableMappings(update.getTables(), mappings);
+            this.extractTableMappings(update.getTable(), mappings);
             this.extractColumnMapping(update.getColumns(), mappings);
             this.extractExpression(update.getExpressions(), mappings);
             this.extractExpression(update.getWhere(), mappings);
@@ -139,10 +139,10 @@ public class CommandMappingHandler {
             this.extractExpression(where, mappings);
         }
 
-        List<Expression> groupByColumnReferences = plainSelect.getGroupByColumnReferences();
-        if (groupByColumnReferences != null) {
+        final GroupByElement groupBy = plainSelect.getGroupBy();
+        if (groupBy != null && groupBy.getGroupByExpressions() != null) {
 
-            for (Expression groupByColumnReference : groupByColumnReferences) {
+            for (Expression groupByColumnReference : groupBy.getGroupByExpressions()) {
 
                 if (groupByColumnReference instanceof Column) {
                     this.extractColumnMapping(((Column) groupByColumnReference), mappings);

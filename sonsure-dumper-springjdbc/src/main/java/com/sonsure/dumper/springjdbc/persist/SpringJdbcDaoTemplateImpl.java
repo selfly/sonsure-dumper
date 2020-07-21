@@ -17,7 +17,9 @@ import com.sonsure.dumper.springjdbc.config.JdbcTemplateEngineConfigImpl;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Created by liyd on 17/4/12.
+ *
+ * @author liyd
+ * @date 17/4/12
  */
 public class SpringJdbcDaoTemplateImpl extends AbstractDaoTemplateImpl implements InitializingBean {
 
