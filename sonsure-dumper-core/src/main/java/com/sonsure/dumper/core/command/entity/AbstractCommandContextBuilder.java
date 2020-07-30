@@ -46,18 +46,15 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
             ((AbstractMappingHandler) mappingHandler).addClassMapping(modelClasses);
         }
 
-        String resolvedCommand = commandContext.getCommand();
         if (!executorContext.isNativeCommand()) {
             // todo 需要收集参数信息，待完成
             Map<String, Object> params = Collections.emptyMap();
-            resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
-        }
-        if (StringUtils.isNotBlank(jdbcEngineConfig.getCommandCase())) {
-            resolvedCommand = this.convertCase(resolvedCommand, jdbcEngineConfig.getCommandCase());
+            final String resolvedCommand = jdbcEngineConfig.getCommandConversionHandler().convert(commandContext.getCommand(), params);
+            commandContext.setCommand(resolvedCommand);
         }
 
         if (executorContext.isNamedParameter()) {
-            final ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(resolvedCommand);
+            final ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(commandContext.getCommand());
             final Map<String, Object> paramMap = commandContext.getCommandParameters().stream()
                     .collect(Collectors.toMap(CommandParameter::getName, CommandParameter::getValue));
             final String sqlToUse = NamedParameterUtils.substituteNamedParameters(parsedSql, paramMap);
@@ -69,8 +66,11 @@ public abstract class AbstractCommandContextBuilder implements CommandContextBui
             final List<Object> objects = commandContext.getCommandParameters().stream()
                     .map(CommandParameter::getValue)
                     .collect(Collectors.toList());
-            commandContext.setCommand(resolvedCommand);
             commandContext.setParameters(objects);
+        }
+        if (StringUtils.isNotBlank(jdbcEngineConfig.getCommandCase())) {
+            String resolvedCommand = this.convertCase(commandContext.getCommand(), jdbcEngineConfig.getCommandCase());
+            commandContext.setCommand(resolvedCommand);
         }
         return commandContext;
     }

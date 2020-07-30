@@ -20,6 +20,7 @@ import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.entity.Update;
 
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +52,11 @@ public class JdbcEngineImpl implements JdbcEngine {
     @Override
     public JdbcEngineConfig getJdbcEngineConfig() {
         return jdbcEngineConfig;
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return jdbcEngineConfig.getDataSource();
     }
 
     @Override

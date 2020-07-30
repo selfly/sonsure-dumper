@@ -195,6 +195,7 @@ public abstract class AbstractJdbcEngineConfig implements JdbcEngineConfig {
         this.commandExecutorFactory = commandExecutorFactory;
     }
 
+    @Override
     public DataSource getDataSource() {
         return dataSource;
     }

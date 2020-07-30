@@ -20,6 +20,7 @@ import com.sonsure.dumper.core.command.entity.Insert;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.entity.Update;
 
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,12 @@ public interface JdbcEngine {
      */
     JdbcEngineConfig getJdbcEngineConfig();
 
+    /**
+     * Gets data source.
+     *
+     * @return the data source
+     */
+    DataSource getDataSource();
 
     /**
      * 创建执行器

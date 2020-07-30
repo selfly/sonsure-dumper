@@ -17,6 +17,8 @@ import com.sonsure.dumper.core.persist.KeyGenerator;
 import com.sonsure.dumper.core.persist.PersistExecutor;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import javax.sql.DataSource;
+
 /**
  * jdbc配置类
  * <p>
@@ -25,6 +27,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
  * @date 17/4/11
  */
 public interface JdbcEngineConfig {
+
+    /**
+     * Gets data source.
+     *
+     * @return the data source
+     */
+    DataSource getDataSource();
 
     /**
      * 获取CommandExecutorFactory
