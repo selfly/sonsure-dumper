@@ -9,11 +9,7 @@
 
 package com.sonsure.dumper.core.persist;
 
-import com.sonsure.dumper.core.config.AbstractJdbcEngineConfig;
 import com.sonsure.dumper.core.config.JdbcEngine;
-import com.sonsure.dumper.core.config.JdbcEngineConfig;
-
-import javax.sql.DataSource;
 
 /**
  * The type Flexible dao template.
@@ -28,15 +24,6 @@ public class FlexibleDaoTemplate extends AbstractDaoTemplateImpl {
 
     @Override
     public DaoTemplate use(String name) {
-        throw new UnsupportedOperationException("不支持的方法");
-    }
-
-    @Override
-    public DataSource getDataSource() {
-        JdbcEngineConfig jdbcEngineConfig = getDefaultJdbcEngine().getJdbcEngineConfig();
-        if (jdbcEngineConfig instanceof AbstractJdbcEngineConfig) {
-            return ((AbstractJdbcEngineConfig) jdbcEngineConfig).getDataSource();
-        }
         throw new UnsupportedOperationException("不支持的方法");
     }
 

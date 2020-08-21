@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author liyd
  * @date 17/4/13
  */
@@ -225,7 +224,7 @@ public abstract class AbstractDaoTemplateImpl implements JdbcDao {
     }
 
     public DataSource getDataSource() {
-        return dataSource;
+        return dataSource != null ? dataSource : this.getDefaultJdbcEngine().getDataSource();
     }
 
     public void setDataSource(DataSource dataSource) {
