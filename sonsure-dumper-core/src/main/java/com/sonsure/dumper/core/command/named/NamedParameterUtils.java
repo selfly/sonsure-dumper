@@ -167,6 +167,8 @@ public abstract class NamedParameterUtils {
                     ((Iterable<?>) value).forEach(paramArray::add);
                 } else if (value.getClass().isArray()) {
                     paramArray.addAll(Arrays.asList(((Object[]) value)));
+                } else if (value instanceof NamedParamHandler) {
+                    paramArray.add(((NamedParamHandler) value).getValue(paramName));
                 } else {
                     paramArray.add(value);
                 }

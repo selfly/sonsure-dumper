@@ -741,6 +741,29 @@ public class SpringJdbcDaoTemplateTest {
         Assert.assertTrue(user.getUserAge() == 18);
     }
 
+    @Test
+    public void namedParamHandler() {
+        String sql = "insert into UserInfo(userInfoId,loginName,password,userAge) values(:userInfoId,:loginName,:password,:random_z10_z30)";
+
+        Set<Integer> ages = new HashSet<>();
+        for (int i = 0; i < 10; i++) {
+            daoTemplate.nativeExecutor()
+                    .namedParameter()
+                    .command(sql)
+                    .parameter("userInfoId", 99L + i)
+                    .parameter("loginName", "newName")
+                    .parameter("password", "123456")
+                    .parameter("random_z10_z30", new JdbcRandomNamedParamHandler())
+                    .insert();
+
+            UserInfo user = daoTemplate.get(UserInfo.class, 99L + i);
+            ages.add(user.getUserAge());
+            Assert.assertEquals(user.getLoginName(), "newName");
+            Assert.assertTrue(user.getUserAge() >= 10 && user.getUserAge() <= 30);
+        }
+        Assert.assertTrue(ages.size() > 1);
+    }
+
 
     @Test
     public void nativeExecutor() {
