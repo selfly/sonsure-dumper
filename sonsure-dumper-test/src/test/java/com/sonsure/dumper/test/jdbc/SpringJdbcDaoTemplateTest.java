@@ -1145,7 +1145,7 @@ public class SpringJdbcDaoTemplateTest {
         final long begin = System.currentTimeMillis();
         daoTemplate.batchUpdate()
                 .nativeCommand()
-                .execute(sql, userInfoList, userInfoList.size(), (ps, names, userInfo) -> {
+                .execute(sql, userInfoList, 1000, (ps, names, userInfo) -> {
                     ps.setString(1, userInfo.getPassword());
                     ps.setString(2, userInfo.getLoginName());
                     ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
