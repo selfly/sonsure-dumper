@@ -54,7 +54,7 @@
         <aspectjweaver.version>1.8.13</aspectjweaver.version>
         <spring.version>5.2.5.RELEASE</spring.version>
         <servicemix.spring.version>5.2.5.RELEASE_1</servicemix.spring.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <commons-dbutils.version>1.7</commons-dbutils.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <slf4j.version>1.7.30</slf4j.version>
