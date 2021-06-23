@@ -11,6 +11,7 @@ package com.sonsure.dumper.test.jdbc;
 
 import com.sonsure.commons.model.Page;
 import com.sonsure.commons.model.Pageable;
+import com.sonsure.commons.utils.FileIOUtils;
 import com.sonsure.dumper.core.command.entity.Select;
 import com.sonsure.dumper.core.command.lambda.Function;
 import com.sonsure.dumper.core.exception.SonsureJdbcException;
@@ -19,7 +20,6 @@ import com.sonsure.dumper.test.model.AuthCode;
 import com.sonsure.dumper.test.model.KUserInfo;
 import com.sonsure.dumper.test.model.UidUser;
 import com.sonsure.dumper.test.model.UserInfo;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -1118,8 +1118,9 @@ public class SpringJdbcDaoTemplateTest {
 
         InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("modular-osgi-user-3.0.0.sql");
 
+        byte[] bytes = FileIOUtils.toByteArray(resourceAsStream);
         daoTemplate.nativeExecutor()
-                .command(IOUtils.toString(resourceAsStream, "utf-8"))
+                .command(new String(bytes))
                 .nativeCommand()
                 .executeScript();
         resourceAsStream.close();
