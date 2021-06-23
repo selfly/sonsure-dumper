@@ -65,7 +65,7 @@ public abstract class AbstractSimpleCommandExecutor<T extends SimpleCommandExecu
 
     @Override
     public T parameter(BeanParameter beanParameter) {
-        return null;
+        throw new UnsupportedOperationException("暂不支持");
     }
 
     @Override

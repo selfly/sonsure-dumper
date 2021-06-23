@@ -122,7 +122,8 @@
 14. [扩展自定义的执行方式 CommandExecutor](doc/ext-executor.md)
 15. [多数据源的使用](doc/multi-ds.md)
 16. [执行脚本](doc/execute-script.md)
-17. [批量更新](doc/batch-update.md)
+17. [named传参方式](doc/named-execute.md)
+18. [批量更新](doc/batch-update.md)
 
 ## 参与贡献
 
