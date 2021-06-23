@@ -124,6 +124,7 @@
 - [多数据源的使用](doc/multi-ds.md)
 - [执行脚本](doc/execute-script.md)
 - [named传参方式](doc/named-execute.md)
+- [特殊参数处理器](doc/param-handler.md)
 - [批量更新](doc/batch-update.md)
 
 ## 参与贡献
