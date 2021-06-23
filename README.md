@@ -2,18 +2,6 @@
 
 简单、快速、易用的jdbc持久化操作层。
 
-**4.0.0版本主要更新内容：**
-
-- 更新最低jdk版本到1.8，参数设置增加lambda方式支持
-- 支持parameterNamed方式
-- 增加DaoTemplate抽象层，当仍然想要规范化的建立与实体类对应的dao时，可以使用该DaoTemplate
-- 增加批量更新方法
-- 增加脚本执行方法
-- 增加自定义executor执行方法
-- 支持OSGi环境
-- 升级jsqlparser到3.2
-
-
 ## 示例
 
     //根据主键获取
