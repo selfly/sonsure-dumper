@@ -10,6 +10,22 @@
 
 此时无法在后台代码中预先处理与生成某个值，因为更新逻辑由业务人员在不同时间段的不同需求而来。
 
+## `NamedParamHandler`接口定义
+
+此种类型只支持named操作方式，`paramName`即在sql中定义的参数名，实现类可以根据此名称生成自己想要的值。
+
+    public interface NamedParamHandler {
+    
+        /**
+         * named方式时支持自定义生成参数值，例如随机数，
+         * 返回的值只能是支持jdbc传参的简单类型，不能是list、数组等复杂对象
+         *
+         * @param paramName the param name
+         * @return the value
+         */
+        Object getValue(String paramName);
+    }
+
 ## 示例
 
 以下实现了一个随机数生成器`JdbcRandomNamedParamHandler`，实际的值在10-30之间生成，具体可以查看`JdbcRandomNamedParamHandler`类的源码：
