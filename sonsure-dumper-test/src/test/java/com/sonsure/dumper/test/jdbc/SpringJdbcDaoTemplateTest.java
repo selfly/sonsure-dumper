@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -1198,25 +1199,27 @@ public class SpringJdbcDaoTemplateTest {
 
         daoTemplate.executeDelete(UserInfo.class);
         String sql = "INSERT INTO USER_INFO (PASSWORD, LOGIN_NAME, GMT_CREATE, USER_AGE, USER_INFO_ID) VALUES (:PASSWORD, :LOGIN_NAME, :GMT_CREATE, :USER_AGE, :USER_INFO_ID)";
-        List<UserInfo> userInfoList = new ArrayList<>();
+        List<Map<String, Object>> userInfoList = new ArrayList<>();
         for (int i = 1; i < 10000; i++) {
-            UserInfo user = new UserInfo();
-            user.setUserInfoId(Long.valueOf(i));
-            user.setLoginName("name-" + i);
-            user.setPassword("123456-" + i);
-            user.setUserAge(i);
-            user.setGmtCreate(new Date());
-            userInfoList.add(user);
+            Map<String, Object> map = new LinkedCaseInsensitiveMap<>();
+            map.put("password", "123456-" + i);
+            map.put("login_name", "name-" + i);
+            map.put("gmt_create", new Date());
+            map.put("user_age", i);
+            map.put("USER_INFO_ID", (long) i);
+            userInfoList.add(map);
         }
         daoTemplate.batchUpdate()
                 .nativeCommand()
                 .namedParameter()
-                .execute(sql, userInfoList, userInfoList.size(), (ps, names, userInfo) -> {
-                    ps.setString(1, userInfo.getPassword());
-                    ps.setString(2, userInfo.getLoginName());
-                    ps.setDate(3, new java.sql.Date(userInfo.getGmtCreate().getTime()));
-                    ps.setInt(4, userInfo.getUserAge());
-                    ps.setLong(5, userInfo.getUserInfoId());
+                .execute(sql, userInfoList, userInfoList.size(), (ps, names, map) -> {
+                    for (int j = 0; j < names.size(); j++) {
+                        Object val = map.get(names.get(j));
+                        if (val == null) {
+                            throw new RuntimeException("参数不存在");
+                        }
+                        ps.setObject(j + 1, val);
+                    }
                 });
 
 

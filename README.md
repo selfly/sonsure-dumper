@@ -53,7 +53,7 @@
     //SQL: select user_age, count(*) num from user_info group by user_age order by num desc limit 0,10
     Page<Object> page = jdbcDao.select("userAge,count(*) Num")
             .from(UserInfo.class)
-            .groupBy("userAge")
+            .groupBy(UserInfo::getUserAge()) //4.0版开始属性推荐使用lambda方式，防止拼错
             .orderBy("Num").desc()
             .paginate(1, 10)
             .isCount(false)
@@ -121,6 +121,7 @@
 13. [sql的解析转换 CommandConversionHandler](doc/conversion-handler.md)
 14. [扩展自定义的执行方式 CommandExecutor](doc/ext-executor.md)
 15. [多数据源的使用](doc/multi-ds.md)
+16. [执行脚本](doc/execute-script.md)
 
 ## 参与贡献
 
