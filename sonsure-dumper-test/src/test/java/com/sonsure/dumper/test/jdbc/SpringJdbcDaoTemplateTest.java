@@ -1117,7 +1117,7 @@ public class SpringJdbcDaoTemplateTest {
     @Test
     public void executeScript() throws Exception {
 
-        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("modular-osgi-user-3.0.0.sql");
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("test-script.sql");
 
         byte[] bytes = FileIOUtils.toByteArray(resourceAsStream);
         daoTemplate.nativeExecutor()

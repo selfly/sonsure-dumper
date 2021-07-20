@@ -18,11 +18,7 @@ CREATE TABLE `ss_user_message` (
   `is_receive_new` tinyint(4) NOT NULL COMMENT '是否有新消息',
   `gmt_create` datetime NOT NULL COMMENT '创建时间',
   `last_message_text_id` bigint(20) NOT NULL COMMENT '最后一条消息内容id',
-  PRIMARY KEY (`user_message_id`),
-  KEY `idx_ime_user_message` (`owner_user_id`),
-  KEY `idx_ime_user_message_0` (`other_user_id`),
-  CONSTRAINT `fk_ime_user_message` FOREIGN KEY (`owner_user_id`) REFERENCES `ss_user` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_ime_user_message_0` FOREIGN KEY (`other_user_id`) REFERENCES `ss_user` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`user_message_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='用户消息';
 
 CREATE TABLE `ss_message_text` (
@@ -38,10 +34,6 @@ CREATE TABLE `ss_user_message_item` (
   `gmt_create` datetime NOT NULL COMMENT '创建时间',
   `user_message_id` bigint(20) NOT NULL COMMENT '用户消息id',
   `author_user_id` bigint(20) NOT NULL COMMENT '消息作者id',
-  PRIMARY KEY (`user_message_item_id`),
-  KEY `idx_ime_user_message_record` (`user_message_id`),
-  KEY `idx_ime_user_message_record_0` (`message_text_id`),
-  CONSTRAINT `fk_ime_user_message_record` FOREIGN KEY (`user_message_id`) REFERENCES `ss_user_message` (`user_message_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_ime_user_message_record_0` FOREIGN KEY (`message_text_id`) REFERENCES `ss_message_text` (`message_text_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`user_message_item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='用户消息记录';
 
